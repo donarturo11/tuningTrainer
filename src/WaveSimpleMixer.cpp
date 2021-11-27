@@ -7,7 +7,7 @@ WaveSimpleMixer::WaveSimpleMixer()
 
 WaveSimpleMixer::~WaveSimpleMixer()
 {
-    std::cout << "Destroy Mixer" << std::endl;
+    
 }
 
 StkFloat WaveSimpleMixer::tick()
@@ -16,9 +16,7 @@ StkFloat WaveSimpleMixer::tick()
     for (WaveSimple *synth : m_instruments)
     {
         if (synth->isPressed()) {
-            //std::cout << "is Pressed: " << synth << std::endl;
             outValue+=synth->tick();
-            //outValue=0.0;
         }
     }
     return outValue;

@@ -26,7 +26,6 @@ public:
     void init();
     void setRunning(bool running);  
     void setAudioValue(stk::StkFloat value);
-    void printAudioValue();
     void connectMixer(stk::WaveSimpleMixer *synth);
     
 private:

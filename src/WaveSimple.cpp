@@ -28,8 +28,7 @@ WaveSimple :: WaveSimple( void )
 
 WaveSimple :: ~WaveSimple( void )
 {
-  std::cout << "Destroy Synth:" << this << std::endl;
-  //delete loop_;
+  
 }
 
 void WaveSimple :: loadWave(std::string filename, bool raw)
@@ -81,11 +80,6 @@ bool WaveSimple :: isPressed()
     return this->pressed_;
 }
 
-/*
-void WaveSimple :: connectAudio(AudioEngine &engine)
-{
-    this->m_engine=&engine;
-}
-*/
+
 
 } // stk namespace

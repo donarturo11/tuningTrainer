@@ -62,17 +62,7 @@ void Window::createKey(int nextSemitone, int &posX, int &color, int &index, int 
     myKeyGroup[index]->m_tuneDial->setValue(440);
     myKeyGroup[index]->m_spinbox->setValue(440);
     myKeyGroup[index]->connectSynth(m_synth[0][index]);
-    //std::cout << m_synth[0][index] << std::endl;
     
-    
-    /*
-    std::cout << "Next semitone: " << nextSemitone << std::endl;
-    std::cout << "Color: " << color << std::endl;
-    std::cout << "X Pos: " << posX << std::endl;
-    std::cout << "Index: " << index << std::endl;
-    std::cout << "Key Name: " << myKeyGroup[index]->getKeyLabel().toStdString() << std::endl;
-    */
-     
     ++index;
 }
 //-------------------------------------------
@@ -87,17 +77,7 @@ void Window::keyPressEvent(QKeyEvent *event)
         int objectId=this->keyBindMap[event->key()];
         myKeyGroup[objectId]->pressedSlot();
     }
-    //std::cout << "Pressed" << std::endl;
-    //
-    if (!autoRepeat) {
-    std::cout << "Really Pressed" << std::endl;
-    
-    this->waitCount+=1;
-    }
-    
-    
-    
-    
+      
 }
 //-------------------------------------------
 void Window::keyReleaseEvent(QKeyEvent *event)
@@ -110,14 +90,5 @@ void Window::keyReleaseEvent(QKeyEvent *event)
         myKeyGroup[objectId]->releasedSlot();
         
     }
-    
-    if (!autoRepeat) {
-    std::cout << "Really Released" << std::endl;
-    
-    }
-    
-    
+        
 }
-
-
-

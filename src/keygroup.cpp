@@ -31,7 +31,7 @@ void KeyGroup::initKeyButton(int posX, int white, int nId, int keyCode, QWidget*
     
     
     textAlignStr="text-align: bottom; font-size: 30px";
-    //textAlignStr="";
+    
     
     if (white==WHITE) {
         btnStyle="background-color: #ffffff; color: #000000; ";
@@ -126,7 +126,7 @@ void KeyGroup::tuneDialSlot()
     int value = m_tuneDial->value();
     m_spinbox->setValue(value);
     this->setFrequency(value);
-    //std::cout << "Tune dial value: " << value << std::endl;
+    
 }
 //-------------------------------------------
 void KeyGroup::spinboxSlot()
@@ -134,7 +134,7 @@ void KeyGroup::spinboxSlot()
     int value = m_spinbox->value();
     m_tuneDial->setValue(value);
     this->setFrequency(value);
-    //std::cout << "Tune dial value: " << value << std::endl;
+    
 }
 //-------------------------------------------
 void KeyGroup::setPressedBg()
@@ -244,10 +244,6 @@ void KeyGroup::pressedSlot()
     
     m_synth->noteOn(freq, 0.3);
     
-    
-    //std::cout << "You pressed the key:" << std::endl;
-    //std::cout << "ID\t:\t" << m_synth << std::endl;
-    //std::cout << "Frequency\t:\t" << frequency << " hZ" << std::endl;
 }
 //-------------------------------------------
 void KeyGroup::releasedSlot() 
@@ -262,7 +258,7 @@ void KeyGroup::connectSynth(stk::WaveSimple* synth)
 {
     
     this->m_synth = synth;
-    //std::cout << "Key" << this->keyId << ":" << m_synth << std::endl;
+    
 }
 
 

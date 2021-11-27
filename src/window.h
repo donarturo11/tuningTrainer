@@ -11,10 +11,8 @@
 #include <QShortcut>
 #include <QKeyEvent>
 #include <QThread>
-#include <iostream>
 #include <map>
 #include <vector>
-
 
 #include "keygroup.h"
 #include "globals.h"
