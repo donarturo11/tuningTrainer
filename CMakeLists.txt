@@ -17,25 +17,44 @@ set (CMAKE_AUTOUIC ON)
 if(CMAKE_VERSION VERSION_LESS "3.7.0")
  set (CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
-
+message(${CMAKE_SYSTEM_NAME})
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         message(STATUS ">>> Linux")
         add_compile_definitions(__OS_LINUX__)
         # linux stuff here
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 
+        message(STATUS ">>> Windows")
+
+        add_compile_definitions(__OS_WINDOWS__)
+        add_compile_definitions(__WINDOWS_WASAPI__)
+        #add_compile_definitions(__WINDOWS_DS__)
+        INCLUDE_DIRECTORIES(C:/Windows/System32 C:/MSYS64/src/stk-4.6.2/include src/)
+        LINK_DIRECTORIES(C:/MSYS64/usr/lib/ C:/Windows/System32 /src/stk-4.6.2/src)
+        
+                
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -LC:/MSYS64/usr/lib/")
     else()
         message(STATUS ">>> Not Linux")
         # stuff that should happen not on Linux
     endif()
 
-include_directories(/usr/include/stk src/)
+INCLUDE_DIRECTORIES(/usr/include/stk/ src/)
 
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
 
+message(STATUS ${INCLUDE_DIRECTORIES})
+
+
+
+
 add_subdirectory(src/)
+
+
 
 install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION bin
        LIBRARY DESTINATION lib
        ARCHIVE DESTINATION lib/archive )
+
