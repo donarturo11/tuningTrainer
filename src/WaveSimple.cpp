@@ -19,10 +19,8 @@ WaveSimple :: WaveSimple( void )
   loop_ = new FileLoop();
   pitchShift_ = new LentPitShift();
   baseFrequency_ = 440.0;
-  setFrequency( baseFrequency_ );
   loopGain_ = 0.0;
   this->setPressed(0);
-  //playing_=false;
   
 }  
 
@@ -33,8 +31,18 @@ WaveSimple :: ~WaveSimple( void )
 
 void WaveSimple :: loadWave(std::string filename, bool raw)
 {
-    this->loop_->openFile(filename, raw);
+    try {
+          
+          loop_->openFile(filename, raw);
+          setGood();
+        }
+    catch(...) // if loading sample fails, set sine generator
+        {
+           setBad();
+           sine_ = new SineWave();
+        }
 }
+
 
 
 
@@ -43,7 +51,10 @@ void WaveSimple :: noteOn( StkFloat frequency, StkFloat amplitude )
   
   this->loopGain_=amplitude;
   this->setFrequency( frequency );
-  this->loop_->reset();
+  
+  if(this->good_) this->loop_->reset();
+  
+  
   this->setPressed(1);
   
 }
@@ -67,7 +78,8 @@ void WaveSimple :: setBaseFrequency(StkFloat frequency)
 
 void WaveSimple :: setFrequency( StkFloat frequency )
 {
-  pitchShift_->setShift(frequency/baseFrequency_);
+  if (isGood()) pitchShift_->setShift(frequency/baseFrequency_);
+  else sine_->setFrequency(frequency);
 }
 
 void WaveSimple :: setPressed(bool pressed)
@@ -78,6 +90,21 @@ void WaveSimple :: setPressed(bool pressed)
 bool WaveSimple :: isPressed()
 {
     return this->pressed_;
+}
+
+void WaveSimple::setGood()
+{
+    this->good_=1;
+}
+
+void WaveSimple::setBad()
+{
+    this->good_=0;
+}
+
+bool WaveSimple :: isGood()
+{
+    return this->good_;    
 }
 
 

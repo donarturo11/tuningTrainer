@@ -1,10 +1,12 @@
 #ifndef STK_WAVESIMPLE_H
 #define STK_WAVESIMPLE_H
 
+#include <thread>
 
 #include "Instrmnt.h"
 #include "FileLoop.h"
 #include "LentPitShift.h"
+#include "SineWave.h"
 
 namespace stk {
 
@@ -30,6 +32,7 @@ class WaveSimple : public Instrmnt
   //! Class destructor.
   ~WaveSimple( void );
   
+  
   //! Load wavefile
   void loadWave(std::string filename, bool raw=false);
   
@@ -53,21 +56,30 @@ class WaveSimple : public Instrmnt
   
   void setPressed(bool b=0);
   bool isPressed();
-
+  bool isGood();
+ 
+ private:
+  void initWave();
+  void initSine();
+  void setGood();
+  void setBad();
+ 
  protected:
 
   FileLoop *loop_;
+  SineWave *sine_;
   StkFloat  baseFrequency_;
   StkFloat  loopGain_;
   LentPitShift *pitchShift_;
   bool pressed_;
-  
+  bool good_;
 
 };
 
 inline StkFloat WaveSimple :: tick( unsigned int )
 {
-  lastFrame_[0] = loopGain_ * pitchShift_->tick(loop_->tick());
+  if (isGood()) lastFrame_[0] = loopGain_ * pitchShift_->tick(loop_->tick());
+  else lastFrame_[0] = loopGain_ * sine_->tick();
   return lastFrame_[0];
 }
 
