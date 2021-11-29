@@ -14,7 +14,7 @@
 #include <map>
 #include <vector>
 
-#include "keygroup.h"
+#include "KeyGroup.h"
 #include "globals.h"
 #include "semitones.h"
 
