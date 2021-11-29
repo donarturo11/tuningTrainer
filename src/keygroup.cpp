@@ -127,6 +127,7 @@ void KeyGroup::tuneDialSlot()
     m_spinbox->setValue(value);
     this->setFrequency(value);
     
+    
 }
 //-------------------------------------------
 void KeyGroup::spinboxSlot()
@@ -134,6 +135,8 @@ void KeyGroup::spinboxSlot()
     int value = m_spinbox->value();
     m_tuneDial->setValue(value);
     this->setFrequency(value);
+    this->parentClass->setFocus();
+    
     
 }
 //-------------------------------------------
@@ -216,6 +219,8 @@ int KeyGroup::getFrequency()
 void KeyGroup::setFrequency(int frequency)
 {
     this->frequency=frequency;
+    m_synth->setFrequency(frequency);
+    
 }
 //-------------------------------------------
 
