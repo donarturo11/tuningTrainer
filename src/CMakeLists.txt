@@ -38,5 +38,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	target_link_libraries(${PROJECT_NAME} winmm)
 	target_link_libraries(${PROJECT_NAME} dsound)
 	target_link_libraries(${PROJECT_NAME} ole32)
-	
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    target_link_libraries(${PROJECT_NAME} pthread)
 endif()
