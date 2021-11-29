@@ -1,5 +1,5 @@
 #include "window.h"
-#include "keygroup.h"
+#include "KeyGroup.h"
 
 
 
