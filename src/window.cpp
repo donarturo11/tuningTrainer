@@ -59,9 +59,11 @@ void Window::createKey(int nextSemitone, int &posX, int &color, int &index, int 
     this->keyBindMap[keyCode]=index;    
     
     myKeyGroup[index]->setLabel(keyName);
+    myKeyGroup[index]->connectSynth(m_synth[0][index]);
     myKeyGroup[index]->m_tuneDial->setValue(440);
     myKeyGroup[index]->m_spinbox->setValue(440);
-    myKeyGroup[index]->connectSynth(m_synth[0][index]);
+    
+    
     
     ++index;
 }
