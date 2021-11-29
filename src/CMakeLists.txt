@@ -8,7 +8,7 @@
 
 set(SOURCES main.cpp
             window.cpp
-            keygroup.cpp
+            KeyGroup.cpp
             AudioEngine.cpp
             WaveSimple.cpp
             WaveSimpleMixer.cpp
