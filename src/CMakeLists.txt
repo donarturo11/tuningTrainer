@@ -7,7 +7,7 @@
 #            )
 
 set(SOURCES main.cpp
-            window.cpp
+            MainWindow.cpp
             KeyGroup.cpp
             AudioEngine.cpp
             WaveSimple.cpp

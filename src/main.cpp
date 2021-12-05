@@ -6,7 +6,7 @@
 #include "WaveSimpleMixer.h"
 
 #include <QApplication>
-#include "window.h"
+#include "MainWindow.h"
 
 int main(int argc,  char **argv)
 {

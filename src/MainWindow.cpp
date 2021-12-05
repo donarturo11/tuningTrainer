@@ -1,4 +1,4 @@
-#include "window.h"
+#include "MainWindow.h"
 #include <QString>
 
 Window::Window(QWidget *parent) : QWidget(parent)

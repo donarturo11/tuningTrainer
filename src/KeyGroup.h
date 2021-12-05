@@ -5,7 +5,7 @@
 #include <QSpinBox>
 #include <QThread>
 
-#include "window.h"
+#include "MainWindow.h"
 #include "globals.h"
 #include "semitones.h"
 #include "WaveSimple.h"

@@ -1,4 +1,4 @@
-#include "window.h"
+#include "MainWindow.h"
 #include "KeyGroup.h"
 
 
