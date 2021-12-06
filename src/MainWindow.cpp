@@ -1,17 +1,36 @@
 #include "MainWindow.h"
 #include <QString>
 
-Window::Window(QWidget *parent) : QWidget(parent)
+
+MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
+//MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
+    this->setWindowTitle("TuningTrainer");
+    
     this->waitCount=0;
     
+    int posX=800;
+    int posY=0;
+    int width=60;
+    int height=20;
     
+    m_about_btn = new QPushButton("About", this);
+    m_about_btn->setGeometry(posX, posY, width, height);
+    m_about_btn->show();
+    connect (m_about_btn, SIGNAL(pressed()), this, SLOT(aboutSlot()));
+    
+    posY+=height;
+    
+    m_quit_btn = new QPushButton("Quit", this);
+    m_quit_btn->setGeometry(posX, posY, width, height);
+    m_quit_btn->show();
+    connect (m_quit_btn, SIGNAL(pressed()), this, SLOT(quitSlot()));
     
     
 }
 //-------------------------------------------
-void Window::initKeyboard(std::vector <stk::WaveSimple*> *synth)
+void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
 {
     
     this->m_synth=synth;
@@ -39,7 +58,7 @@ void Window::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     
 }
 
-void Window::createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode)
+void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode)
 {
     QString keyName=QKeySequence(keyCode).toString();
     myKeyGroup[index]=new KeyGroup(posX, color, index, keyCode, this);
@@ -68,7 +87,7 @@ void Window::createKey(int nextSemitone, int &posX, int &color, int &index, int 
     ++index;
 }
 //-------------------------------------------
-void Window::keyPressEvent(QKeyEvent *event)
+void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     
     int keyCode=event->key();
@@ -82,7 +101,7 @@ void Window::keyPressEvent(QKeyEvent *event)
       
 }
 //-------------------------------------------
-void Window::keyReleaseEvent(QKeyEvent *event)
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
     bool autoRepeat=event->isAutoRepeat();
     
@@ -93,4 +112,20 @@ void Window::keyReleaseEvent(QKeyEvent *event)
         
     }
         
+}
+
+
+void MainWindow::aboutSlot()
+{
+    
+    aboutwindow=new AboutWindow(this);
+    
+    aboutwindow->setModal(1);
+    aboutwindow->show();
+    
+}
+
+void MainWindow::quitSlot()
+{
+    this->close();
 }

@@ -8,6 +8,7 @@
 
 set(SOURCES main.cpp
             MainWindow.cpp
+            AboutWindow.cpp
             KeyGroup.cpp
             AudioEngine.cpp
             WaveSimple.cpp

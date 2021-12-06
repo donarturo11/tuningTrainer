@@ -29,8 +29,8 @@ int main(int argc,  char **argv)
     audioengine.init();
 
     QApplication app(argc, argv);
-    Window window;
-    window.initKeyboard(&synth);
-	window.show();
+    MainWindow mainwindow;
+    mainwindow.initKeyboard(&synth);
+	mainwindow.show();
 	return app.exec();
 }
