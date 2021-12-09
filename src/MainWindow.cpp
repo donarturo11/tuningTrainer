@@ -1,11 +1,12 @@
 #include "MainWindow.h"
 #include <QString>
 
-
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
+    m_settings=new QSettings("donarturo11", "tuningTrainer");
+    m_settings->setDefaultFormat(QSettings::IniFormat);
     this->setWindowTitle("TuningTrainer");
     
     this->waitCount=0;
@@ -27,7 +28,18 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_quit_btn->show();
     connect (m_quit_btn, SIGNAL(pressed()), this, SLOT(quitSlot()));
     
+    posY+=height*2;
     
+    m_reset_btn = new QPushButton("Reset", this);
+    m_reset_btn->setGeometry(posX, posY, width, height);
+    m_reset_btn->show();
+    connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
+    
+}
+
+MainWindow::~MainWindow()
+{
+    m_settings->sync();
 }
 //-------------------------------------------
 void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
@@ -39,29 +51,34 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     int posX=0;
     int color=WHITE;
     
-    this->createKey(0, posX, color, ind, Qt::Key_Q); 
-    this->createKey(0, posX, color, ind, Qt::Key_W); 
-    this->createKey(0, posX, color, ind, Qt::Key_E); 
-    this->createKey(KEY_C, posX, color, ind, Qt::Key_R);
-    this->createKey(KEY_C_SHARP, posX, color, ind, Qt::Key_5);
-    this->createKey(KEY_D, posX, color, ind, Qt::Key_T);
-    this->createKey(KEY_D_SHARP, posX, color, ind, Qt::Key_6);
-    this->createKey(KEY_E, posX, color, ind, Qt::Key_Y);    
-    this->createKey(KEY_F, posX, color, ind, Qt::Key_U);    
-    this->createKey(KEY_F_SHARP, posX, color, ind, Qt::Key_8);    
-    this->createKey(KEY_G, posX, color, ind, Qt::Key_I);    
-    this->createKey(KEY_G_SHARP, posX, color, ind, Qt::Key_9);    
-    this->createKey(KEY_A, posX, color, ind, Qt::Key_O);    
-    this->createKey(KEY_A_SHARP, posX, color, ind, Qt::Key_0);    
-    this->createKey(KEY_B, posX, color, ind, Qt::Key_P);    
-    this->createKey(KEY_C_HIGH, posX, color, ind, 91);
+    this->createKey(0, posX, color, ind, Qt::Key_Q, m_settings); 
+    this->createKey(0, posX, color, ind, Qt::Key_W, m_settings); 
+    this->createKey(0, posX, color, ind, Qt::Key_E, m_settings); 
+    this->createKey(KEY_C, posX, color, ind, Qt::Key_R, m_settings);
+    this->createKey(KEY_C_SHARP, posX, color, ind, Qt::Key_5, m_settings);
+    this->createKey(KEY_D, posX, color, ind, Qt::Key_T, m_settings);
+    this->createKey(KEY_D_SHARP, posX, color, ind, Qt::Key_6, m_settings);
+    this->createKey(KEY_E, posX, color, ind, Qt::Key_Y, m_settings);    
+    this->createKey(KEY_F, posX, color, ind, Qt::Key_U, m_settings);    
+    this->createKey(KEY_F_SHARP, posX, color, ind, Qt::Key_8, m_settings);    
+    this->createKey(KEY_G, posX, color, ind, Qt::Key_I, m_settings);    
+    this->createKey(KEY_G_SHARP, posX, color, ind, Qt::Key_9, m_settings);    
+    this->createKey(KEY_A, posX, color, ind, Qt::Key_O, m_settings);    
+    this->createKey(KEY_A_SHARP, posX, color, ind, Qt::Key_0, m_settings);    
+    this->createKey(KEY_B, posX, color, ind, Qt::Key_P, m_settings);    
+    this->createKey(KEY_C_HIGH, posX, color, ind, 91, m_settings);
     
 }
 
-void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode)
+void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings)
 {
     QString keyName=QKeySequence(keyCode).toString();
-    myKeyGroup[index]=new KeyGroup(posX, color, index, keyCode, this);
+    //------------
+    QString settingsKey="keyID";
+    if (index < 10) settingsKey+="0";
+    settingsKey+=QString::number(index);
+    //--------------
+    myKeyGroup[index]=new KeyGroup(posX, color, index, keyCode, m_settings, settingsKey, this);
     if (nextSemitone==1 && color==WHITE) {
         posX+=AFTER_WHITE_STEP;
         color=BLACK;
@@ -79,8 +96,8 @@ void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, 
     
     myKeyGroup[index]->setLabel(keyName);
     myKeyGroup[index]->connectSynth(m_synth[0][index]);
-    myKeyGroup[index]->m_tuneDial->setValue(440);
-    myKeyGroup[index]->m_spinbox->setValue(440);
+    //myKeyGroup[index]->m_tuneDial->setValue(440);
+    //myKeyGroup[index]->m_spinbox->setValue(440);
     
     
     
@@ -128,4 +145,13 @@ void MainWindow::aboutSlot()
 void MainWindow::quitSlot()
 {
     this->close();
+}
+
+void MainWindow::resetSlot()
+{
+    for (int i=0; i<KEY_NUMBERS; i++)
+    {
+        myKeyGroup[i]->m_spinbox->setValue(440);
+    }
+    m_settings->clear();
 }

@@ -3,6 +3,7 @@
 #include <vector>
 #include <QDial>
 #include <QSpinBox>
+#include <QSettings>
 #include <QThread>
 
 #include "MainWindow.h"
@@ -16,11 +17,13 @@ class KeyGroup : public QWidget
 {
     Q_OBJECT
     public:
-       KeyGroup(int posX, int white, int nId, int keyCode, QWidget* parent);
+       KeyGroup(int posX, int white, int nId, int keyCode, QSettings *settings, QString settingsKey, QWidget* parent);
+       ~KeyGroup();
        QPushButton *m_keyButton;
        QDial *m_tuneDial;
        QLabel *m_Label;
        QSpinBox *m_spinbox;
+       QSettings *m_settings;
        void setLabel(QString text);
        void connectSynth(stk::WaveSimple *synth);
        int getKeyCode();
@@ -57,6 +60,7 @@ class KeyGroup : public QWidget
        QString btnStylePressed;
        QString shortcutString;
        QString keyLabel;
+       QString settingsKey;
        int keyCode;
        int keyId;
        int frequency;

@@ -17,7 +17,6 @@ WaveSimple :: WaveSimple( void )
 {
   
   loop_ = new FileLoop();
-  sine_ = new SineWave();
   pitchShift_ = new LentPitShift();
   baseFrequency_ = 440.0;
   loopGain_ = 0.0;
@@ -40,7 +39,7 @@ void WaveSimple :: loadWave(std::string filename, bool raw)
     catch(...) // if loading sample fails, set sine generator
         {
            setBad();
-
+           sine_ = new SineWave();
         }
 }
 

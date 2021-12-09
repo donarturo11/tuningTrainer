@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QString>
 #include <QKeySequence>
+#include <QSettings>
 #include <QShortcut>
 #include <QKeyEvent>
 #include <QThread>
@@ -33,7 +34,9 @@ class MainWindow : public QWidget
 	Q_OBJECT
 	public:
 		explicit MainWindow(QWidget *parent=0);
+		~MainWindow();
         AboutWindow *aboutwindow;
+        QSettings *m_settings;
         void initKeyboard(std::vector <stk::WaveSimple*> *synth);
         
 	private:
@@ -41,8 +44,9 @@ class MainWindow : public QWidget
         KeyGroup *myKeyGroup[KEY_NUMBERS];
         QPushButton *m_about_btn;
         QPushButton *m_quit_btn;
+        QPushButton *m_reset_btn;
         std::map<int, int> keyBindMap;
-        void createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode);
+        void createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings);
         void keyPressEvent(QKeyEvent *event);
         void keyReleaseEvent(QKeyEvent *event);
         
@@ -55,6 +59,7 @@ class MainWindow : public QWidget
     
     public slots:
         void aboutSlot();
+        void resetSlot();
         void quitSlot();
         
     signals:

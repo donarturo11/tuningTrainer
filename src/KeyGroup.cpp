@@ -1,10 +1,9 @@
 #include "MainWindow.h"
 #include "KeyGroup.h"
 
-
-
-KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QWidget* parent) //: public QWidget(parent)
+KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *settings, QString settingsKey, QWidget* parent) //: public QWidget(parent)
 {
+    
     this->parentClass=parent;
     
     this->setKeyButtonPosY(150);
@@ -14,7 +13,18 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QWidget* parent) /
     
     this->initTuneDial();
     this->initSpinBox();
-    this->setConnections();    
+    this->setConnections();   
+    this->settingsKey=settingsKey; 
+    this->m_settings=settings;
+    
+               
+    
+}
+
+KeyGroup::~KeyGroup()
+{
+    m_settings->setValue(this->settingsKey, this->getFrequency());
+    
 }
 
 //-------------------------------------------
@@ -220,6 +230,7 @@ void KeyGroup::setFrequency(int frequency)
 {
     this->frequency=frequency;
     m_synth->setFrequency(frequency);
+    m_settings->setValue(this->settingsKey, frequency);
     
 }
 //-------------------------------------------
@@ -263,6 +274,9 @@ void KeyGroup::connectSynth(stk::WaveSimple* synth)
 {
     
     this->m_synth = synth;
+    int defFreq=m_settings->value(this->settingsKey, 440).toInt();
+    this->m_tuneDial->setValue(defFreq);
+    
     
 }
 
