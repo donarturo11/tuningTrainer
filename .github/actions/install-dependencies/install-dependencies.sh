@@ -36,7 +36,7 @@ setup_macos() {
   brew update
   echo "::endgroup::"
   echo "::group::Install Homebrew packages"
-  brew install libarchive qt@5 stk
+  brew install libarchive qt@5 stk cmake
   brew link qt@5 --force
   echo "/usr/local/opt/libarchive/bin" >> "${GITHUB_PATH}"
   echo "::endgroup::"
