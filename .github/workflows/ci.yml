@@ -61,6 +61,13 @@ jobs:
         apt-add-repository -y ppa:git-core/ppa
         apt-get update -yq
         apt-get install -yq --no-install-suggests --no-install-recommends git
+    - name: Install cmake (Linux)
+      # GitHub runners come with git pre-installed, but our "custom" Linux
+      # container image does not
+      if: runner.os == 'Linux'
+      run: |
+        apt-get update -yq
+        apt-get install -yq --no-install-suggests --no-install-recommends cmake
     - name: Check out repository
       uses: actions/checkout@v2
     - name: Install Qt (Windows)
