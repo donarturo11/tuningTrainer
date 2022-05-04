@@ -59,7 +59,7 @@ jobs:
         apt-get update -yq
         apt-get update -yq
         apt-get install -yq --no-install-suggests --no-install-recommends git
-        apt-get install -yq qt5
+        apt-get install -yq qt5-default
         apt-get install -yq stk
     - name: Check out repository
       uses: actions/checkout@v2
