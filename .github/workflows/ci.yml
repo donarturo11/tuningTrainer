@@ -57,10 +57,10 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         apt-get update -yq
+        apt-get -yq install software-properties-common
+        apt-add-repository -y ppa:git-core/ppa
         apt-get update -yq
         apt-get install -yq --no-install-suggests --no-install-recommends git
-        apt-get install -yq qt5-default
-        apt-get install -yq stk
     - name: Check out repository
       uses: actions/checkout@v2
     - name: Install Qt (Windows)
@@ -84,11 +84,18 @@ jobs:
       if: github.ref != 'refs/heads/release'
       working-directory: build
       run: cmake ../ PREFIX=/usr
-    
+    - name: Configure build (Release)
+      if: github.ref == 'refs/heads/release'
+      working-directory: build
+      run: cmake ../ PREFIX=/usr
 
     - name: Build tuningTrainer
       working-directory: build
       run: test "${{runner.os}}" != "Windows" && make || nmake
+
+    - name: Run tests
+      env: { QT_QPA_PLATFORM: minimal }
+      run: build/tests/bin/tests
 
     - name: Create package
       id: package
@@ -97,11 +104,8 @@ jobs:
         arch: ${{matrix.arch}}
 
     - name: Upload package
-      env: { GOOGLE_PRIVATE_KEY: "${{secrets.google_private_key}}" }
-      if: env.GOOGLE_PRIVATE_KEY != null
       uses: ./.github/actions/upload-package
       with:
         google-private-key: ${{secrets.google_private_key}}
         parent: ${{secrets[matrix.upload-parent]}}
-        path: build
-        files: ${{steps.package.outputs.package-name}}
+        path: build/${{steps.package.outputs.package-name}}
