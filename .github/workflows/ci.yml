@@ -83,7 +83,7 @@ jobs:
     - name: Configure build (Nightly Build)
       if: github.ref != 'refs/heads/release'
       working-directory: build
-      run: qmake ../ PREFIX=/usr CONFIG+=release CONFIG+=GIT CONFIG+=PENCIL2D_NIGHTLY
+      run: cmake ../
     - name: Configure build (Release)
       if: github.ref == 'refs/heads/release'
       working-directory: build
