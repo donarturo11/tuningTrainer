@@ -49,7 +49,7 @@ jobs:
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
       with:
-          # Artifact name
-          name: tuningTrainer-bin.tar.gz # optional
-          # Destination path
-          # path: # optional         
+        # Artifact name
+        name: tuningTrainer-bin.tar.gz # optional
+        # Destination path
+        path: ${{github.workspace}}/build # optional         
