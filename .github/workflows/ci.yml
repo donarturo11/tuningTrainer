@@ -80,14 +80,9 @@ jobs:
 
     - name: Create build directory
       run: mkdir build
-    - name: Configure build (Nightly Build)
-      if: github.ref != 'refs/heads/release'
-      working-directory: build
-      run: mkdir build && cd build && cmake ../
     - name: Configure build (Release)
-      if: github.ref == 'refs/heads/release'
       working-directory: build
-      run: mkdir build && cd build && cmake ../
+      run: cmake ../
 
     - name: Build tuningTrainer
       working-directory: build
