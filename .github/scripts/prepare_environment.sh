@@ -1,4 +1,5 @@
 #!usr/bin/env bash
 
 ls -lah
-uname -u
+echo ${secrets.GITHUB_TOKEN}
+
