@@ -7,3 +7,6 @@ sudo apt-get update
 sudo apt-get install qt5-default
 sudo apt-get install stk
 
+echo -e "\n\n"
+find /usr/include -iname "RtWvOut.h"
+
