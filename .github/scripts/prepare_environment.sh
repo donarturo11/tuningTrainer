@@ -5,7 +5,7 @@ curl ifconfig.me
 echo -e "\nEnvironment runs"
 sudo apt-get update
 sudo apt-get install qt5-default
-sudo apt-get install stk
+sudo apt-get install stk libstk-dev
 
 echo -e "\n\n"
 find /usr/include -iname "RtWvOut.h"
