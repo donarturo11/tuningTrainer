@@ -69,4 +69,4 @@ jobs:
         path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
         
     - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
+      run: echo ${{steps.download.outputs.download-path}}
