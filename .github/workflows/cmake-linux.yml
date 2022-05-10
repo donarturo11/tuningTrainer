@@ -47,10 +47,9 @@ jobs:
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            zip tuningTrainer-bin.zip tuningTrainer/
-           find -iname tuningTrainer-bin*
-           cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/
-           cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/
-           rm -Rv tuningTrainer/
+           cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/  || echo 'FAILED tuningTrainer-bin.tar.gz'
+           cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/ || echo 'FAILED tuningTrainer-bin.tar.gz'
+           rm -Rv tuningTrainer/ || echo 'already deleted'
            
 
     - name: Upload tuningTrainer-bin.tar.gz
