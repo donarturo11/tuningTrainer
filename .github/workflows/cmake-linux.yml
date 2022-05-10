@@ -47,8 +47,7 @@ jobs:
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            zip tuningTrainer-bin.zip tuningTrainer/
-           cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/  || echo 'FAILED tuningTrainer-bin.tar.gz'
-           cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/ || echo 'FAILED tuningTrainer-bin.tar.gz'
+           
            rm -Rv tuningTrainer/ || echo 'already deleted'
            
 
@@ -56,11 +55,11 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-bin.tar.gz
-        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz
+        path: ${{github.workspace}}/build/tuningTrainer-bin.tar.gz
 
     - name: Upload tuningTrainer-bin.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-bin.tar.gz
-        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.zip
+        path: ${{github.workspace}}/build/tuningTrainer-bin.zip
         
