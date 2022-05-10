@@ -1,4 +1,4 @@
-name: cmake-linux
+name: cmake-windows
 
 on:
   push:
