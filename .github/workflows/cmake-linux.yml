@@ -47,9 +47,10 @@ jobs:
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            zip tuningTrainer-bin.zip tuningTrainer/
-           rm -Rv tuningTrainer/
+           echo $PWD/$(find -iname tuningTrainer-bin*)
            cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/
            cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/
+           rm -Rv tuningTrainer/
            
 
     - name: Upload tuningTrainer-bin.tar.gz
