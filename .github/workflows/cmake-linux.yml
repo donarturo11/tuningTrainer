@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
            sudo apt-get update
-           sudo apt-get install qt5-default
+           sudo apt-get install qt5-default zip
            sudo apt-get install stk libstk-dev
           
     - name: Configure CMake
@@ -47,7 +47,7 @@ jobs:
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            zip tuningTrainer-bin.zip tuningTrainer/
-           echo $PWD/$(find -iname tuningTrainer-bin*)
+           find -iname tuningTrainer-bin*
            cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/
            cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/
            rm -Rv tuningTrainer/
