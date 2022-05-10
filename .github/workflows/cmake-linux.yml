@@ -60,6 +60,6 @@ jobs:
     - name: Upload tuningTrainer-bin.zip
       uses: actions/upload-artifact@v3.0.0
       with:
-        name: tuningTrainer-bin.tar.gz
+        name: tuningTrainer-bin.zip
         path: ${{github.workspace}}/build/tuningTrainer-bin.zip
         
