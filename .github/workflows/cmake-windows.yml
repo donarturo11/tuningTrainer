@@ -38,16 +38,15 @@ jobs:
            echo ${{github.workspace}}
            cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     
-    #- name: Build Package
-      #run: |
-      #     cd ${{github.workspace}}/build
-      #     mkdir tuningTrainer/
-      #     cp -v bin/tuningTrainer tuningTrainer/
-      #     cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
-      #     tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
-      #     zip tuningTrainer-bin.zip tuningTrainer/
-      #     
-      #     rm -Rv tuningTrainer/ || echo 'already deleted'
+    - name: Build Package
+      run: |
+           cd ${{github.workspace}}/build
+           mkdir tuningTrainer/
+           cp -v bin/tuningTrainer tuningTrainer/
+           cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
+           tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
+           zip tuningTrainer-bin.zip tuningTrainer/
+           rm -Rv tuningTrainer/ || echo 'already deleted'
            
 
     - name: Upload tuningTrainer-bin.tar.gz
