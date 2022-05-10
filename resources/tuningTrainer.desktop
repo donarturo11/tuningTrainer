@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=tuningTrainer
+Version=1.0
+GenericName=tuningTrainer
+Comment=A small and simple program to training tuning systems
+Exec=tuningTrainer
+Icon=tuningTrainer-icon
+Categories=Audio;AudioVideo;X-Jack;Qt;
+Keywords=Audio;JACK;Qt;
+Terminal=false
+Type=Application
+StartupWMClass=tuningTrainer
+X-SuSE-translate=false
