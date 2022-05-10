@@ -14,7 +14,7 @@ env:
 
 
 jobs:
-  build:
+  build-linux:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -46,27 +46,21 @@ jobs:
            cp -v bin/tuningTrainer tuningTrainer/
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
+           zip tuningTrainer-bin.zip tuningTrainer/
            rm -Rv tuningTrainer/
-           mkdir ${{github.workspace}}/build/artifacts
            cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts/
-           echo $(pwd)
-           echo $(find -iname tuningTrainer-bin.tar.gz)
+           cp -v tuningTrainer-bin.zip ${{github.workspace}}/build/artifacts/
+           
 
-    - name: Upload a Build Artifact
+    - name: Upload tuningTrainer-bin.tar.gz
       uses: actions/upload-artifact@v3.0.0
       with:
-        # Artifact name
-        name: tuningTrainer-bin.tar.gz # optional
-        # Destination path
-        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
+        name: tuningTrainer-bin.tar.gz
+        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz
+
+    - name: Upload tuningTrainer-bin.zip
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: tuningTrainer-bin.tar.gz
+        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.zip
         
-    #- name: Download a Build Artifact
-    #  uses: actions/download-artifact@v3.0.0
-    #  with:
-    #    # Artifact name
-    #    name: tuningTrainer-bin.tar.gz # optional
-    #    # Destination path
-    #    path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
-        
-    - name: 'Echo download path'
-      run: echo ${{steps.download.outputs.download-path}}
