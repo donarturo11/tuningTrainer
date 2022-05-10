@@ -38,7 +38,7 @@ jobs:
            echo ${{github.workspace}}
            cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     
-    - name: Build Package
+    #- name: Build Package
       #run: |
       #     cd ${{github.workspace}}/build
       #     mkdir tuningTrainer/
