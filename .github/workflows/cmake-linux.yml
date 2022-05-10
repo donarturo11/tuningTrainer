@@ -1,6 +1,6 @@
 name: cmake-linux
 
-off:
+on:
   push:
     branches:
        - main
