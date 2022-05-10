@@ -47,6 +47,10 @@ jobs:
            cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            rm -Rv tuningTrainer/
+           mkdir ${{github.workspace}}/build/artifacts
+           cp -v tuningTrainer-bin.tar.gz ${{github.workspace}}/build/artifacts
+           echo $(pwd)
+           echo $(find -iname tuningTrainer-bin.tar.gz)
 
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
@@ -54,4 +58,4 @@ jobs:
         # Artifact name
         name: tuningTrainer-bin.tar.gz # optional
         # Destination path
-        path: ${{github.workspace}}/build/tuningTrainer-bin.tar.gz # optional         
+        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional         
