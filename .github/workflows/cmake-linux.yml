@@ -44,7 +44,7 @@ jobs:
            cd ${{github.workspace}}/build
            mkdir tuningTrainer/
            cp -v bin/tuningTrainer tuningTrainer/
-           cp -v ${{github.workspace}}/harpsichord.wav tuningTrainer/
+           cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            rm -Rv tuningTrainer/
 
@@ -54,4 +54,4 @@ jobs:
         # Artifact name
         name: tuningTrainer-bin.tar.gz # optional
         # Destination path
-        path: ${{github.workspace}}/build # optional         
+        path: ${{github.workspace}}/build/tuningTrainer-bin.tar.gz # optional         
