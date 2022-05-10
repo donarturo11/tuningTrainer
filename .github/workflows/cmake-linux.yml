@@ -60,13 +60,13 @@ jobs:
         # Destination path
         path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
         
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v3.0.0
-      with:
-        # Artifact name
-        name: tuningTrainer-bin.tar.gz # optional
-        # Destination path
-        path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
+    #- name: Download a Build Artifact
+    #  uses: actions/download-artifact@v3.0.0
+    #  with:
+    #    # Artifact name
+    #    name: tuningTrainer-bin.tar.gz # optional
+    #    # Destination path
+    #    path: ${{github.workspace}}/build/artifacts/tuningTrainer-bin.tar.gz # optional
         
     - name: 'Echo download path'
       run: echo ${{steps.download.outputs.download-path}}
