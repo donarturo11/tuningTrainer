@@ -38,12 +38,13 @@ jobs:
          install: mingw-w64-x86_64-qt5
     - name: Build and install stk
       run: |
-           echo ${PWD}
-           tar -vxzf .github/mingw-deps/stk-PKGBUILD.tar.gz
-           cd stk
-           cat PKGBUILD
+           export LAST_PWD=${PWD}
+           cd .github/mingw-deps/stk/
+           mv PKGBUILD PKGBUILD.msdos
+           tr -d '\r' PKGBUILD.msdos > PKGBUILD
+           rm PKGBUILD.msdos
            makepkg-mingw -si
-           cd ..
+           cd $LAST_PWD
     - name: Install dependencies
       run: |
            echo "deps"
