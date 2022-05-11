@@ -72,6 +72,6 @@ package_stk-docs() {
 
 package(){
   package_stk
-  package_stk_docs
+  package_stk-docs
 }
 
