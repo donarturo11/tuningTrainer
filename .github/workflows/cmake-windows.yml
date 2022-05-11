@@ -28,7 +28,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: git mingw-w64-x86_64-toolchain cmake
+        install: dos2unix git mingw-w64-x86_64-toolchain cmake
     - name: Git checkout
       uses: actions/checkout@v3    
     - name: Install qt5
@@ -40,9 +40,7 @@ jobs:
       run: |
            export LAST_PWD=${PWD}
            cd .github/mingw-deps/stk/
-           mv PKGBUILD PKGBUILD.msdos
-           tr -d '\r' PKGBUILD.msdos > PKGBUILD
-           rm PKGBUILD.msdos
+           dos2unix PKGBUILD
            makepkg-mingw -si
            cd $LAST_PWD
     - name: Install dependencies
