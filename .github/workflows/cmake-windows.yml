@@ -39,7 +39,10 @@ jobs:
     - name: Build and install stk
       run: |
            export LAST_PWD=${PWD}
-           cd .github/mingw-deps/stk/
+           cd .github/mingw-deps/mingw-w64-jack2/
+           dos2unix PKGBUILD
+           makepkg-mingw -si
+           cd ../stk/
            dos2unix PKGBUILD
            makepkg-mingw -si
            cd $LAST_PWD
