@@ -8,9 +8,7 @@ pkgdesc='The Synthesis ToolKit in C++'
 arch=('any')
 url="https://ccrma.stanford.edu/software/stk/"
 license=(MIT)
-makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" 
-             "${MINGW_PACKAGE_PREFIX}-glibc"
-             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-doxygen")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 options=('staticlibs') # '!strip' 'debug')
