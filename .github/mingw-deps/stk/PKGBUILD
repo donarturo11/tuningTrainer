@@ -12,7 +12,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-doxygen")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 options=('staticlibs') # '!strip' 'debug')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/thestk/${pkgname}/archive/${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/thestk/${_realname}/archive/${pkgver}.tar.gz")
 sha512sums=('f1925744fdeddc9fccd24add52dbcc68b17c9f069be8d7d139b2a8a70d7d288881ec9effc564e1f43094a5395ddf45db7cc1339db17649abe0b8e0be2dc7bacd')
 b2sums=('b15f052580b30f4aee314e6737dbff4193a25b552ea9f251832e3f39e4f623ddcf4550d6e2fcd227aad593dd2f4af518844e5f25082f676ce02e237810a4923a')
 
