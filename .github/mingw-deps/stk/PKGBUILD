@@ -46,15 +46,15 @@ package_stk() {
   cd "${_realname}-${pkgver}"
   mingw32-make DESTDIR="${pkgdir}" install
   # license
-  install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"
+  #install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"  || echo "License Failed"
   # demo
-  install -vDm 755 projects/demo/stk-demo -t "${pkgdir}/usr/bin"
-  install -vDm 644 projects/demo/tcl/*.tcl \
-    -t "${pkgdir}/usr/share/${pkgname}/tcl"
-  install -vDm 644 projects/demo/scores/{README,*.ski} \
-    -t "${pkgdir}/usr/share/${pkgname}/scores"
-  install -vDm 644 rawwaves/*.{raw,c} \
-    -t "${pkgdir}/usr/share/${pkgname}/rawwaves"
+  #install -vDm 755 projects/demo/stk-demo -t "${pkgdir}/usr/bin" || echo "Stk demo Failed"
+  #install -vDm 644 projects/demo/tcl/*.tcl \
+  #  -t "${pkgdir}/usr/share/${pkgname}/tcl" || echo "Tcl projects Failed"
+  #install -vDm 644 projects/demo/scores/{README,*.ski} \
+  #  -t "${pkgdir}/usr/share/${pkgname}/scores"  || echo "Failed"
+  #install -vDm 644 rawwaves/*.{raw,c} \
+  #  -t "${pkgdir}/usr/share/${pkgname}/rawwaves"  || echo "Failed"
 }
 
 package_stk-docs() {
@@ -72,6 +72,6 @@ package_stk-docs() {
 
 package(){
   package_stk
-  package_stk-docs
+  #package_stk-docs
 }
 
