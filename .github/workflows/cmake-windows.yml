@@ -39,9 +39,11 @@ jobs:
     - name: Build and install stk
       run: |
            echo ${PWD}
-           cd .github/mingw-deps/stk
+           tar -vxzf .github/mingw-deps/stk-PKGBUILD.tar.gz
+           cd stk
            cat PKGBUILD
            makepkg-mingw -si
+           cd ..
     - name: Install dependencies
       run: |
            echo "deps"
