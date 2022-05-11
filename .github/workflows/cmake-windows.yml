@@ -38,8 +38,9 @@ jobs:
          install: mingw-w64-x86_64-qt5
     - name: Build and install stk
       run: |
-           pwd
+           echo ${PWD}
            cd .github/mingw-deps/stk
+           cat PKGBUILD
            makepkg-mingw -si
     - name: Install dependencies
       run: |
