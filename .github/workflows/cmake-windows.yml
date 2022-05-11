@@ -11,7 +11,6 @@ on:
 env:
   #  Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  GITHUB_WORKSPACE: C:\msys2\src\donarturo11\tuningTrainer
 
 jobs:
   build-windows:
@@ -32,15 +31,13 @@ jobs:
         msystem: MINGW64
         update: true
         install: git mingw-w64-x86_64-toolchain cmake
-    - name: Find packages
-      run: |
-           pacman -Ss qt5
-           pacman -Ss stk
     - name: Install qt5
       uses: msys2/setup-msys2@v2
       with:
          msystem: MINGW64
-         install: mingw-w64-qt5    
+         install: mingw-w64-x86_64-qt5
+    - name: Find stk
+      run: pacman -Ss stk
     - name: Install dependencies
       run: |
            pacman -Ss qt5
