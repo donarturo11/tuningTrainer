@@ -25,6 +25,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: msys2/setup-msys2@v2
     - name: Setup MinGW
       uses: msys2/setup-msys2@v2
         with:
