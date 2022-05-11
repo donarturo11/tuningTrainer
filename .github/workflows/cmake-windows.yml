@@ -28,10 +28,10 @@ jobs:
     - uses: msys2/setup-msys2@v2
     - name: Setup MinGW
       uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-          install: git mingw-w64-x86_64-toolchain cmake
+      with:
+        msystem: MINGW64
+        update: true
+        install: git mingw-w64-x86_64-toolchain cmake
     - name: Find packages
       run: |
            pacman -Ss qt5
