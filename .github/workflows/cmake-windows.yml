@@ -30,9 +30,12 @@ jobs:
         msystem: MINGW64
         update: true
         install: git mingw-w64-x86_64-toolchain cmake
+    - name: Install qt5
+      install: mingw-w64-qt5    
     - name: Install dependencies
       run: |
            pacman -Ss qt5
+           pacman -Ss stk
           
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
