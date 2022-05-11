@@ -43,7 +43,7 @@ jobs:
            export LAST_PWD=${PWD}
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
-           makepkg-mingw -si
+           makepkg-mingw -si --noconfirm
            cd $LAST_PWD
     
     - name: Install dependencies
