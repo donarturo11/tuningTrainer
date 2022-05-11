@@ -29,10 +29,9 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: git mingw-w64-x86_64-toolchain qt5 cmake
+        install: git mingw-w64-x86_64-toolchain cmake
     - name: Install dependencies
       run: |
-           C:\msys64\mingw64.exe <
            pacman -Ss qt5
           
     - name: Configure CMake
