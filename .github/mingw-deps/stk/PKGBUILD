@@ -9,8 +9,7 @@ arch=('any')
 url="https://ccrma.stanford.edu/software/stk/"
 license=(MIT)
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc" 
-             "${MINGW_PACKAGE_PREFIX}-glibc" 
-             "${MINGW_PACKAGE_PREFIX}-jack2" 
+             "${MINGW_PACKAGE_PREFIX}-glibc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config"
              "${MINGW_PACKAGE_PREFIX}-doxygen")
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
@@ -31,9 +30,7 @@ build() {
               --build=${MINGW_CHOST} \
               --host=${MINGW_CHOST} \
               --target=${MINGW_CHOST} \
-              --enable-shared \
-              --with-alsa \
-              --with-jack
+              --enable-shared 
   mingw32-make
   mingw32-make -C projects/demo
 
