@@ -52,7 +52,7 @@ jobs:
            echo $env || echo "This variable does not exist"
            mkdir build
            cd build
-           cmake --config ${{env.BUILD_TYPE}} ..
+           cmake ..
            make
     
     - name: Build Package
