@@ -17,13 +17,13 @@ sha512sums=('f1925744fdeddc9fccd24add52dbcc68b17c9f069be8d7d139b2a8a70d7d288881e
 b2sums=('b15f052580b30f4aee314e6737dbff4193a25b552ea9f251832e3f39e4f623ddcf4550d6e2fcd227aad593dd2f4af518844e5f25082f676ce02e237810a4923a')
 
 prepare() {
-  cd "$pkgname-$pkgver"
+  cd "${_realname}-${pkgver}"
   autoreconf -fiv
 }
 
 build() {
-  cd "$pkgname-$pkgver"
-  export RAWWAVE_PATH="/usr/share/${pkgname}/rawwaves/"
+  cd "${_realname}-${pkgver}"
+  export RAWWAVE_PATH="/usr/share/${_realname}/rawwaves/"
   ./configure --prefix=${MINGW_PREFIX} \
               --build=${MINGW_CHOST} \
               --host=${MINGW_CHOST} \
@@ -43,7 +43,7 @@ package_stk() {
     'tk: for demos and samples'
   )
 
-  cd "$pkgbase-$pkgver"
+  cd "${_realname}-${pkgver}"
   mingw32-make DESTDIR="${pkgdir}" install
   # license
   install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"
@@ -60,14 +60,14 @@ package_stk() {
 package_stk-docs() {
   pkgdesc+=' (documentation)'
 
-  cd "$pkgbase-$pkgver"
+  cd "${_realname}-${pkgver}"
   # docs
   install -vDm 644 doc/{README-Linux,ReleaseNotes,SKINI,hierarchy}.txt \
-    -t "${pkgdir}/usr/share/doc/${pkgbase}"
+    -t "${pkgdir}/usr/share/doc/${"${_realname}"}"
   install -vDm 644 doc/html/*.{html,png,js} \
-    -t "${pkgdir}/usr/share/doc/${pkgbase}/html"
+    -t "${pkgdir}/usr/share/doc/${_realname}/html"
   # license
-  install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"
+  install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${_realname}"
 }
 
 package(){
