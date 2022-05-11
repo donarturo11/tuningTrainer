@@ -28,7 +28,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: base base-devel autoconf dos2unix zip git mingw-w64-x86_64-toolchain cmake
+        install: base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain cmake
     
     - name: Git checkout
       uses: actions/checkout@v3
