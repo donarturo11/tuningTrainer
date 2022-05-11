@@ -28,7 +28,7 @@ jobs:
       with:
         msystem: MINGW64
         update: true
-        install: dos2unix zip git autoreconf mingw-w64-x86_64-toolchain cmake
+        install: dos2unix zip git autoconf mingw-w64-x86_64-toolchain cmake
     
     - name: Git checkout
       uses: actions/checkout@v3
