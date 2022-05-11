@@ -11,6 +11,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  GITHUB_WORKSPACE: C:\msys2\src\donarturo11\tuningTrainer
 
 
 jobs:
@@ -21,9 +22,7 @@ jobs:
     runs-on: windows-latest
     defaults:
        run:
-         shell: msys2 {0}
-       env:
-         github.workspace: C:\msys2\src\donarturo11\tuningTrainer
+         shell: msys2 {0}env:
 
     steps:
     - uses: actions/checkout@v3
