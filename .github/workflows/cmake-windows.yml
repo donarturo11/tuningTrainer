@@ -11,8 +11,6 @@ on:
 env:
   #  Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  MINGW_WINROOT: RUNNER_TEMP
-  MINGW_RUNNERTEMP: RUNNER_TEMP
 
 jobs:
   build-windows:
@@ -33,8 +31,9 @@ jobs:
 
     - name: Setup MINGW env vars
       run: |
-           export env.MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}
-           export env.MINGW_ROOT=$(cd /; pwd -W)
+           echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
+           echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
+           
            
     - name: Print MINGW env vars
       run: |
