@@ -30,11 +30,11 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         add_compile_definitions(__OS_WINDOWS__)
         add_compile_definitions(__WINDOWS_WASAPI__)
         #add_compile_definitions(__WINDOWS_DS__)
-        INCLUDE_DIRECTORIES(C:/Windows/System32 C:/MSYS64/src/stk-4.6.2/include src/)
-        LINK_DIRECTORIES(C:/MSYS64/usr/lib/ C:/Windows/System32 /src/stk-4.6.2/src)
+        INCLUDE_DIRECTORIES(C:/Windows/System32 C:/MSYS64/mingw64/include/stk src/)
+        LINK_DIRECTORIES(C:/MSYS64/usr/lib/ C:/Windows/System32 C:/MSYS64/mingw64/lib)
         
                 
-        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -LC:/MSYS64/usr/lib/")
+        set(CMAKE_EXE_LINKER_FLAGS "-static -LC:/MSYS64/usr/lib/")
     else()
         message(STATUS ">>> Not Linux")
         # stuff that should happen not on Linux
