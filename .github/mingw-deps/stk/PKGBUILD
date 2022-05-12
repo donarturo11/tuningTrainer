@@ -28,12 +28,13 @@ build() {
               --build=${MINGW_CHOST} \
               --host=${MINGW_CHOST} \
               --target=${MINGW_CHOST} \
+              --enable-static \
               --enable-shared 
   mingw32-make
-  mingw32-make -C projects/demo
+  #mingw32-make -C projects/demo
 
-  cd doc/doxygen
-  doxygen
+  #cd doc/doxygen
+  #doxygen
 }
 
 package_stk() {
@@ -45,6 +46,8 @@ package_stk() {
 
   cd "${_realname}-${pkgver}"
   mingw32-make DESTDIR="${pkgdir}" install
+  # Static stk
+  install -vDm 755 src/libstk.a -t "$pkgdir/${MINGW_PREFIX}/lib"
   # license
   #install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"  || echo "License Failed"
   # demo
