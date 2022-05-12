@@ -33,13 +33,13 @@ jobs:
 
     - name: Setup MINGW env vars
       run: |
-           MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}
-           MINGW_ROOT=$(cd /; pwd -W)
+           ${{env.MINGW_RUNNER_TEMP}}=${RUNNER_TEMP//\\//}
+           ${{MINGW_ROOT}}=$(cd /; pwd -W)
            
     - name: Print MINGW env vars
       run: |
-           echo "MINGW_ROOT = ${MINGW_ROOT}"
-           echo "MINGW_RUNNER_TEMP = ${MINGW_RUNNER_TEMP}"
+           echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
+           echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
            
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
