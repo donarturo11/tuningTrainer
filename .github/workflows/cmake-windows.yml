@@ -31,7 +31,8 @@ jobs:
 
     - name: Print MINGW env
       run: |
-           pwd -W
+           echo "Windows PWD $(pwd -W)"
+           echo "MinGW PWD $(pwd)"
            echo "Windows PATH of runner: ${RUNNER_TEMP}"
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
 
