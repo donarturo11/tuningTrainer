@@ -64,16 +64,20 @@ jobs:
            cd $LAST_PWD
            pacman -Ql mingw-w64-x86_64-stk
               
-    - name: Build
+    - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
            echo $env || echo "This variable does not exist"
            mkdir build
            cd build
-           cmake ..
+           cmake .. \
+              -DCMAKE_INCLUDE_DIRECTORIES=$MINGW_ROOT/usr/include/stk \
+              -DCMAKE_INCLUDE_DIRECTORIES=C:/Windows/System32 \
+              -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/usr/lib
+              -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/mingw64/lib
            ninja
     
-    - name: Build Package
+    - name: PackagetuningTrainer
       run: |
            cd ${{github.workspace}}/build
            mkdir tuningTrainer/
