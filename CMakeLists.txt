@@ -19,6 +19,8 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 message(${CMAKE_SYSTEM_NAME})
 
+INCLUDE_DIRECTORIES(/usr/include/stk/ src/)
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         message(STATUS ">>> Linux")
         add_compile_definitions(__OS_LINUX__)
@@ -40,11 +42,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # stuff that should happen not on Linux
     endif()
 
-INCLUDE_DIRECTORIES(/usr/include/stk/ src/)
+
 
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
 
-message(STATUS ${INCLUDE_DIRECTORIES})
+message(STATUS "Include directories: " ${INCLUDE_DIRECTORIES})
+message(STATUS "Link directories: " ${LINK_DIRECTORIES})
 
 add_subdirectory(src/)
 
