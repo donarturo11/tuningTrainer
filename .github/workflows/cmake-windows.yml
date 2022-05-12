@@ -45,6 +45,7 @@ jobs:
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $LAST_PWD
+           pacman -Ql mingw-w64-x86_64-stk
               
     - name: Build
       # Build your program with the given configuration
