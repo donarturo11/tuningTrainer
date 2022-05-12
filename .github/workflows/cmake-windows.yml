@@ -74,7 +74,7 @@ jobs:
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}/usr/include/stk C:/Windows/System32" \
+              -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}/mingw64/include/stk C:/Windows/System32" \
               -DCMAKE_EXE_LINKER_FLAGS="-L ${MINGW_ROOT}/usr/lib -L${MINGW_ROOT}/mingw64/lib -LC:/Windows/System32"
            make
     
