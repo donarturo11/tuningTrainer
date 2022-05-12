@@ -33,12 +33,14 @@ jobs:
       run: |
            echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
            echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
+           echo "MINGW_GIT_WORKSPACE=${{github.workspace}//\\//}" >> $GITHUB_ENV
            
            
     - name: Print MINGW env vars
       run: |
            echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
            echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
+           echo "Github workspace = $MINGW_GIT_WORKSPACE"
            
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
@@ -82,10 +84,10 @@ jobs:
     
     - name: PackagetuningTrainer
       run: |
-           cd ${{github.workspace}}/build
+           cd ${MINGW_GIT_WORKSPACE}/build
            mkdir tuningTrainer/
-           cp -v bin/tuningTrainer tuningTrainer/
-           cp -v ${{github.workspace}}/src/harpsichord.wav tuningTrainer/
+           cp -v bin/tuningTrainer.exe tuningTrainer/
+           cp -v ${MINGW_GIT_WORKSPACE}/src/harpsichord.wav tuningTrainer/
            tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
            zip tuningTrainer-bin.zip tuningTrainer/
            rm -Rv tuningTrainer/ || echo 'already deleted'
@@ -95,11 +97,11 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-bin.tar.gz
-        path: ${{github.workspace}}/build/tuningTrainer-bin.tar.gz
+        path: ${{github.workspace}}\build\tuningTrainer-bin.tar.gz
 
     - name: Upload tuningTrainer-bin.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-bin.zip
-        path: ${{github.workspace}}/build/tuningTrainer-bin.zip
+        path: ${{github.workspace}}\build\tuningTrainer-bin.zip
         
