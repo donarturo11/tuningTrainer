@@ -30,7 +30,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         add_compile_definitions(__OS_WINDOWS__)
         add_compile_definitions(__WINDOWS_WASAPI__)
         #add_compile_definitions(__WINDOWS_DS__)
-        INCLUDE_DIRECTORIES(C:/Windows/System32 C:/MSYS64/mingw64/include/stk src/)
+        INCLUDE_DIRECTORIES(C:/Windows/System32 /mingw64/include/stk src/)
         LINK_DIRECTORIES(C:/MSYS64/usr/lib/ C:/Windows/System32 C:/MSYS64/mingw64/lib)
         
                 
