@@ -23,18 +23,18 @@ jobs:
         shell: msys2 {0}
 
     steps:
-    - name: Test MINGW env
-      run: |
-           echo "Windows PATH of runner: ${RUNNER_TEMP}"
-           echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
-
     - name: Setup MinGW
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         update: true
         install: base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-    
+
+    - name: Test MINGW env
+      run: |
+           echo "Windows PATH of runner: ${RUNNER_TEMP}"
+           echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
+
     - name: Git checkout
       uses: actions/checkout@v3
       
