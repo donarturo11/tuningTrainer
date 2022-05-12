@@ -71,11 +71,12 @@ jobs:
            mkdir build
            cd build
            cmake .. \
+              -G "Unix Makefiles" \
               -DCMAKE_INCLUDE_DIRECTORIES=$MINGW_ROOT/usr/include/stk \
               -DCMAKE_INCLUDE_DIRECTORIES=C:/Windows/System32 \
               -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/usr/lib \
               -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/mingw64/lib
-           ninja
+           make
     
     - name: PackagetuningTrainer
       run: |
