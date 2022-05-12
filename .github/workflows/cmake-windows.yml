@@ -25,7 +25,8 @@ jobs:
     steps:
     - name: Test MINGW env
       uses: msys2/setup-msys2@v2
-      run: |
+      with:
+        run: |
            pwd -W
            echo "Windows PATH of runner: ${RUNNER_TEMP}"
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
