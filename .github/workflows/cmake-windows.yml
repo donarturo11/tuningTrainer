@@ -35,7 +35,8 @@ jobs:
            echo "MinGW PWD $(pwd)"
            echo "Windows PATH of runner: ${RUNNER_TEMP}"
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
-           find . -iname msys2_shell.cmd
+           echo $(find . -iname msys2_shell.cmd)
+           sdfosdijsdfsoijsd
 
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
