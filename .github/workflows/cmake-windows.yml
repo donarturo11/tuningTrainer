@@ -68,12 +68,13 @@ jobs:
       # Build your program with the given configuration
       run: |
            echo $env || echo "This variable does not exist"
+           echo $env || echo "This variable does not exist"
            mkdir build
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DINCLUDE_DIRECTORIES="${MINGW_ROOT}/usr/include/stk C:/Windows/System32" \
-              -DLINK_DIRECTORIES="{MINGW_ROOT}/usr/lib ${MINGW_ROOT}/mingw64/lib C:/Windows/System32"
+              -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}/usr/include/stk C:/Windows/System32" \
+              -DCMAKE_EXE_LINKER_FLAGS="-L ${MINGW_ROOT}/usr/lib -L${MINGW_ROOT}/mingw64/lib -LC:/Windows/System32"
            make
     
     - name: PackagetuningTrainer
