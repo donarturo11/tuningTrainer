@@ -37,7 +37,7 @@ build() {
 }
 
 package_stk() {
-  depends=(gcc-libs glibc libasound.so libjack.so)
+  depends=()
   optdepends=(
     'stk-docs: for documentation'
     'tk: for demos and samples'
