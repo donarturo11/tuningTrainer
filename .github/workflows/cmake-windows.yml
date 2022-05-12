@@ -41,6 +41,7 @@ jobs:
     - name: Build and install stk
       run: |
            export LAST_PWD=${PWD}
+           echo ${RUNNER_TEMP}
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
