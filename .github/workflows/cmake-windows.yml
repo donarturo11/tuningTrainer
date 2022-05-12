@@ -64,6 +64,7 @@ jobs:
            cd $LAST_PWD
            pacman -Ql mingw-w64-x86_64-stk
            find D:/a/_temp/msys64/ -iname *.h | grep -i "RtWvOut.h"
+           find D:/a/_temp/msys64/ -iname *.h | grep -i "libstk*.so"
               
     - name: Build tuningTrainer
       # Build your program with the given configuration
@@ -76,7 +77,8 @@ jobs:
               -G "Unix Makefiles" \
               -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}mingw64/include/stk C:/Windows/System32" \
               -DCMAKE_CXX_FLAGS="-I${MINGW_ROOT}mingw64/include/stk -isystem ${MINGW_ROOT}mingw64/include/stk" \
-              -DCMAKE_EXE_LINKER_FLAGS="-L ${MINGW_ROOT}usr/lib -L${MINGW_ROOT}/mingw64/lib -LC:/Windows/System32"
+              -DEXTRA_LINKER_PATHS="${MINGW_ROOT}usr/lib {MINGW_ROOT}mingw64/lib C:/Windows/System32" \
+              -DSTKPATH={MINGW_ROOT}mingw64/lib/libstk.so
            make VERBOSE=1
     
     - name: PackagetuningTrainer

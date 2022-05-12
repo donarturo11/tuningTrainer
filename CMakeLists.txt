@@ -36,7 +36,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         add_compile_definitions(__WINDOWS_WASAPI__)
         #add_compile_definitions(__WINDOWS_DS__)
         INCLUDE_DIRECTORIES(C:/Windows/System32 /mingw64/include/stk src/ ${EXTRA_INCLUDE_PATHS})
-        LINK_DIRECTORIES(C:/MSYS64/usr/lib/ C:/Windows/System32 C:/MSYS64/mingw64/lib ${EXTRA_LINKER_PATHS})
+        LINK_DIRECTORIES(C:/Windows/System32 ${EXTRA_LINKER_PATHS})
         set(CMAKE_EXE_LINKER_FLAGS "-static -LC:/MSYS64/usr/lib/")
     else()
         message(STATUS ">>> Not Linux")
@@ -44,6 +44,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     endif()
 
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
+
+find_library(stk $STKPATH)
 
 message(STATUS "EXTRA_INCLUDE_PATHS=" ${EXTRA_INCLUDE_PATHS})
 message(STATUS "EXTRA_LINKER_PATHS=" ${EXTRA_LINKER_PATHS})
