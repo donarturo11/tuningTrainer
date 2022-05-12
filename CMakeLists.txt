@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
 
+set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
+
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+
 
 
 set (CMAKE_AUTOMOC ON)
@@ -37,7 +40,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         #add_compile_definitions(__WINDOWS_DS__)
         INCLUDE_DIRECTORIES(C:/Windows/System32 /mingw64/include/stk src/ ${EXTRA_INCLUDE_PATHS})
         LINK_DIRECTORIES(C:/Windows/System32 ${EXTRA_LINKER_PATHS})
-        set(CMAKE_EXE_LINKER_FLAGS "-static -LC:/MSYS64/usr/lib/")
+        set (CMAKE_CXX_FLAGS "-static -static-libstdc++ -isystem /mingw64/include/stk -L/mingw64/lib")
+        set (CMAKE_EXE_LINKER_FLAGS "-static -LC:/MSYS64/usr/lib/")
     else()
         message(STATUS ">>> Not Linux")
         # stuff that should happen not on Linux
