@@ -29,16 +29,16 @@ jobs:
         msystem: MINGW64
         update: true
 
-    - name: Print MINGW env
+    - name: Setup MINGW env vars
       run: |
-           echo "Windows PWD $(pwd -W)"
-           echo "MinGW PWD $(pwd)"
-           echo "Windows PATH of runner: ${RUNNER_TEMP}"
-           echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
-           echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}/setup-msys2/"
-           ls -lah ${RUNNER_TEMP//\\//}/setup-msys2/
-           echo "MinGW location: $(cd /; pwd -W)"
-
+           export MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}
+           export MINGW_ROOT=$(cd /; pwd -W)
+           
+    - name: Print MINGW env vars
+      run: |
+           echo "MINGW_ROOT = ${MINGW_ROOT}"
+           echo "MINGW_RUNNER_TEMP = ${MINGW_RUNNER_TEMP}"
+           
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
       with:
