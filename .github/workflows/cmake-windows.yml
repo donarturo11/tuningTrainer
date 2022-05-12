@@ -72,10 +72,7 @@ jobs:
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DCMAKE_INCLUDE_DIRECTORIES=$MINGW_ROOT/usr/include/stk \
-              -DCMAKE_INCLUDE_DIRECTORIES=C:/Windows/System32 \
-              -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/usr/lib \
-              -DCMAKE_LINK_DIRECTORIES=$MINGW_ROOT/mingw64/lib
+              -DCMAKE_CXX_FLAGS="-I${MINGW_ROOT}/usr/include/stk -IC:/Windows/System32 -L${MINGW_ROOT}/usr/lib -L${MINGW_ROOT}/mingw64/lib"
            make
     
     - name: PackagetuningTrainer

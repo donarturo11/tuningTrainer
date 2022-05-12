@@ -46,9 +46,6 @@ find_package (Qt5 COMPONENTS Widgets REQUIRED)
 
 message(STATUS ${INCLUDE_DIRECTORIES})
 
-
-
-
 add_subdirectory(src/)
 
 
