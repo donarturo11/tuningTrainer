@@ -23,6 +23,11 @@ jobs:
         shell: msys2 {0}
 
     steps:
+    - name: Test MINGW env
+      run: |
+           echo "Windows PATH of runner: ${RUNNER_TEMP}"
+           echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
+
     - name: Setup MinGW
       uses: msys2/setup-msys2@v2
       with:
@@ -38,10 +43,10 @@ jobs:
       with:
          msystem: MINGW64
          install: mingw-w64-x86_64-qt5
+
     - name: Build and install stk
       run: |
            export LAST_PWD=${PWD}
-           echo ${RUNNER_TEMP}
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
