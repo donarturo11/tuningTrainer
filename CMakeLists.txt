@@ -19,8 +19,8 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 message(${CMAKE_SYSTEM_NAME})
 
-set (EXTRA_INCLUDE_PATHS "")
-set (EXTRA_LINKER_FLAGS "")
+set (EXTRA_INCLUDE_PATHS)
+set (EXTRA_LINKER_FLAGS)
 
 INCLUDE_DIRECTORIES(${EXTRA_INCLUDE_PATHS} /usr/include/stk/ src/)
 
@@ -49,8 +49,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
 
-message(STATUS "Include directories: " ${INCLUDE_DIRECTORIES})
-message(STATUS "Link directories: " ${LINK_DIRECTORIES})
+message(STATUS "EXTRA_INCLUDE_PATHS=" ${EXTRA_INCLUDE_PATHS})
+message(STATUS "EXTRA_LINKER_FLAGS=" ${EXTRA_LINKER_FLAGS})
 
 add_subdirectory(src/)
 
