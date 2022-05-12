@@ -84,23 +84,17 @@ jobs:
     - name: PackagetuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
+           ls -lah ${MINGW_GIT_WORKSPACE}/build
+           ls -lah ${MINGW_GIT_WORKSPACE}/src/
            mkdir tuningTrainer/
            cp -v bin/tuningTrainer.exe tuningTrainer/
            cp -v ${MINGW_GIT_WORKSPACE}/src/harpsichord.wav tuningTrainer/
-           tar -vczf tuningTrainer-bin.tar.gz tuningTrainer/
-           zip tuningTrainer-bin.zip tuningTrainer/
+           zip tuningTrainer-win.zip tuningTrainer/
            rm -Rv tuningTrainer/ || echo 'already deleted'
            
-
-    - name: Upload tuningTrainer-bin.tar.gz
+    - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
-        name: tuningTrainer-bin.tar.gz
-        path: ${{github.workspace}}\build\tuningTrainer-bin.tar.gz
-
-    - name: Upload tuningTrainer-bin.zip
-      uses: actions/upload-artifact@v3.0.0
-      with:
-        name: tuningTrainer-bin.zip
-        path: ${{github.workspace}}\build\tuningTrainer-bin.zip
+        name: tuningTrainer-win.zip
+        path: ${{github.workspace}}\build\tuningTrainer-win.zip
         
