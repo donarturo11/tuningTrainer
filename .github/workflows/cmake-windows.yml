@@ -63,6 +63,7 @@ jobs:
            makepkg-mingw -si --noconfirm
            cd $LAST_PWD
            pacman -Ql mingw-w64-x86_64-stk
+           find D:/a/_temp/msys64/ -iname *.h | grep -i "RtWvOut.h"
               
     - name: Build tuningTrainer
       # Build your program with the given configuration
