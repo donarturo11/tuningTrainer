@@ -76,7 +76,7 @@ jobs:
            cmake .. \
               -G "Unix Makefiles" \
               -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}mingw64/include/stk C:/Windows/System32" \
-              -DCMAKE_CXX_FLAGS="-I${MINGW_ROOT}mingw64/include/stk -isystem ${MINGW_ROOT}mingw64/include/stk" \
+              -DCMAKE_CXX_FLAGS="-static -I${MINGW_ROOT}mingw64/include/stk -isystem ${MINGW_ROOT}mingw64/include/stk" \
               -DEXTRA_LINKER_PATHS="${MINGW_ROOT}usr/lib {MINGW_ROOT}mingw64/lib C:/Windows/System32" \
               -DSTKPATH={MINGW_ROOT}mingw64/lib/libstk.so
            make VERBOSE=1
@@ -89,12 +89,10 @@ jobs:
            mkdir tuningTrainer/
            cp -v bin/tuningTrainer.exe tuningTrainer/
            cp -v ${MINGW_GIT_WORKSPACE}/src/harpsichord.wav tuningTrainer/
-           zip tuningTrainer-win.zip tuningTrainer/
-           rm -Rv tuningTrainer/ || echo 'already deleted'
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win.zip
-        path: ${{github.workspace}}\build\tuningTrainer-win.zip
+        path: ${{github.workspace}}\build\tuningTrainer
         
