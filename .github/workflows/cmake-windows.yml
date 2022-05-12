@@ -37,6 +37,7 @@ jobs:
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}/setup-msys2/"
            ls -lah ${RUNNER_TEMP//\\//}/setup-msys2/
+           echo "MinGW location: $(cd /; pwd -W)"
 
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
