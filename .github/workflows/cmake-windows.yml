@@ -30,7 +30,7 @@ jobs:
         update: true
 
     - name: Print MINGW env
-        run: |
+      run: |
            pwd -W
            echo "Windows PATH of runner: ${RUNNER_TEMP}"
            echo "MinGW PATH of runner: ${RUNNER_TEMP//\\//}"
