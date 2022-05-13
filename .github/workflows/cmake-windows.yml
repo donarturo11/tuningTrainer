@@ -33,7 +33,7 @@ jobs:
       run: |
            echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
            echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
-           echo "MINGW_GIT_WORKSPACE=${{{github.workspace}}//\\//}" >> $GITHUB_ENV
+           echo "MINGW_GIT_WORKSPACE=${GITHUB_WORKSPACE//\\//}" >> $GITHUB_ENV
            
     - name: Print MINGW env vars
       run: |
