@@ -30,9 +30,9 @@ jobs:
     - name: Print MinGW directory
       shell: cmd
       run: |
-           tree /A D:\a\ 
+           tree /F /A D:\a\ 
            mkdir D:\a\tree\
-           tree /A C:\msys64 > D:\a\tree\msys-tree.txt 
+           tree /F /A C:\msys64 > D:\a\tree\msys-tree.txt 
            
     - name: Upload Msys tree
       uses: actions/upload-artifact@v3.0.0
@@ -40,45 +40,3 @@ jobs:
         name: msys2-tree
         path: D:\a\tree\
       
-    - name: View MINGW env vars
-      run: |
-           cd D:/a/
-           echo "$(pwd -W)"
-           echo "$(ls -lah)"
-
-    - name: Setup MinGW Build environment
-      run: |
-           pacman -S --noconfirm --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-
-    - name: Install qt5
-      run: |
-           pacman -S --noconfirm --needed mingw-w64-x86_64-qt5
-
-    - name: Build and install stk
-      run: |
-           cd D:/a/tuningTrainer/tuningTrainer/.github/mingw-deps/stk/
-           dos2unix PKGBUILD
-           makepkg-mingw -si --noconfirm
-           cd $MINGW_GIT_WORKSPACE
-           pacman -Ql mingw-w64-x86_64-stk
-
-    - name: Build tuningTrainer
-      # Build your program with the given configuration
-      run: |
-           cd D:/a/tuningTrainer/tuningTrainer/
-           mkdir build
-           cd build
-           cmake ..  \
-              -G "Unix Makefiles" \
-              -DCMAKE_CXX_FLAGS="-static -I/mingw64/include/stk -isystem /mingw64/include/stk -static -L /mingw64/lib" 
-           make
-
-    - name: PackagetuningTrainer
-      run: |
-           D:/a/tuningTrainer/tuningTrainer/.github/scripts/mingw-prepare-package.sh
-
-    - name: Upload tuningTrainer-win.zip
-      uses: actions/upload-artifact@v3.0.0
-      with:
-        name: tuningTrainer-win
-        path: ${{github.workspace}}\build\tuningTrainer-win
