@@ -26,6 +26,8 @@ jobs:
     steps:
     - name: Git checkout
       uses: actions/checkout@v3
+      with:
+          set-safe-directory: C:\msys64\home\runneradmin\tuningTrainer\
       
     - name: Print MinGW directory
       shell: cmd
