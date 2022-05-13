@@ -2,14 +2,16 @@
 ## Copy to build
 # PATH::/mingw64/bin/
 export PACKAGE_PATH=./tuningTrainer/tuningTrainer-win/
+mkdir -p $PACKAGE_PATH
 
 function installFile(){
     cp -Rv ${1} ${PACKAGE_PATH} || echo "NOT FOUND"
 }
 
+installFile ./bin/tuningTrainer.exe
+installFile ../src/harpsichord.wav
+
 for i in \
-./bin/tuningTrainer.exe \
-../src/harpsichord.wav \
 libgcc_s_seh-1.dll \
 libwinpthread-1.dll \
 libpcre2-16-0.dll \
