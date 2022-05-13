@@ -30,7 +30,15 @@ jobs:
     - name: Print MinGW directory
       shell: cmd
       run: |
-           tree D:\a\
+           tree /A D:\a\ 
+           mkdir D:\a\tree\
+           tree /A C:\msys64 > D:\a\tree\msys-tree.txt 
+           
+    - name: Upload Msys tree
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: msys2-tree
+        path: C:\msys64 > D:\a\tree\
       
     - name: View MINGW env vars
       run: |
