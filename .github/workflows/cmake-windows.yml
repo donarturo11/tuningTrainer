@@ -27,11 +27,12 @@ jobs:
     - name: Print MinGW directory
       shell: cmd
       run: |
-           dir
+           dir C:\msys64\home\runneradmin
 
     - name: View MINGW env vars
       run: |
            echo "$(pwd -W)"
+           echo "$(ls -lah)"
 
     - name: Setup MinGW Build environment
       run: |
@@ -50,7 +51,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd .github/mingw-deps/stk/
+           cd /home/runneradmin/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -59,7 +60,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd ${${{github.workspace}}//\\//}
+           cd /home/runneradmin/
            mkdir build
            cd build
            cmake .. \
@@ -69,7 +70,7 @@ jobs:
 
     - name: PackagetuningTrainer
       run: |
-           .github/scripts/mingw-prepare-package.sh
+           /home/runneradmin/.github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
