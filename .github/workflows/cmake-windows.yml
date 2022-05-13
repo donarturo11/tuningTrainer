@@ -47,31 +47,15 @@ jobs:
         msystem: MINGW64
         install: base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
         
-    - name: Install qt5
-      uses: msys2/setup-msys2@v2
-      with:
-         msystem: MINGW64
-         install: mingw-w64-x86_64-qt5        
-        
-    - name: Setup MINGW env vars
-      run: |
-           echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
-           echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
-           echo "MINGW_GIT_WORKSPACE=${${{github.workspace}}//\\//}" >> $GITHUB_ENV
-           
-    - name: Print MINGW env vars
-      run: |
-           echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
-           echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
-           echo "Github workspace = $MINGW_GIT_WORKSPACE"
-           
     
     - name: Git checkout
       uses: actions/checkout@v3
       
     - name: Install qt5
-      run: |
-           pacman -S --needed mingw-w64-x86_64-qt5
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: mingw-w64-x86_64-qt5
     
     - name: Build and install stk
       run: |
