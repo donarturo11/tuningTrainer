@@ -11,7 +11,6 @@ on:
 env:
   #  Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  GITHUB_WORKSPACE: D:\runner\
 
 jobs:
   build-windows:
@@ -26,18 +25,16 @@ jobs:
     steps:
     - name: Git checkout
       uses: actions/checkout@v3
-      with:
-          path: tuningTrainer
-          set-safe-directory: D:\runner\tuningTrainer\
+      
       
     - name: Print MinGW directory
       shell: cmd
       run: |
-           tree D:\runner\runneradmin
+           tree D:\a\
       
     - name: View MINGW env vars
       run: |
-           cd /d/runner/
+           cd D:/a/
            echo "$(pwd -W)"
            echo "$(ls -lah)"
 
@@ -51,7 +48,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd /d/runner/tuningTrainer/.github/mingw-deps/stk/
+           cd D:/a/tuningTrainer/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -60,7 +57,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd /d/runner/tuningTrainer/
+           cd D:/a/runner/tuningTrainer/
            mkdir build
            cd build
            cmake .. \
@@ -70,7 +67,7 @@ jobs:
 
     - name: PackagetuningTrainer
       run: |
-           /d/runner/tuningTrainer/.github/scripts/mingw-prepare-package.sh
+           D:/a/tuningTrainer/.github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
