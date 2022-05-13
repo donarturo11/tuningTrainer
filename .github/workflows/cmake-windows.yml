@@ -48,7 +48,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd D:/a/tuningTrainer/.github/mingw-deps/stk/
+           cd D:/a/tuningTrainer/tuningTrainer/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -57,17 +57,17 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd D:/a/runner/tuningTrainer/
+           cd D:/a/tuningTrainer/tuningTrainer/
            mkdir build
            cd build
-           cmake .. \
+           cmake ..  \
               -G "Unix Makefiles" \
               -DCMAKE_CXX_FLAGS="-static -I/mingw64/include/stk -isystem /mingw64/include/stk -static -L /mingw64/lib" 
            make
 
     - name: PackagetuningTrainer
       run: |
-           D:/a/tuningTrainer/.github/scripts/mingw-prepare-package.sh
+           D:/a/tuningTrainer/tuningTrainer/.github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
