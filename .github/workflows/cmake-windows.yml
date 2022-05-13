@@ -1,0 +1,79 @@
+name: cmake-windows
+
+on:
+  push:
+    branches:
+       - main
+       - CI-cmake
+  pull_request:
+    branches: [ main ]
+
+env:
+  #  Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: C:\msys64\msys2 {0}
+    
+    - name: Setup MINGW env vars
+      run: |
+           echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
+           echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
+           echo "MINGW_GIT_WORKSPACE=${${{github.workspace}}//\\//}" >> $GITHUB_ENV
+           
+    - name: Print MINGW env vars
+      run: |
+           echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
+           echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
+           echo "Github workspace = $MINGW_GIT_WORKSPACE"
+           
+    - name: Setup MinGW Build environment
+      run: pacman -Syu --noconfirm
+      
+    - name: Setup MinGW Build environment
+      run: |
+           pacman -S --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+    
+    - name: Git checkout
+      uses: actions/checkout@v3
+      
+    - name: Install qt5
+      run: |
+           pacman -S --needed mingw-w64-x86_64-qt5
+    
+    - name: Build and install stk
+      run: |
+           echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
+           cd .github/mingw-deps/stk/
+           dos2unix PKGBUILD
+           makepkg-mingw -si --noconfirm
+           cd $MINGW_GIT_WORKSPACE
+           pacman -Ql mingw-w64-x86_64-stk
+                  
+    - name: Build tuningTrainer
+      # Build your program with the given configuration
+      run: |
+           mkdir build
+           cd build
+           cmake .. \
+              -G "Unix Makefiles" \
+              -DCMAKE_CXX_FLAGS="-static -I/mingw64/include/stk -isystem /mingw64/include/stk -static -L /mingw64/lib" 
+           make
+    
+    - name: PackagetuningTrainer
+      run: |
+           cd ${MINGW_GIT_WORKSPACE}/build
+           ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
+           
+    - name: Upload tuningTrainer-win.zip
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: tuningTrainer-win
+        path: ${{github.workspace}}\build\tuningTrainer-win
