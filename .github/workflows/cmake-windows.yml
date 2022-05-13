@@ -84,7 +84,7 @@ jobs:
     - name: PackagetuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
-           ${MINGW_GIT_WORKSPACE}/.github/mingw-prepare-package.sh
+           ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
