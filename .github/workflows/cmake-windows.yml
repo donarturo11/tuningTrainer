@@ -21,7 +21,7 @@ jobs:
     defaults:
       run:
         shell: C:\msys64\msys2 {0}
-
+    
     - name: Setup MINGW env vars
       run: |
            echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
@@ -47,7 +47,7 @@ jobs:
     - name: Install qt5
       run: |
            pacman -S --needed mingw-w64-x86_64-qt5
-
+    
     - name: Build and install stk
       run: |
            echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
@@ -56,8 +56,7 @@ jobs:
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
            pacman -Ql mingw-w64-x86_64-stk
-           
-              
+                  
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
@@ -78,4 +77,3 @@ jobs:
       with:
         name: tuningTrainer-win
         path: ${{github.workspace}}\build\tuningTrainer-win
-        
