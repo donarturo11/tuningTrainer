@@ -26,13 +26,8 @@ jobs:
     - name: Print MinGW directory
       shell: cmd
       run: |
-<<<<<<< HEAD
-           dir C:\msys64
-
-=======
            dir C:\msys64\
-           
->>>>>>> e4113ecb750f99f95660f5f977beedb75bfc34a0
+
     - name: Setup MINGW env vars
       run: |
            echo $(pwd -W)
@@ -53,21 +48,22 @@ jobs:
     - name: Setup MinGW Build environment
       run: |
            pacman -S --noconfirm --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-    
+
     - name: Git checkout
       uses: actions/checkout@v3
-      
+
     - name: Install qt5
       run: |
            pacman -S --noconfirm --needed mingw-w64-x86_64-qt5
-    
+
     - name: Build and install stk
+      run: |
            cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
            pacman -Ql mingw-w64-x86_64-stk
-                  
+
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
@@ -78,12 +74,12 @@ jobs:
               -G "Unix Makefiles" \
               -DCMAKE_CXX_FLAGS="-static -I/mingw64/include/stk -isystem /mingw64/include/stk -static -L /mingw64/lib" 
            make
-    
+
     - name: PackagetuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
            ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
-           
+
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
