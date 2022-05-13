@@ -20,8 +20,8 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: msys2.cmd {0}
-        
+        shell: msys2 {0}
+
     steps:
     - name: Setup Base MINGW env
       uses: msys2/setup-msys2@v2
@@ -31,24 +31,21 @@ jobs:
 
     - name: Setup MINGW env vars
       run: |
-           
            echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
            echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
-           export GIT_WORKSPACE_TEMP=${{github.workspace}}
-           echo "MINGW_GIT_WORKSPACE=${GIT_WORKSPACE_TEMP//\\//}" >> $GITHUB_ENV
+           echo "MINGW_GIT_WORKSPACE=${${{github.workspace}}//\\//}" >> $GITHUB_ENV
            
     - name: Print MINGW env vars
       run: |
            echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
            echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
-           echo "Github workspace = ${{env.MINGW_GIT_WORKSPACE}}"
+           echo "Github workspace = $MINGW_GIT_WORKSPACE"
            
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         install: base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-        
     
     - name: Git checkout
       uses: actions/checkout@v3
@@ -56,35 +53,42 @@ jobs:
     - name: Install qt5
       uses: msys2/setup-msys2@v2
       with:
-        msystem: MINGW64
-        install: mingw-w64-x86_64-qt5
-    
+         msystem: MINGW64
+         install: mingw-w64-x86_64-qt5
+
     - name: Build and install stk
       run: |
-           cd "${{env.MINGW_GIT_WORKSPACE}}/.github/mingw-deps/stk/"
+           echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
+           cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
            pacman -Ql mingw-w64-x86_64-stk
-                  
+           
+              
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd ${{env.MINGW_GIT_WORKSPACE}}
+           echo $env || echo "This variable does not exist"
+           echo $env || echo "This variable does not exist"
            mkdir build
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DCMAKE_CXX_FLAGS="-static -I/mingw64/include/stk -isystem /mingw64/include/stk -static -L /mingw64/lib" 
-           make
+              -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}mingw64/include/stk C:/Windows/System32" \
+              -DCMAKE_CXX_FLAGS="-static -I${MINGW_ROOT}mingw64/include/stk -isystem ${MINGW_ROOT}mingw64/include/stk" \
+              -DEXTRA_LINKER_PATHS="${MINGW_ROOT}usr/lib {MINGW_ROOT}mingw64/lib C:/Windows/System32" \
+              -DSTKPATH={MINGW_ROOT}mingw64/lib/libstk.so
+           make VERBOSE=1
     
     - name: PackagetuningTrainer
       run: |
-           cd ${{env.MINGW_GIT_WORKSPACE}}/build
-           ${{env.MINGW_GIT_WORKSPACE}}/.github/scripts/mingw-prepare-package.sh
+           cd ${MINGW_GIT_WORKSPACE}/build
+           ${MINGW_GIT_WORKSPACE}/.github/mingw-prepare-package.sh
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win
         path: ${{github.workspace}}\build\tuningTrainer-win
+        
