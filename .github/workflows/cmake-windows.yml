@@ -57,8 +57,8 @@ jobs:
     
     - name: Build and install stk
       run: |
-           echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
-           cd .github/mingw-deps/stk/
+           echo "MINGW_GIT_WORKSPACE=$(pwd -W)" >> $GITHUB_ENV
+           cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -67,6 +67,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
+           cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
            mkdir build
            cd build
            cmake .. \
@@ -84,9 +85,3 @@ jobs:
       with:
         name: tuningTrainer-win
         path: ${{github.workspace}}\build\tuningTrainer-win
-    
-    - name: Upload msys2.zip
-      uses: actions/upload-artifact@v3.0.0
-      with:
-        name: msys2
-        path: D:\a\_temp\setup-msys2\
