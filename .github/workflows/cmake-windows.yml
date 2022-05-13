@@ -46,14 +46,14 @@ jobs:
       
     - name: Setup MinGW Build environment
       run: |
-           pacman -S --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+           pacman -S --noconfirm --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
     
     - name: Git checkout
       uses: actions/checkout@v3
       
     - name: Install qt5
       run: |
-           pacman -S --needed mingw-w64-x86_64-qt5
+           pacman -S --noconfirm --needed mingw-w64-x86_64-qt5
     
     - name: Build and install stk
       run: |
