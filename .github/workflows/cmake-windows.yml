@@ -21,6 +21,7 @@ jobs:
     defaults:
       run:
         shell: C:\msys64\msys2 {0}
+        
     steps:
     - name: Setup Base MINGW env
       uses: msys2/setup-msys2@v2
@@ -74,8 +75,7 @@ jobs:
     
     - name: Build and install stk
       run: |
-           echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
-           cd .github/mingw-deps/stk/
+           cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -84,6 +84,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
+           cd ${MINGW_GIT_WORKSPACE}
            mkdir build
            cd build
            cmake .. \
