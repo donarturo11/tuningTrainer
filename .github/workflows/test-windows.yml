@@ -32,11 +32,23 @@ jobs:
       run: |
            tree /F /A D:\a\ 
            mkdir D:\a\tree\
-           tree /F /A C:\msys64 > D:\a\tree\msys-tree.txt 
+           tree /F /A C:\msys64 > D:\a\tree\msys-tree.txt
+           tree /A C:\msys64 > D:\a\tree\C-tree.txt
            
     - name: Upload Msys tree
       uses: actions/upload-artifact@v3.0.0
       with:
         name: msys2-tree
         path: D:\a\tree\
-      
+
+    - name: Upload Msys files
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: msys64
+        path: C:\msys64\
+
+    - name: Upload Cygwin
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: cygwin
+        path: C:\cygwin\
