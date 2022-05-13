@@ -61,7 +61,7 @@ jobs:
     
     - name: Build and install stk
       run: |
-           cd ${{env.MINGW_GIT_WORKSPACE}}/.github/mingw-deps/stk/
+           cd "${{env.MINGW_GIT_WORKSPACE}}/.github/mingw-deps/stk/"
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
