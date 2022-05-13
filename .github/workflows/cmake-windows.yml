@@ -89,3 +89,9 @@ jobs:
       with:
         name: tuningTrainer-win
         path: ${{github.workspace}}\build\tuningTrainer-win
+    
+    - name: Upload msys2.zip
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: msys2
+        path: D:\a\_temp\setup-msys2\
