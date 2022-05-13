@@ -28,18 +28,9 @@ jobs:
       run: |
            dir C:\msys64\
 
-    - name: Setup MINGW env vars
+    - name: View MINGW env vars
       run: |
-           echo $(pwd -W)
-           echo "MINGW_RUNNER_TEMP=${RUNNER_TEMP//\\//}" >> $GITHUB_ENV
-           echo "MINGW_ROOT=$(cd /; pwd -W)" >> $GITHUB_ENV
-           echo "MINGW_GIT_WORKSPACE=${${{github.workspace}}//\\//}" >> $GITHUB_ENV
-
-    - name: Print MINGW env vars
-      run: |
-           echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
-           echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
-           echo "Github workspace = $MINGW_GIT_WORKSPACE"
+           echo "${${{github.workspace}}//\\//}"
 
     - name: Setup MinGW Build environment
       run: |
@@ -58,7 +49,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
+           cd ${${{github.workspace}}//\\//}/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -67,7 +58,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
+           cd ${${{github.workspace}}//\\//}
            mkdir build
            cd build
            cmake .. \
@@ -77,8 +68,7 @@ jobs:
 
     - name: PackagetuningTrainer
       run: |
-           cd ${MINGW_GIT_WORKSPACE}/build
-           ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
+           ${${{github.workspace}}//\\//}/.github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
