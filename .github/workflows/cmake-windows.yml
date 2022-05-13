@@ -27,12 +27,13 @@ jobs:
     - name: Git checkout
       uses: actions/checkout@v3
       with:
+          path: tuningTrainer
           set-safe-directory: C:\msys64\home\runneradmin\tuningTrainer\
       
     - name: Print MinGW directory
       shell: cmd
       run: |
-           dir C:\msys64\home\runneradmin
+           tree C:\msys64\home\runneradmin
       
     - name: View MINGW env vars
       run: |
