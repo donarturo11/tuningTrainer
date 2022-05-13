@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 ## Copy to build
 # PATH::/mingw64/bin/
-mkdir tuningTrainer-win || echo "Already exists"
-cp ../src/harpsichord.wav tuningTrainer-win/ || echo "NOT FOUND"
-cp ./bin/tuningTrainer.exe tuningTrainer-win/ || echo "NOT FOUND"
+export PACKAGE_PATH=./tuningTrainer/tuningTrainer-win/
+
+function installFile(){
+    cp -Rv ${1} ${PACKAGE_PATH} || echo "NOT FOUND"
+}
 
 for i in \
+./bin/tuningTrainer.exe \
+../src/harpsichord.wav \
 libgcc_s_seh-1.dll \
 libwinpthread-1.dll \
 libpcre2-16-0.dll \
@@ -31,9 +35,10 @@ libmd4c.dll \
 Qt5Core.dll \
 Qt5Gui.dll \
 Qt5Widgets.dll
-do cp -v /mingw64/bin/${i} tuningTrainer-win/
+do installFile /mingw64/bin/${i}
 
 done
 
-cp -Rv /mingw64/share/qt5/plugins/platforms tuningTrainer-win/
-cp -Rv /mingw64/share/qt5/plugins/styles tuningTrainer-win/
+installFile /mingw64/share/qt5/plugins/platforms
+installFile /mingw64/share/qt5/plugins/styles
+
