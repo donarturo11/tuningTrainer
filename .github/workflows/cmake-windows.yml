@@ -20,7 +20,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: C:\msys64\msys2 {0}
+        shell: msys2.cmd {0}
         
     steps:
     - name: Setup Base MINGW env
