@@ -56,8 +56,6 @@ jobs:
            pacman -S --noconfirm --needed mingw-w64-x86_64-qt5
     
     - name: Build and install stk
-      run: |
-           echo "MINGW_GIT_WORKSPACE=$(pwd -W)" >> $GITHUB_ENV
            cd ${MINGW_GIT_WORKSPACE}/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
