@@ -24,11 +24,14 @@ jobs:
         shell: C:\msys64\usr\bin\bash.exe -leo pipefail {0}
 
     steps:
+    - name: Git checkout
+      uses: actions/checkout@v3
+      
     - name: Print MinGW directory
       shell: cmd
       run: |
            dir C:\msys64\home\runneradmin
-
+      
     - name: View MINGW env vars
       run: |
            echo "$(pwd -W)"
@@ -36,14 +39,7 @@ jobs:
 
     - name: Setup MinGW Build environment
       run: |
-           pacman -Syu --noconfirm
-
-    - name: Setup MinGW Build environment
-      run: |
            pacman -S --noconfirm --needed base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-
-    - name: Git checkout
-      uses: actions/checkout@v3
 
     - name: Install qt5
       run: |
@@ -51,7 +47,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd /home/runneradmin/.github/mingw-deps/stk/
+           cd /home/runneradmin/tuningTrainer/.github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -60,7 +56,7 @@ jobs:
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           cd /home/runneradmin/
+           cd /home/runneradmin/tuningTrainer/
            mkdir build
            cd build
            cmake .. \
@@ -70,7 +66,7 @@ jobs:
 
     - name: PackagetuningTrainer
       run: |
-           /home/runneradmin/.github/scripts/mingw-prepare-package.sh
+           /home/runneradmin/tuningTrainer/.github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
