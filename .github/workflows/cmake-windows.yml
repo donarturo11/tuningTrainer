@@ -81,9 +81,10 @@ jobs:
               -DSTKPATH={MINGW_ROOT}mingw64/lib/libstk.so
            make VERBOSE=1
     
-    - name: PackagetuningTrainer
+    - name: Package tuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
+           echo $(pwd)
            ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
            
     - name: Upload tuningTrainer-win.zip
