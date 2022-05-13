@@ -11,6 +11,7 @@ on:
 env:
   #  Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  GITHUB_WORKSPACE: C:\msys64\src
 
 jobs:
   build-windows:
@@ -26,11 +27,11 @@ jobs:
     - name: Print MinGW directory
       shell: cmd
       run: |
-           dir C:\msys64\
+           dir
 
     - name: View MINGW env vars
       run: |
-           echo "${${{github.workspace}}//\\//}"
+           echo "$(pwd -W)"
 
     - name: Setup MinGW Build environment
       run: |
@@ -49,7 +50,7 @@ jobs:
 
     - name: Build and install stk
       run: |
-           cd ${${{github.workspace}}//\\//}/.github/mingw-deps/stk/
+           cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
            cd $MINGW_GIT_WORKSPACE
@@ -68,7 +69,7 @@ jobs:
 
     - name: PackagetuningTrainer
       run: |
-           ${${{github.workspace}}//\\//}/.github/scripts/mingw-prepare-package.sh
+           .github/scripts/mingw-prepare-package.sh
 
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
