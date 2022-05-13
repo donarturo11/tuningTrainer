@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: msys2-tree
-        path: C:\msys64 > D:\a\tree\
+        path: D:\a\tree\
       
     - name: View MINGW env vars
       run: |
