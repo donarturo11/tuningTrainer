@@ -20,7 +20,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: C:\msys64\msys2_shell.cmd {0}
+        shell: C:\msys64\usr\bin\bash.exe -leo pipefail %*
 
     steps:
     - name: Setup Base MINGW env
