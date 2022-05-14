@@ -75,11 +75,8 @@ jobs:
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DEXTRA_INCLUDE_PATHS="${MINGW_ROOT}mingw64/include/stk C:/Windows/System32" \
-              -DCMAKE_CXX_FLAGS="-static -I${MINGW_ROOT}mingw64/include/stk -isystem ${MINGW_ROOT}mingw64/include/stk" \
-              -DEXTRA_LINKER_PATHS="${MINGW_ROOT}usr/lib {MINGW_ROOT}mingw64/lib C:/Windows/System32" \
-              -DSTKPATH={MINGW_ROOT}mingw64/lib/libstk.so
-           make VERBOSE=1
+              -DCMAKE_CXX_FLAGS="-static -L /mingw64/lib/ -isystem /mingw64/include/stk"
+           make 
     
     - name: Package tuningTrainer
       run: |
@@ -91,5 +88,5 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win
-        path: ${{github.workspace}}\build\tuningTrainer-win
+        path: ${{github.workspace}}\build\tuningTrainer
         
