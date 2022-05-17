@@ -48,7 +48,7 @@ jobs:
            wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            chmod +x linuxdeploy*.AppImage
            ./linuxdeploy-x86_64.AppImage \
-                -e AppDir/usr/bin/tuningTrainer \
+                -e appdir/usr/bin/tuningTrainer \
                 -i ${{github.workspace}}/src/desktop/tuningTrainer-icon.svg \
                 -d ${{github.workspace}}/src/desktop/tuningTrainer.desktop \
                 --output appimage \
