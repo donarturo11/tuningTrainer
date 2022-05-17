@@ -62,4 +62,5 @@ install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION bin
        LIBRARY DESTINATION lib
        ARCHIVE DESTINATION lib/archive )
+install (FILES src/harpsichord.wav DESTINATION bin)
 
