@@ -57,8 +57,8 @@ jobs:
                 --output appimage \
                 --appdir appdir/ \
                 --plugin qt
-            cp tuningTrainer*.appimage artifacts/tuningTrainer || echo "FAILED"
-            cp ${{github.workspace}}/src/harpsichord.wav || echo "FAILED"
+            cp tuningTrainer*.AppImage artifacts/tuningTrainer || echo "FAILED"
+            cp ${{github.workspace}}/src/harpsichord.wav artifacts/tuningTrainer || echo "FAILED"
     
     - name: Upload tuningTrainer-linux
       uses: actions/upload-artifact@v3.0.0
