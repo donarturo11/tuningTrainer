@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=tuningTrainer
+Comment=Tool to training tuning
+Exec=tuningTrainer
+Icon=tuningTrainer-icon
+Categories=Audio;AudioVideo;X-Jack;Qt;
