@@ -1,0 +1,67 @@
+name: cmake-macos
+
+on:
+  push:
+    branches:
+       - main
+       - CI-cmake
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+
+jobs:
+  build-macos:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+           brew update
+           brew install qt@5 stk cmake
+          
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build \
+                  -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+                  -DCMAKE_INSTALL_PREFIX=/usr/
+
+    - name: Build
+      # Build your program with the given configuration
+      run: |
+           echo "Github workspace=${{github.workspace}}"
+           echo "PWD=${PWD}"
+           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    
+    - name: Build Package
+      run: |
+           cd ${{github.workspace}}/build
+           mv bin tuningTrainer
+           pushd tuningTrainer >/dev/null
+           mkdir -p artifacts/tuningTrainer
+           mkdir tuningTrainer.app
+           macdeployqt tuningTrainer.app
+           curl -fsSLO https://github.com/aurelien-rainone/macdeployqtfix/archive/master.zip
+           bsdtar xf master.zip
+           python macdeployqtfix-master/macdeployqtfix.py \
+                     tuningTrainer.app/Contents/MacOS/tuningTrainer \
+                     /usr/local/Cellar/qt/5.9.1/
+           rm -rf macdeployqtfix-master master.zip
+           popd >/dev/null
+           bsdtar caf "tuningTrainer-mac.zip" tuningTrainer
+           mv tuningTrainer-mac.zip artifacts/tuningTrainer/
+    
+    - name: Upload tuningTrainer-mac
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: tuningTrainer-mac
+        path: ${{github.workspace}}/build/artifacts
+        
