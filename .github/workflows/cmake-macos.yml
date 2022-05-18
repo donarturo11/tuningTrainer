@@ -30,6 +30,7 @@ jobs:
            export LDFLAGS="-L/usr/local/opt/qt@5/lib"
            export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
+           export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/
            
            
            
@@ -42,7 +43,12 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build \
+      run: |
+           export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+           export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
+           export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
+           export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/
+           cmake -B ${{github.workspace}}/build \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
                   -DQt5_DIR=/usr/local/opt/qt@5/lib/cmake/ \
                   -DCMAKE_INSTALL_PREFIX=/usr/
