@@ -26,7 +26,17 @@ jobs:
       run: |
            brew update
            brew install qt@5 cmake extra-cmake-modules stk
-          
+           echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+           export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+           export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/include"
+           export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
+           
+           
+    - name: Print parameters
+      run: |
+           find /usr/local/Cellar/stk/4.6.2/ -iname *.h
+           find /usr/local/Cellar/stk/4.6.2/ -iname *.a
+           
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
