@@ -36,10 +36,15 @@ jobs:
            
     - name: Print parameters
       run: |
+           echo ":: STK Headers ::"
            find /usr/local/Cellar/stk/4.6.2/ -iname *.h
+           echo ":: STK Libs ::"
            find /usr/local/Cellar/stk/4.6.2/ -iname *.a
+           echo ":: STK Qt5 CMake ::"
            find /usr/local/opt/qt@5/ -iname *.cmake
-           
+           echo ":: STK Qt5 Headers ::"
+           find /usr/local/opt/qt@5/ -iname *.h
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
