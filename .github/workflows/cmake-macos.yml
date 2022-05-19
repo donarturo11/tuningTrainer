@@ -59,7 +59,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
            export LDFLAGS="-L/usr/local/Cellar/qt@5/5.15.3/lib/ -L /usr/local/Cellar/stk/4.6.2/lib/"
-           export CXX="/usr/local/Cellar/gcc/11.3.0/bin/g++-11"
+           export CXX="g++-10"
            export CXXFLAGS="-isystem/usr/local/Cellar/qt@5/5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export CXXFLAGS="{CXXFLAGS} -isystem/usr/local/Cellar/qt@5/5.15.3/lib/QtWidgets.framework/Versions/5/Headers/"
            export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5/5.15.3/lib/pkgconfig"
