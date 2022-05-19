@@ -50,7 +50,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # stuff that should happen not on Linux
     endif()
 
-if(${CMAKE_SYSTEM_NAME} NOT STREQUAL "Darwin")
+if(${NOT CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 message(STATUS ">>> Find QT for " ${CMAKE_SYSTEM_NAME})
 find_package (Qt5 COMPONENTS Core REQUIRED)
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
