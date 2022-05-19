@@ -30,23 +30,7 @@ jobs:
     - name: Print parameters
       run: |
            mkdir -p ${{github.workspace}}/build/artifacts/
-           echo ":: STK Headers ::"
-           find /usr/local/Cellar/stk/4.6.2/ -iname *.h > ${{github.workspace}}/build/artifacts/stk-headers.txt
-           echo ":: STK Libs ::"
-           find /usr/local/Cellar/stk/4.6.2/ -iname *.a > ${{github.workspace}}/build/artifacts/stk-libs.txt
-           echo ":: STK Qt5 CMake ::"
-           find /usr/local/opt/qt@5/ -iname *.cmake > ${{github.workspace}}/build/artifacts/qt-cmake.txt
-           echo ":: STK Qt5 Headers ::"
-           find /usr/local/opt/qt@5/ -iname *.h > ${{github.workspace}}/build/artifacts/qt-headers-opt.txt
-           echo ":: STK Qt5 Headers in Cellar::"
-           find /usr/local/Cellar/qt@5/ -iname *.h > ${{github.workspace}}/build/artifacts/qt-headers-cellar.txt
-           find /usr/local/Cellar/qt@5/ -iname *.cmake > ${{github.workspace}}/build/artifacts/qt-cmake-cellar.txt
-           find /usr/local/Cellar/ -iname *gcc* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-gcc.txt
-           find /usr/local/Cellar/ -iname *g++* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-g++.txt
-           find /usr/local/Cellar/ -iname *ld* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-ld.txt
-           find /usr/local/Cellar/ -iname *cmake* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-cmake.txt
            find /usr/local/Cellar/ > ${{github.workspace}}/build/artifacts/cellar-entire.txt
-           tree -l --charset ascii /usr/local/Cellar/ > ${{github.workspace}}/build/artifacts/cellar-entire-tree.txt
            
     - name: Upload tuningTrainer-system-properties
       uses: actions/upload-artifact@v3.0.0
