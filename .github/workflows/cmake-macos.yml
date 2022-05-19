@@ -44,6 +44,8 @@ jobs:
            find /usr/local/opt/qt@5/ -iname *.cmake
            echo ":: STK Qt5 Headers ::"
            find /usr/local/opt/qt@5/ -iname *.h
+           echo ":: STK Qt5 Headers in Cellar::"
+           find /usr/local/Cellar/qt@5/ -iname *.h
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
