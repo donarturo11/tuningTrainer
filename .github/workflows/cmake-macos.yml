@@ -61,12 +61,14 @@ jobs:
            export LDFLAGS="-L/usr/local/Cellar/qt@5/5.15.3/lib/ -L /usr/local/Cellar/stk/4.6.2/lib/"
            export CXX="/usr/local/Cellar/gcc/11.3.0/bin/g++-11"
            export CXXFLAGS="-isystem/usr/local/Cellar/qt@5/5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
+           export CXXFLAGS="{CXXFLAGS} -isystem/usr/local/Cellar/qt@5/5.15.3/lib/QtWidgets.framework/Versions/5/Headers/"
            export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5/5.15.3/lib/pkgconfig"
            export Qt5_DIR="/usr/local/Cellar/qt@5/5.15.3/lib/cmake/"
            /usr/local/Cellar/cmake/3.23.1_1/bin/cmake \
                   -B ${{github.workspace}}/build \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
                   -DCMAKE_CXX_FLAGS="${CXXFLAGS} ${LDFLAGS}" \
+                  -DCMAKE_MAKE_PROGRAM=""
                   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
                   -DCMAKE_INSTALL_PREFIX=/usr/
 
