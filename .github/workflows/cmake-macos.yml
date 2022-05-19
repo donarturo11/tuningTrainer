@@ -42,7 +42,11 @@ jobs:
            find /usr/local/Cellar/qt@5/ -iname *.h > ${{github.workspace}}/build/artifacts/qt-headers-cellar.txt
            find /usr/local/Cellar/qt@5/ -iname *.cmake > ${{github.workspace}}/build/artifacts/qt-cmake-cellar.txt
            find /usr/local/Cellar/ -iname *gcc* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-gcc.txt
+           find /usr/local/Cellar/ -iname *g++* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-g++.txt
+           find /usr/local/Cellar/ -iname *ld* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-ld.txt
            find /usr/local/Cellar/ -iname *cmake* | grep -i bin > ${{github.workspace}}/build/artifacts/cellar-cmake.txt
+           find /usr/local/Cellar/ > ${{github.workspace}}/build/artifacts/cellar-entire.txt
+           tree -l --charset ascii /usr/local/Cellar/ > ${{github.workspace}}/build/artifacts/cellar-entire-tree.txt
            
     - name: Upload tuningTrainer-system-properties
       uses: actions/upload-artifact@v3.0.0
@@ -54,14 +58,13 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
-           
            export LDFLAGS="-L/usr/local/Cellar/qt@5/5.15.3/lib/ -L /usr/local/Cellar/stk/4.6.2/lib/"
            export CXXFLAGS="-isystem/usr/local/Cellar/qt@5/5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5/5.15.3/lib/pkgconfig"
            export Qt5_DIR="/usr/local/Cellar/qt@5/5.15.3/lib/cmake/"
-           cmake -B ${{github.workspace}}/build \
+           /usr/local/Cellar/cmake/3.23.1_1/bin/cmake \
+                  -B ${{github.workspace}}/build \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-                  -DCMAKE_CXX_COMPILER="g++-11" \
                   -DCMAKE_CXX_FLAGS="${CXXFLAGS} ${LDFLAGS}" \
                   -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
                   -DCMAKE_INSTALL_PREFIX=/usr/
@@ -71,7 +74,9 @@ jobs:
       run: |
            echo "Github workspace=${{github.workspace}}"
            echo "PWD=${PWD}"
-           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+           /usr/local/Cellar//cmake/3.23.1_1/bin/cmake \
+                          --build ${{github.workspace}}/build \
+                          --config ${{env.BUILD_TYPE}}
     
     - name: Build Package
       run: |
