@@ -4,6 +4,7 @@
 #include "AudioEngine.h"
 #include "WaveSimple.h"
 #include "WaveSimpleMixer.h"
+#include <QtGui>
 #ifndef __APPLE__
 #include <QApplication>
 #endif

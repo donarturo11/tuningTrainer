@@ -1,7 +1,10 @@
 #ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
+#include <QtGui>
+#ifndef __APPLE__
 #include <QApplication>
+#endif
 #include <QWidget>
 #include <QDialog>
 #include <QLineEdit>
