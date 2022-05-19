@@ -5,9 +5,7 @@
 #include "WaveSimple.h"
 #include "WaveSimpleMixer.h"
 #include <QtGui>
-#ifndef __APPLE__
 #include <QApplication>
-#endif
 #include "MainWindow.h"
 
 int main(int argc,  char **argv)

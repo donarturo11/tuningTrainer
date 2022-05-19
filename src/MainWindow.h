@@ -1,10 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui>
-#ifndef __APPLE__
 #include <QApplication>
-#endif
 #include <QMainWindow>
 #include <QWidget>
 #include <QLineEdit>
