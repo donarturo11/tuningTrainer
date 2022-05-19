@@ -56,14 +56,17 @@ if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     find_package (Qt5 COMPONENTS Widgets REQUIRED)
 else()
     message(STATUS ">>> Find Qt for MacOS")
+    find_package(CoreAudio REQUIRED)
+    include_directories(${COREAUDIO_INCLUDE_DIRS})
+    add_definitions(-D__MACOSX_CORE__)
+    link_libraries(${COREAUDIO_LIBRARY} ${COREAUDIO_FOUNDATION} ${COREAUDIO_MIDI})
+    # Qt 5
     set(Qt5_DIR "/usr/local/Cellar/qt@5//5.15.3/lib/cmake/Qt5/")
     set(QT_QMAKE_EXECUTABLE "/usr/local/Cellar/qt@5/5.15.3/bin/qmake")
     set(Qt5Core_DIR "/usr/local/Cellar/qt@5/5.15.3/lib/cmake/Qt5Core")
     set(Qt5Widgets_DIR "/usr/local/Cellar/qt@5/5.15.3/lib/cmake/Qt5Widgets")
     find_package (Qt5 COMPONENTS Core REQUIRED)
     find_package (Qt5 COMPONENTS Widgets REQUIRED)
-    find_library(COREAUDIO_LIB CoreAudio)
-    find_library(COREFOUNDATION_LIB CoreFoundation)
     INCLUDE_DIRECTORIES(
         /usr/local/Cellar/stk/4.6.2/include/stk/
         /usr/local/Cellar/qt@5/5.15.3/include/ 
