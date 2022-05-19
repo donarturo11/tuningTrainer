@@ -30,7 +30,7 @@ jobs:
            export LDFLAGS="-L/usr/local/opt/qt@5/lib"
            export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
-           export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/
+           export Qt5_DIR="/usr/local/opt/qt@5/lib/cmake/"
            
            
            
@@ -50,7 +50,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
            export LDFLAGS="-L/usr/local/opt/qt@5/lib -L /usr/local/Cellar/stk/4.6.2/lib/"
-           export CPPFLAGS="-isystem /usr/local/opt/qt@5/include -isystem /usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
+           export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
            export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/
            cmake -B ${{github.workspace}}/build \
