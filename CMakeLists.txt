@@ -70,6 +70,9 @@ INCLUDE_DIRECTORIES(
         /usr/local/Cellar/qt@5//5.15.3/lib/QtCore.framework/Versions/5/Headers/
         /usr/local/Cellar/qt@5//5.15.3/lib/QtGui.framework/Versions/5/Headers/
         )
+LINK_DIRECTORIES(
+        /usr/local/Cellar/stk/4.6.2//lib/
+        )        
 endif()
 
 
