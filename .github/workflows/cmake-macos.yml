@@ -36,6 +36,7 @@ jobs:
            
     - name: Print parameters
       run: |
+           mkdir -p ${{github.workspace}}/build/artifacts/
            echo ":: STK Headers ::"
            find /usr/local/Cellar/stk/4.6.2/ -iname *.h > ${{github.workspace}}/build/artifacts/stk-headers.txt
            echo ":: STK Libs ::"
