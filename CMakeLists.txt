@@ -66,6 +66,7 @@ find_package (Qt5 COMPONENTS Widgets REQUIRED)
 INCLUDE_DIRECTORIES(
         /usr/local/Cellar/qt@5/5.15.3/include/ 
         /usr/local/Cellar/qt@5//5.15.3/lib/QtWidgets.framework/Versions/5/Headers/
+        /usr/local/Cellar/qt@5//5.15.3/lib/QtCore.framework/Versions/5/Headers/
         )
 endif()
 
