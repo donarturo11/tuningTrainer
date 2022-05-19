@@ -26,14 +26,7 @@ jobs:
       run: |
            brew update
            brew install qt@5 cmake extra-cmake-modules stk
-           echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
-           export LDFLAGS="-L/usr/local/opt/qt@5/lib"
-           export CPPFLAGS="-I/usr/local/opt/qt@5/include -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
-           export PKG_CONFIG_PATH="/usr/local/opt/qt@5/lib/pkgconfig"
-           export Qt5_DIR="/usr/local/opt/qt@5/lib/cmake/"
-           
-           
-           
+                    
     - name: Print parameters
       run: |
            mkdir -p ${{github.workspace}}/build/artifacts/
@@ -60,7 +53,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
            export LDFLAGS="-L/usr/local/Cellar/qt@5//5.15.3/lib/ -L /usr/local/Cellar/stk/4.6.2/lib/"
-           export CPPFLAGS="-I/usr/local/Cellar/qt@5//5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
+           export CXXFLAGS="-I/usr/local/Cellar/qt@5//5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5//5.15.3/lib/pkgconfig"
            export Qt5_DIR="/usr/local/Cellar/qt@5//5.15.3/lib/cmake/"
            cmake -B ${{github.workspace}}/build \
