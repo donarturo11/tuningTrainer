@@ -66,12 +66,13 @@ find_package (Qt5 COMPONENTS Widgets REQUIRED)
 INCLUDE_DIRECTORIES(
         /usr/local/Cellar/stk/4.6.2/include/stk/
         /usr/local/Cellar/qt@5/5.15.3/include/ 
-        /usr/local/Cellar/qt@5//5.15.3/lib/QtWidgets.framework/Versions/5/Headers/
-        /usr/local/Cellar/qt@5//5.15.3/lib/QtCore.framework/Versions/5/Headers/
-        /usr/local/Cellar/qt@5//5.15.3/lib/QtGui.framework/Versions/5/Headers/
+        /usr/local/Cellar/qt@5/5.15.3/lib/QtWidgets.framework/Versions/5/Headers/
+        /usr/local/Cellar/qt@5/5.15.3/lib/QtCore.framework/Versions/5/Headers/
+        /usr/local/Cellar/qt@5/5.15.3/lib/QtGui.framework/Versions/5/Headers/
         )
 LINK_DIRECTORIES(
         /usr/local/Cellar/stk/4.6.2//lib/
+        usr/local/Cellar/qt@5/5.15.3/lib/
         )        
 endif()
 
