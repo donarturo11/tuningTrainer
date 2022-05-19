@@ -62,7 +62,11 @@ set(Qt5Core_DIR "/usr/local/Cellar/qt@5/5.15.3/lib/cmake/Qt5Core")
 set(Qt5Widgets_DIR "/usr/local/Cellar/qt@5/5.15.3/lib/cmake/Qt5Widgets")
 find_package (Qt5 COMPONENTS Core REQUIRED)
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
-INCLUDE_DIRECTORIES(/usr/local/Cellar/qt@5//5.15.3/include/)
+#set (CMAKE_CXX_FLAGS "-isystem ")
+INCLUDE_DIRECTORIES(
+        /usr/local/Cellar/qt@5/5.15.3/include/ 
+        /usr/local/Cellar/qt@5//5.15.3/lib/QtWidgets.framework/Versions/5/Headers/
+        )
 endif()
 
 
