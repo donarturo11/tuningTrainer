@@ -37,15 +37,22 @@ jobs:
     - name: Print parameters
       run: |
            echo ":: STK Headers ::"
-           find /usr/local/Cellar/stk/4.6.2/ -iname *.h
+           find /usr/local/Cellar/stk/4.6.2/ -iname *.h > ${{github.workspace}}/build/artifacts/stk-headers.txt
            echo ":: STK Libs ::"
-           find /usr/local/Cellar/stk/4.6.2/ -iname *.a
+           find /usr/local/Cellar/stk/4.6.2/ -iname *.a > ${{github.workspace}}/build/artifacts/stk-libs.txt
            echo ":: STK Qt5 CMake ::"
-           find /usr/local/opt/qt@5/ -iname *.cmake
+           find /usr/local/opt/qt@5/ -iname *.cmake > ${{github.workspace}}/build/artifacts/qt-cmake.txt
            echo ":: STK Qt5 Headers ::"
-           find /usr/local/opt/qt@5/ -iname *.h
+           find /usr/local/opt/qt@5/ -iname *.h > ${{github.workspace}}/build/artifacts/qt-headers-opt.txt
            echo ":: STK Qt5 Headers in Cellar::"
-           find /usr/local/Cellar/qt@5/ -iname *.h
+           find /usr/local/Cellar/qt@5/ -iname *.h > ${{github.workspace}}/build/artifacts/qt-headers-cellar.txt
+           find /usr/local/Cellar/qt@5/ -iname *.cmake > ${{github.workspace}}/build/artifacts/qt-cmake-cellar.txt
+           
+    - name: Upload tuningTrainer-system-properties
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: tuningTrainer-system-properties
+        path: ${{github.workspace}}/build/artifacts
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
