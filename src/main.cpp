@@ -4,8 +4,9 @@
 #include "AudioEngine.h"
 #include "WaveSimple.h"
 #include "WaveSimpleMixer.h"
-
+#ifndef __APPLE__
 #include <QApplication>
+#endif
 #include "MainWindow.h"
 
 int main(int argc,  char **argv)
