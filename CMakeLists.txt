@@ -50,10 +50,19 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # stuff that should happen not on Linux
     endif()
 
+if(${CMAKE_SYSTEM_NAME} NOT STREQUAL "Darwin")
+message(STATUS ">>> Find QT for " ${CMAKE_SYSTEM_NAME})
 find_package (Qt5 COMPONENTS Core REQUIRED)
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
-get_target_property(QtCore_location Qt5::Core LOCATION)
-get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
+else()
+message(STATUS ">>> Find Qt for MacOS")
+set(Qt5_DIR "/usr/local/Cellar//qt@5/5.15.3/lib/cmake")
+set(QT_QMAKE_EXECUTABLE "/usr/local/Cellar/qt@5/5.15.3/bin/qmake")
+set(Qt5Core_DIR "/usr/local/Cellar//qt@5/5.15.3/lib/cmake/Qt5Core")
+set(Qt5Widgets_DIR "/usr/local/Cellar//qt@5/5.15.3/lib/cmake/Qt5Widgets")
+find_package (Qt5 COMPONENTS Core REQUIRED)
+find_package (Qt5 COMPONENTS Widgets REQUIRED)
+endif()
 
 
 find_library(stk $STKPATH)

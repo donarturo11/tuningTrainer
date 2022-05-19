@@ -62,7 +62,7 @@ jobs:
            export CXX="g++-10"
            export CXXFLAGS="-isystem/usr/local/Cellar/qt@5/5.15.3/include/ -I/usr/local/Cellar/stk/4.6.2/share/stk/src/include/"
            export CXXFLAGS="{CXXFLAGS} -isystem/usr/local/Cellar/qt@5/5.15.3/lib/QtWidgets.framework/Versions/5/Headers/"
-           export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5/5.15.3/lib/pkgconfig"
+           export PKG_CONFIG_PATH="/usr/local/Cellar/qt@5/5.15.3/lib/pkgconfig/"
            export Qt5_DIR="/usr/local/Cellar/qt@5/5.15.3/lib/cmake/"
            /usr/local/Cellar/cmake/3.23.1_1/bin/cmake \
                   -B ${{github.workspace}}/build \
