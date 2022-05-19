@@ -51,6 +51,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         # stuff that should happen not on Linux
     endif()
 
+find_package (Qt5 COMPONENTS Core REQUIRED)
 find_package (Qt5 COMPONENTS Widgets REQUIRED)
 
 find_library(stk $STKPATH)
