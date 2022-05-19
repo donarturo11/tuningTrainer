@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
            brew update
-           brew install qt@5 cmake extra-cmake-modules stk
+           brew install qt@5 cmake extra-cmake-modules stk tree
                     
     - name: Print parameters
       run: |
