@@ -4,7 +4,7 @@
 #include "AudioEngine.h"
 #include "WaveSimple.h"
 #include "WaveSimpleMixer.h"
-
+#include <QtGui>
 #include <QApplication>
 #include "MainWindow.h"
 

@@ -1,0 +1,80 @@
+# Maintainer: Tim Mayberry <mojofunk@gmail.com>
+
+_realname=stk
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=4.6.2
+pkgrel=1
+pkgdesc='The Synthesis ToolKit in C++'
+arch=('any')
+url="https://ccrma.stanford.edu/software/stk/"
+license=(MIT)
+makedepends=("${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "${MINGW_PACKAGE_PREFIX}-doxygen")
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
+options=('staticlibs') # '!strip' 'debug')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/thestk/${_realname}/archive/${pkgver}.tar.gz")
+sha512sums=('f1925744fdeddc9fccd24add52dbcc68b17c9f069be8d7d139b2a8a70d7d288881ec9effc564e1f43094a5395ddf45db7cc1339db17649abe0b8e0be2dc7bacd')
+b2sums=('b15f052580b30f4aee314e6737dbff4193a25b552ea9f251832e3f39e4f623ddcf4550d6e2fcd227aad593dd2f4af518844e5f25082f676ce02e237810a4923a')
+
+prepare() {
+  cd "${_realname}-${pkgver}"
+  autoreconf -fiv
+}
+
+build() {
+  cd "${_realname}-${pkgver}"
+  export RAWWAVE_PATH="/usr/share/${_realname}/rawwaves/"
+  ./configure --prefix=${MINGW_PREFIX} \
+              --build=${MINGW_CHOST} \
+              --host=${MINGW_CHOST} \
+              --target=${MINGW_CHOST} \
+              --enable-static \
+              --enable-shared 
+  mingw32-make
+  #mingw32-make -C projects/demo
+
+  #cd doc/doxygen
+  #doxygen
+}
+
+package_stk() {
+  depends=()
+  optdepends=(
+    'stk-docs: for documentation'
+    'tk: for demos and samples'
+  )
+
+  cd "${_realname}-${pkgver}"
+  mingw32-make DESTDIR="${pkgdir}" install
+  # Static stk
+  install -vDm 755 src/libstk.a -t "$pkgdir/${MINGW_PREFIX}/lib"
+  # license
+  #install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${pkgname}"  || echo "License Failed"
+  # demo
+  #install -vDm 755 projects/demo/stk-demo -t "${pkgdir}/usr/bin" || echo "Stk demo Failed"
+  #install -vDm 644 projects/demo/tcl/*.tcl \
+  #  -t "${pkgdir}/usr/share/${pkgname}/tcl" || echo "Tcl projects Failed"
+  #install -vDm 644 projects/demo/scores/{README,*.ski} \
+  #  -t "${pkgdir}/usr/share/${pkgname}/scores"  || echo "Failed"
+  #install -vDm 644 rawwaves/*.{raw,c} \
+  #  -t "${pkgdir}/usr/share/${pkgname}/rawwaves"  || echo "Failed"
+}
+
+package_stk-docs() {
+  pkgdesc+=' (documentation)'
+
+  cd "${_realname}-${pkgver}"
+  # docs
+  install -vDm 644 doc/{README-Linux,ReleaseNotes,SKINI,hierarchy}.txt \
+    -t "${pkgdir}/usr/share/doc/${"${_realname}"}"
+  install -vDm 644 doc/html/*.{html,png,js} \
+    -t "${pkgdir}/usr/share/doc/${_realname}/html"
+  # license
+  install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/${_realname}"
+}
+
+package(){
+  package_stk
+  #package_stk-docs
+}
+
