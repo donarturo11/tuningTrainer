@@ -46,21 +46,17 @@ jobs:
     
     - name: Build Package
       run: |
-           find ./build/
            cd ${{github.workspace}}/build
-           mkdir -p artifacts/tuningTrainer
-           mkdir -p tuningTrainer.app/Contents/MacOS/
-           cp bin/tuningTrainer tuningTrainer.app/Contents/MacOS/
+           mkdir -p artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/
+           cp bin/tuningTrainer artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/
            /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
-               tuningTrainer.app
+               artifacts/tuningTrainer/tuningTrainer.app
            curl -fsSLO https://github.com/aurelien-rainone/macdeployqtfix/archive/master.zip
            bsdtar xf master.zip
            python macdeployqtfix-master/macdeployqtfix.py \
-                     tuningTrainer.app/Contents/MacOS/tuningTrainer \
+                     artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/tuningTrainer \
                      /usr/local/Cellar/qt@5/5.15.3/
            rm -rf macdeployqtfix-master master.zip
-           bsdtar caf "tuningTrainer-mac.zip" tuningTrainer
-           mv tuningTrainer-mac.zip artifacts/tuningTrainer/
     
     - name: Upload tuningTrainer-mac
       uses: actions/upload-artifact@v3.0.0
