@@ -27,9 +27,6 @@ jobs:
            brew update
            brew install qt@5 cmake extra-cmake-modules stk
            
-    - name: MacDeploy QT help
-      run: /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt --help
-      
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -53,7 +50,11 @@ jobs:
            mv bin tuningTrainer
            pushd tuningTrainer >/dev/null
            mkdir -p artifacts/tuningTrainer
-           /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt tuningTrainer.app
+           /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
+               tuningTrainer.app \
+               -executable=bin/tuningTrainer \
+               -dmg \
+               -always-overwrite
            curl -fsSLO https://github.com/aurelien-rainone/macdeployqtfix/archive/master.zip
            bsdtar xf master.zip
            python macdeployqtfix-master/macdeployqtfix.py \
