@@ -50,11 +50,10 @@ jobs:
            mv bin tuningTrainer
            pushd tuningTrainer >/dev/null
            mkdir -p artifacts/tuningTrainer
+           mkdir -p tuningTrainer.app/Contents/MacOS/
+           cp tuningTrainer/tuningTrainer tuningTrainer.app/Contents/MacOS/
            /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
-               tuningTrainer.app \
-               -executable=bin/tuningTrainer \
-               -dmg \
-               -always-overwrite
+               tuningTrainer.app
            curl -fsSLO https://github.com/aurelien-rainone/macdeployqtfix/archive/master.zip
            bsdtar xf master.zip
            python macdeployqtfix-master/macdeployqtfix.py \
