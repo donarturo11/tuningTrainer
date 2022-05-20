@@ -59,7 +59,6 @@ jobs:
                      tuningTrainer.app/Contents/MacOS/tuningTrainer \
                      /usr/local/Cellar/qt@5/5.15.3/
            rm -rf macdeployqtfix-master master.zip
-           popd >/dev/null
            bsdtar caf "tuningTrainer-mac.zip" tuningTrainer
            mv tuningTrainer-mac.zip artifacts/tuningTrainer/
     
