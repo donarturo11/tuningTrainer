@@ -1,17 +1,14 @@
-name: cmake-linux
+name: CMake Linux
 
 on:
   push:
-    branches:
-       - main
-       - CI-cmake
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-
 
 jobs:
   build-linux:
@@ -34,14 +31,13 @@ jobs:
       run: cmake -B ${{github.workspace}}/build \
                   -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
                   -DCMAKE_INSTALL_PREFIX=/usr/
-
+                  
     - name: Build
       # Build your program with the given configuration
       run: |
-           echo "Github workspace=${{github.workspace}}"
-           echo "PWD=${PWD}"
-           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --
-    
+          echo ${{github.workspace}}
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
     - name: Build Package
       run: |
            cd ${{github.workspace}}/build
@@ -66,3 +62,4 @@ jobs:
         name: tuningTrainer-linux
         path: ${{github.workspace}}/build/artifacts
         
+
