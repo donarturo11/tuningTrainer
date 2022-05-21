@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QDebug>
 #include <QWidget>
 #include <QLineEdit>
 #include <QLabel>
@@ -17,6 +18,7 @@
 #include <vector>
 
 #include "AboutWindow.h"
+#include "ChooseSampleWindow.h"
 #include "KeyGroup.h"
 #include "globals.h"
 #include "semitones.h"
@@ -36,6 +38,7 @@ class MainWindow : public QWidget
 		explicit MainWindow(QWidget *parent=0);
 		~MainWindow();
         AboutWindow *aboutwindow;
+        ChooseSampleWindow *choosesamplewindow;
         QSettings *m_settings;
         void initKeyboard(std::vector <stk::WaveSimple*> *synth);
         
@@ -43,13 +46,14 @@ class MainWindow : public QWidget
         
         KeyGroup *myKeyGroup[KEY_NUMBERS];
         QPushButton *m_about_btn;
+        QPushButton *m_chooseSample_btn;
         QPushButton *m_quit_btn;
         QPushButton *m_reset_btn;
         std::map<int, int> keyBindMap;
         void createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings);
         void keyPressEvent(QKeyEvent *event);
         void keyReleaseEvent(QKeyEvent *event);
-        
+        void loadWave(QString path);
         std::vector <stk::WaveSimple*> *m_synth;
         
         
@@ -59,6 +63,7 @@ class MainWindow : public QWidget
     
     public slots:
         void aboutSlot();
+        void chooseSampleSlot();
         void resetSlot();
         void quitSlot();
         

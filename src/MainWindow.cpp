@@ -5,15 +5,16 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
+    qDebug() << "MainWindow Constructor";
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
+    qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
     this->setWindowTitle("TuningTrainer");
-    
     this->waitCount=0;
     
     int posX=800;
     int posY=0;
-    int width=60;
+    int width=140;
     int height=20;
     
     m_about_btn = new QPushButton("About", this);
@@ -29,6 +30,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     connect (m_quit_btn, SIGNAL(pressed()), this, SLOT(quitSlot()));
     
     posY+=height*2;
+    
+    m_chooseSample_btn = new QPushButton("Choose sample", this);
+    m_chooseSample_btn->setGeometry(posX, posY, width, height);
+    m_chooseSample_btn->show();
+    connect (m_chooseSample_btn, SIGNAL(pressed()), this, SLOT(chooseSampleSlot()));
+    
+    posY+=height;
     
     m_reset_btn = new QPushButton("Reset", this);
     m_reset_btn->setGeometry(posX, posY, width, height);
@@ -131,12 +139,29 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         
 }
 
+void MainWindow::chooseSampleSlot()
+{
+    //choosesamplewindow = new ChooseSampleWindow(this);
+    //choosesamplewindow->setModal(1);
+    //choosesamplewindow->show();
+    this->loadWave("harpsichord.wav");
+}
+
+void MainWindow::loadWave(QString path){
+    for (int i=0; i<KEY_NUMBERS; i++)
+    {
+        qDebug() << "synth[" << i << "]: " << m_synth[0][i]->isGood();
+        this->m_synth[0][i]->loadWave(path.toStdString());
+    }
+    
+    m_settings->setValue("samplePath", path);
+    qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
+}
 
 void MainWindow::aboutSlot()
 {
     
     aboutwindow=new AboutWindow(this);
-    
     aboutwindow->setModal(1);
     aboutwindow->show();
     
