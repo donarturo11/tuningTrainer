@@ -141,10 +141,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::chooseSampleSlot()
 {
-    //choosesamplewindow = new ChooseSampleWindow(this);
-    //choosesamplewindow->setModal(1);
-    //choosesamplewindow->show();
-    this->loadWave("harpsichord.wav");
+    choosesamplewindow = new ChooseSampleWindow(this);
+    choosesamplewindow->setModal(1);
+    choosesamplewindow->show();
+    //this->loadWave("harpsichord.wav");
 }
 
 void MainWindow::loadWave(QString path){
