@@ -34,6 +34,10 @@ WaveSimple :: ~WaveSimple( void )
 
 void WaveSimple :: loadWave(std::string filename, bool raw)
 {
+    if (filename=="sine") {
+          this->setBad();
+          this->setSine();
+    }
     try {
           loop_->openFile(filename, raw);
           this->setGood();
@@ -42,7 +46,8 @@ void WaveSimple :: loadWave(std::string filename, bool raw)
         }
     catch(...) // if loading sample fails, set sine generator
         {
-           setSine();
+           this->setBad();
+           this->setSine();
         }
 }
 
