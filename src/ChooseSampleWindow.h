@@ -10,7 +10,11 @@
 #include <QLabel>
 #include <QString>
 #include <QVBoxLayout>
+
+
+//#include "MainWindow.h"
 //class QPushButton;
+class MainWindow;
 
 class ChooseSampleWindow : public QDialog
 {
@@ -18,6 +22,7 @@ class ChooseSampleWindow : public QDialog
 	public:
 		explicit ChooseSampleWindow(QWidget *parent=0);
         void init();
+        QString getWavepath();
         QPushButton *m_quit_btn;
         QLabel *m_label;
         
@@ -28,9 +33,11 @@ class ChooseSampleWindow : public QDialog
         QPushButton *m_browse_btn;
         QPushButton *m_apply_btn;
         QPushButton *m_cancel_btn;
+        QString wavepath;
         
     protected:
         QString label_str="";
+        QWidget *parentClass;
     
     public slots:
         void quitSlot();

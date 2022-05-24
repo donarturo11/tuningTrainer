@@ -1,14 +1,16 @@
 #include "MainWindow.h"
 #include <QString>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
-    qDebug() << "MainWindow Constructor";
+    qDebug() << "MainWindow Constructor:" << this;
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
     qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
+    this->wavepath = m_settings->value("samplePath", "").toString();
     this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
     
@@ -42,6 +44,10 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_reset_btn->setGeometry(posX, posY, width, height);
     m_reset_btn->show();
     connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
+    
+    qDebug() << "Harpsichord exists" << QFile::exists("harpsichord.wav");
+    qDebug() << "Current path" << QDir::currentPath();
+    
     
 }
 
@@ -143,19 +149,33 @@ void MainWindow::chooseSampleSlot()
 {
     choosesamplewindow = new ChooseSampleWindow(this);
     choosesamplewindow->setModal(1);
-    choosesamplewindow->show();
-    //this->loadWave("harpsichord.wav");
+    choosesamplewindow->exec();
+    this->setWavepath(choosesamplewindow->getWavepath());
+    
+    this->loadWave(this->getWavepath());
+    
+    qDebug() << "End function";
 }
 
 void MainWindow::loadWave(QString path){
+    qDebug() << "Main window | WavePath = " << path;
+    qDebug() << "Main window | Good: " << this->m_synth[0][0]->isGood();
     for (int i=0; i<KEY_NUMBERS; i++)
     {
-        qDebug() << "synth[" << i << "]: " << m_synth[0][i]->isGood();
         this->m_synth[0][i]->loadWave(path.toStdString());
     }
     
     m_settings->setValue("samplePath", path);
     qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
+}
+
+void MainWindow::setWavepath(QString path)
+{
+    this->wavepath=path;
+}
+
+QString MainWindow::getWavepath(){
+    return this->wavepath;
 }
 
 void MainWindow::aboutSlot()

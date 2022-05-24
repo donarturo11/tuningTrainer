@@ -29,7 +29,6 @@
 
 //class QPushButton;
 class KeyGroup;
-
 class MainWindow : public QWidget
 //class MainWindow : public QMainWindow
 {
@@ -41,6 +40,9 @@ class MainWindow : public QWidget
         ChooseSampleWindow *choosesamplewindow;
         QSettings *m_settings;
         void initKeyboard(std::vector <stk::WaveSimple*> *synth);
+        void setWavepath(QString path);
+        QString getWavepath();
+        void loadWave(QString path);
         
 	private:
         
@@ -49,11 +51,11 @@ class MainWindow : public QWidget
         QPushButton *m_chooseSample_btn;
         QPushButton *m_quit_btn;
         QPushButton *m_reset_btn;
+        QString wavepath="";
         std::map<int, int> keyBindMap;
         void createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings);
         void keyPressEvent(QKeyEvent *event);
         void keyReleaseEvent(QKeyEvent *event);
-        void loadWave(QString path);
         std::vector <stk::WaveSimple*> *m_synth;
         
         
