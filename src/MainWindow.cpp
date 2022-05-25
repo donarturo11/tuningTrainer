@@ -1,6 +1,5 @@
 #include "MainWindow.h"
-#include <QString>
-#include <QDir>
+
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -9,7 +8,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     qDebug() << "MainWindow Constructor:" << this;
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
+    
+    this->appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    qDebug() << this->appconfiglocation;
+    
     qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
+    
     this->wavepath = m_settings->value("samplePath", "").toString();
     this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
@@ -18,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     int posY=0;
     int width=140;
     int height=20;
+    
+    findWave();
     
     m_about_btn = new QPushButton("About", this);
     m_about_btn->setGeometry(posX, posY, width, height);
@@ -45,8 +51,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_reset_btn->show();
     connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
     
-    qDebug() << "Harpsichord exists" << QFile::exists("harpsichord.wav");
-    qDebug() << "Current path" << QDir::currentPath();
+    
     
     
 }
@@ -56,6 +61,54 @@ MainWindow::~MainWindow()
     m_settings->sync();
 }
 //-------------------------------------------
+void MainWindow::findWave()
+{
+    QStringList searchPaths;
+    QStringList foundPaths;
+    QString filename="harpsichord.wav";
+    QString fullpath="";
+    searchPaths << ".";
+    searchPaths << QCoreApplication::applicationDirPath();
+    searchPaths << this->appconfiglocation;
+    //searchPaths << QStandardPaths::writableLocation();
+    
+    #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
+    searchPaths << "/usr/share/tuningTrainer"
+                << "/usr/local/share/tuningTrainer";
+    #elif(__APPLE__) 
+    searchPaths << "/Applications/tuningTrainer.app/MacOS/Resources";
+    #endif
+    
+    searchPaths << QDir::currentPath();
+    
+    
+    for(int i=0; i<searchPaths.size(); i++){
+        fullpath = searchPaths.at(i) + "/";
+        foundPaths << searchPath(fullpath, filename);
+        //qDebug() << fullpath << QFile::exists(fullpath);
+    }
+    
+    for(int i=0; i<foundPaths.size(); i++){
+        qDebug() << "Found: " << foundPaths.at(i);
+    }
+    
+}
+
+QStringList MainWindow::searchPath(QString dir, QString filename)
+{
+    QStringList foundPath;
+    QDirIterator it(dir, QDirIterator::Subdirectories);
+    QString path;
+    while (it.hasNext()){
+        path = it.next();
+        if (path.contains(filename)){
+            foundPath << path;
+        }
+    }
+    return foundPath;
+}
+
+
 void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
 {
     
