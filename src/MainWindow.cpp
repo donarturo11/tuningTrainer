@@ -10,11 +10,10 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_settings->setDefaultFormat(QSettings::IniFormat);
     
     this->appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    qDebug() << this->appconfiglocation;
+    //qDebug() << "Appconfiglocation " << this->appconfiglocation;
     
-    qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
     
-    this->wavepath = m_settings->value("samplePath", "").toString();
+    
     this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
     
@@ -23,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     int width=140;
     int height=20;
     
-    findWave();
     
+      
     m_about_btn = new QPushButton("About", this);
     m_about_btn->setGeometry(posX, posY, width, height);
     m_about_btn->show();
@@ -61,7 +60,7 @@ MainWindow::~MainWindow()
     m_settings->sync();
 }
 //-------------------------------------------
-void MainWindow::findWave()
+QString MainWindow::findDefaultWavePath()
 {
     QStringList searchPaths;
     QStringList foundPaths;
@@ -69,7 +68,7 @@ void MainWindow::findWave()
     QString fullpath="";
     searchPaths << ".";
     searchPaths << QCoreApplication::applicationDirPath();
-    searchPaths << this->appconfiglocation;
+    //searchPaths << this->appconfiglocation;
     //searchPaths << QStandardPaths::writableLocation();
     
     #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
@@ -85,11 +84,15 @@ void MainWindow::findWave()
     for(int i=0; i<searchPaths.size(); i++){
         fullpath = searchPaths.at(i) + "/";
         foundPaths << searchPath(fullpath, filename);
-        //qDebug() << fullpath << QFile::exists(fullpath);
+        
     }
     
-    for(int i=0; i<foundPaths.size(); i++){
-        qDebug() << "Found: " << foundPaths.at(i);
+    if (foundPaths.size() > 0){
+        qDebug() << foundPaths.at(0) << QFile::exists(foundPaths.at(0));
+        return foundPaths.at(0); 
+        
+    } else {
+        return "";
     }
     
 }
@@ -113,6 +116,16 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
 {
     
     this->m_synth=synth;
+    
+    
+    this->wavepath = m_settings->value("samplePath", findDefaultWavePath()).toString();
+    if(!QFile::exists(this->wavepath)) {
+        this->wavepath=findDefaultWavePath();
+        m_settings->setValue("samplePath", this->wavepath);
+    }
+    this->loadWave(this->wavepath);
+    qDebug() << "Default wavepath: " << this->wavepath;
+    
     
     int ind=0;
     int posX=0;
@@ -200,9 +213,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 void MainWindow::chooseSampleSlot()
 {
-    choosesamplewindow = new ChooseSampleWindow(this);
+    choosesamplewindow = new ChooseSampleWindow(this, getWavepath());
     choosesamplewindow->setModal(1);
     choosesamplewindow->exec();
+    
     this->setWavepath(choosesamplewindow->getWavepath());
     
     this->loadWave(this->getWavepath());

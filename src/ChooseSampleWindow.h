@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLabel>
+#include <QSpinBox>
 #include <QString>
 #include <QVBoxLayout>
 
@@ -20,8 +21,9 @@ class ChooseSampleWindow : public QDialog
 {
 	Q_OBJECT
 	public:
-		explicit ChooseSampleWindow(QWidget *parent=0);
+		ChooseSampleWindow(QWidget *parent, QString wavepath);
         void init();
+        void setWavepath(QString path);
         QString getWavepath();
         QPushButton *m_quit_btn;
         QLabel *m_label;
@@ -33,7 +35,11 @@ class ChooseSampleWindow : public QDialog
         QPushButton *m_browse_btn;
         QPushButton *m_apply_btn;
         QPushButton *m_cancel_btn;
+        QLabel *m_baseFreq_label;
+        QSpinBox *m_baseFreq_spin;
+        
         QString wavepath;
+        int baseFreq;
         
     protected:
         QString label_str="";

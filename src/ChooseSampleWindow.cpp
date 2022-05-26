@@ -3,11 +3,11 @@
 #include <QFileDialog>
 #include <QDebug>
 
-ChooseSampleWindow::ChooseSampleWindow(QWidget *parent) : QDialog(parent)
+ChooseSampleWindow::ChooseSampleWindow(QWidget *parent, QString wavepath) : QDialog(parent)
 {
     this->setString();
     this->setWindowTitle("Choose sample window");
-    //this->wavepath = wavepath;
+    this->wavepath = wavepath;
     
     //m_label = new QLabel(label_str, this);
     //m_label->show();
@@ -27,13 +27,10 @@ void ChooseSampleWindow::init(){
     m_browse_btn->show();
     connect (m_browse_btn, SIGNAL(pressed()), this, SLOT(browseSlot()));
     
-    
-    m_waveurl = new QLineEdit(this);
+    m_waveurl = new QLineEdit(getWavepath(), this);
     m_waveurl->setGeometry(0, 0, 600, 30);
     m_waveurl->setFocus();
     m_waveurl->show();
-    
-    
     
     m_apply_btn = new QPushButton("Apply", this);
     m_apply_btn->setGeometry(0, 30, 60, 30);
@@ -45,6 +42,16 @@ void ChooseSampleWindow::init(){
     m_cancel_btn->setGeometry(70, 30, 60, 30);
     m_cancel_btn->show();
     connect (m_cancel_btn, SIGNAL(pressed()), this, SLOT(quitSlot()));
+    
+    m_baseFreq_label = new QLabel("Frequency of source sample:", this);
+    m_baseFreq_label->setGeometry(200, 30, 200, 30);
+    m_baseFreq_label->show();
+    
+    m_baseFreq_spin = new QSpinBox(this);
+    m_baseFreq_spin->setGeometry(400, 30, 60, 30);
+    m_baseFreq_spin->setRange(30, 880);
+    m_baseFreq_spin->setValue(220);
+    m_baseFreq_spin->show();
 }
 
 
@@ -58,9 +65,14 @@ QString ChooseSampleWindow::getWavepath()
     return this->wavepath;
 }
 
+void ChooseSampleWindow::setWavepath(QString path)
+{
+    this->wavepath=path;
+}
+
 void ChooseSampleWindow::browseSlot()
 {
-    QString wavepath = QFileDialog::getOpenFileName(m_waveurl, "Browse wave", "", tr("Wave file (*.wav)"));
+    QString wavepath = QFileDialog::getOpenFileName(m_waveurl, "Browse wave", this->wavepath, tr("Wave file (*.wav)"));
     m_waveurl->setText(wavepath);
     qDebug() << "End browse slot: " << this->wavepath;
 }

@@ -62,7 +62,7 @@ class MainWindow : public QWidget
         void createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings);
         void keyPressEvent(QKeyEvent *event);
         void keyReleaseEvent(QKeyEvent *event);
-        void findWave();
+        QString findDefaultWavePath();
         QStringList searchPath(QString dir, QString filename);
         std::vector <stk::WaveSimple*> *m_synth;
         
