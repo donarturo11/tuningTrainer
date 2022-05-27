@@ -45,13 +45,13 @@ void ChooseSampleWindow::init(){
     
     m_baseFreq_label = new QLabel("Frequency of source sample:", this);
     m_baseFreq_label->setGeometry(200, 30, 200, 30);
-    m_baseFreq_label->show();
+    //m_baseFreq_label->show();
     
     m_baseFreq_spin = new QSpinBox(this);
     m_baseFreq_spin->setGeometry(400, 30, 60, 30);
     m_baseFreq_spin->setRange(30, 880);
     m_baseFreq_spin->setValue(220);
-    m_baseFreq_spin->show();
+    //m_baseFreq_spin->show();
 }
 
 
