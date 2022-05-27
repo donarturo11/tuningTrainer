@@ -62,29 +62,34 @@ MainWindow::~MainWindow()
 //-------------------------------------------
 QString MainWindow::findDefaultWavePath()
 {
+    if (QFile::exists(QCoreApplication::applicationDirPath())){
+        return QCoreApplication::applicationDirPath();
+    }
+    
     QStringList searchPaths;
     QStringList foundPaths;
     QString filename="harpsichord.wav";
     QString fullpath="";
-    searchPaths << ".";
-    searchPaths << QCoreApplication::applicationDirPath();
+      
+    //searchPaths << ".";
+    
+    
     //searchPaths << this->appconfiglocation;
     //searchPaths << QStandardPaths::writableLocation();
     
     #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
-    searchPaths << "/usr/share/tuningTrainer"
-                << "/usr/local/share/tuningTrainer";
+    searchPaths << "/usr/share/tuningTrainer";
+    searchPaths << "/usr/local/share/tuningTrainer";
     #elif(__APPLE__) 
     searchPaths << "/Applications/tuningTrainer.app/MacOS/Resources";
     #endif
     
-    searchPaths << QDir::currentPath();
+    //searchPaths << QDir::currentPath();
     
     
     for(int i=0; i<searchPaths.size(); i++){
         fullpath = searchPaths.at(i) + "/";
         foundPaths << searchPath(fullpath, filename);
-        
     }
     
     if (foundPaths.size() > 0){
