@@ -17,7 +17,6 @@ set(SOURCES main.cpp
             )
 
 
-
 add_executable(
     ${PROJECT_NAME}
     ${HEADERS}
@@ -28,9 +27,10 @@ add_executable(
 
 #target_link_libraries(${PROJECT_NAME} pthread)
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    LINK_DIRECTORIES(/usr/lib/ C:/Windows/System32)
-    target_link_libraries(${PROJECT_NAME} Qt5::Widgets -static)
-    target_link_libraries(${PROJECT_NAME} stk -static)
+    LINK_DIRECTORIES(/usr/lib/ /mingw64/bin /mingw64/lib C:/Windows/System32)
+    target_link_libraries(${PROJECT_NAME} Qt5::Core)
+    target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+    target_link_libraries(${PROJECT_NAME} stk)
     #find_library(stk "C:/MSYS64/src/stk-4.6.2/src")
 	#find_library(dsound "C:/Windows/System32")
 	#find_library(winmm "C:/Windows/System32")

@@ -40,7 +40,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         INCLUDE_DIRECTORIES(C:/Windows/System32 /mingw64/include/stk src/ ${EXTRA_INCLUDE_PATHS})
         LINK_DIRECTORIES(C:/Windows/System32 ${EXTRA_LINKER_PATHS})
         set (CMAKE_CXX_FLAGS "-static -static-libstdc++ -isystem /mingw64/include/stk -L/mingw64/lib")
-        set (CMAKE_EXE_LINKER_FLAGS "-static -LC:/MSYS64/usr/lib/")
+        set (CMAKE_EXE_LINKER_FLAGS "-static")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         message(STATUS ">>> MacOS")
         add_compile_definitions(__APPLE__)
@@ -99,7 +99,6 @@ else()
         )        
 endif()
 
-
 find_library(stk $STKPATH)
 
 message(STATUS "EXTRA_INCLUDE_PATHS=" ${EXTRA_INCLUDE_PATHS})
@@ -108,10 +107,52 @@ message(STATUS "EXTRA_LINKER_PATHS=" ${EXTRA_LINKER_PATHS})
 add_subdirectory(src/)
 
 
-
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+install (TARGETS ${PROJECT_NAME}
+       RUNTIME DESTINATION tuningTrainer)
+install (FILES src/harpsichord.wav DESTINATION tuningTrainer)
+else()
 install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION bin
        LIBRARY DESTINATION lib
        ARCHIVE DESTINATION lib/archive )
 install (FILES src/harpsichord.wav DESTINATION bin)
+endif()
 
+
+## FILES REQUIRED TO RUN
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+install( FILES
+        ${MINGW_ROOT}/mingw64/bin/libbrotlicommon.dll
+		${MINGW_ROOT}/mingw64/bin/libbrotlidec.dll
+		${MINGW_ROOT}/mingw64/bin/libbz2-1.dll
+		${MINGW_ROOT}/mingw64/bin/libdouble-conversion.dll
+		${MINGW_ROOT}/mingw64/bin/libfreetype-6.dll
+		${MINGW_ROOT}/mingw64/bin/libgcc_s_seh-1.dll
+		${MINGW_ROOT}/mingw64/bin/libglib-2.0-0.dll
+		${MINGW_ROOT}/mingw64/bin/libgraphite2.dll
+		${MINGW_ROOT}/mingw64/bin/libharfbuzz-0.dll
+		${MINGW_ROOT}/mingw64/bin/libiconv-2.dll
+		${MINGW_ROOT}/mingw64/bin/libicudt69.dll
+		${MINGW_ROOT}/mingw64/bin/libicuin69.dll
+		${MINGW_ROOT}/mingw64/bin/libicuuc69.dll
+		${MINGW_ROOT}/mingw64/bin/libintl-8.dll
+		${MINGW_ROOT}/mingw64/bin/libmd4c.dll
+		${MINGW_ROOT}/mingw64/bin/libpcre-1.dll
+		${MINGW_ROOT}/mingw64/bin/libpcre2-16-0.dll
+		${MINGW_ROOT}/mingw64/bin/libpng16-16.dll
+		${MINGW_ROOT}/mingw64/bin/libstdc++-6.dll
+		${MINGW_ROOT}/mingw64/bin/libwinpthread-1.dll
+		${MINGW_ROOT}/mingw64/bin/libzstd.dll
+		${MINGW_ROOT}/mingw64/bin/zlib1.dll
+        DESTINATION tuningTrainer)
+install( FILES         
+        ${MINGW_ROOT}/mingw64/bin/Qt5Core.dll
+        ${MINGW_ROOT}/mingw64/bin/Qt5Gui.dll
+        ${MINGW_ROOT}/mingw64/bin/Qt5Widgets.dll
+        DESTINATION tuningTrainer)
+install( DIRECTORY
+         ${MINGW_ROOT}/mingw64/share/qt5/plugins/platforms
+         ${MINGW_ROOT}/mingw64/share/qt5/plugins/styles
+         DESTINATION tuningTrainer)
+endif()               

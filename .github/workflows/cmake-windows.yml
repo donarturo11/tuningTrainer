@@ -75,6 +75,8 @@ jobs:
            cd build
            cmake .. \
               -G "Unix Makefiles" \
+              -DMINGW_ROOT="/$(cd /; pwd -W | sed "s/://g" | tr [:upper:] [:lower:])" \
+              -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/tuningTrainer-win \
               -DCMAKE_CXX_FLAGS="-static -L /mingw64/lib/ -isystem /mingw64/include/stk"
            make 
     
@@ -82,7 +84,7 @@ jobs:
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
            echo $(pwd)
-           ${MINGW_GIT_WORKSPACE}/.github/scripts/mingw-prepare-package.sh
+           make install
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
