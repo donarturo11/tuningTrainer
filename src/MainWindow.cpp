@@ -1,21 +1,29 @@
 #include "MainWindow.h"
-#include <QString>
+
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
+    qDebug() << "MainWindow Constructor:" << this;
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
-    this->setWindowTitle("TuningTrainer");
     
+    this->appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    //qDebug() << "Appconfiglocation " << this->appconfiglocation;
+    
+    
+    
+    this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
     
     int posX=800;
     int posY=0;
-    int width=60;
+    int width=140;
     int height=20;
     
+    
+      
     m_about_btn = new QPushButton("About", this);
     m_about_btn->setGeometry(posX, posY, width, height);
     m_about_btn->show();
@@ -30,10 +38,20 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     
     posY+=height*2;
     
+    m_chooseSample_btn = new QPushButton("Choose sample", this);
+    m_chooseSample_btn->setGeometry(posX, posY, width, height);
+    m_chooseSample_btn->show();
+    connect (m_chooseSample_btn, SIGNAL(pressed()), this, SLOT(chooseSampleSlot()));
+    
+    posY+=height;
+    
     m_reset_btn = new QPushButton("Reset", this);
     m_reset_btn->setGeometry(posX, posY, width, height);
     m_reset_btn->show();
     connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
+    
+    
+    
     
 }
 
@@ -42,10 +60,77 @@ MainWindow::~MainWindow()
     m_settings->sync();
 }
 //-------------------------------------------
+QString MainWindow::findDefaultWavePath()
+{
+    if (QFile::exists(QCoreApplication::applicationDirPath())){
+        return QCoreApplication::applicationDirPath();
+    }
+    
+    QStringList searchPaths;
+    QStringList foundPaths;
+    QString filename="harpsichord.wav";
+    QString fullpath="";
+      
+    //searchPaths << ".";
+    
+    
+    //searchPaths << this->appconfiglocation;
+    //searchPaths << QStandardPaths::writableLocation();
+    
+    #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
+    searchPaths << "/usr/share/tuningTrainer";
+    searchPaths << "/usr/local/share/tuningTrainer";
+    #elif(__APPLE__) 
+    searchPaths << "/Applications/tuningTrainer.app/MacOS/Resources";
+    #endif
+    
+    //searchPaths << QDir::currentPath();
+    
+    
+    for(int i=0; i<searchPaths.size(); i++){
+        fullpath = searchPaths.at(i) + "/";
+        foundPaths << searchPath(fullpath, filename);
+    }
+    
+    if (foundPaths.size() > 0){
+        qDebug() << foundPaths.at(0) << QFile::exists(foundPaths.at(0));
+        return foundPaths.at(0); 
+        
+    } else {
+        return "";
+    }
+    
+}
+
+QStringList MainWindow::searchPath(QString dir, QString filename)
+{
+    QStringList foundPath;
+    QDirIterator it(dir, QDirIterator::Subdirectories);
+    QString path;
+    while (it.hasNext()){
+        path = it.next();
+        if (path.contains(filename)){
+            foundPath << path;
+        }
+    }
+    return foundPath;
+}
+
+
 void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
 {
     
     this->m_synth=synth;
+    
+    
+    this->wavepath = m_settings->value("samplePath", findDefaultWavePath()).toString();
+    if(!QFile::exists(this->wavepath)) {
+        this->wavepath=findDefaultWavePath();
+        m_settings->setValue("samplePath", this->wavepath);
+    }
+    this->loadWave(this->wavepath);
+    qDebug() << "Default wavepath: " << this->wavepath;
+    
     
     int ind=0;
     int posX=0;
@@ -131,12 +216,44 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         
 }
 
+void MainWindow::chooseSampleSlot()
+{
+    choosesamplewindow = new ChooseSampleWindow(this, getWavepath());
+    choosesamplewindow->setModal(1);
+    choosesamplewindow->exec();
+    
+    this->setWavepath(choosesamplewindow->getWavepath());
+    
+    this->loadWave(this->getWavepath());
+    
+    qDebug() << "End function";
+}
+
+void MainWindow::loadWave(QString path){
+    qDebug() << "Main window | WavePath = " << path;
+    qDebug() << "Main window | Good: " << this->m_synth[0][0]->isGood();
+    for (int i=0; i<KEY_NUMBERS; i++)
+    {
+        this->m_synth[0][i]->loadWave(path.toStdString());
+    }
+    
+    m_settings->setValue("samplePath", path);
+    qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
+}
+
+void MainWindow::setWavepath(QString path)
+{
+    this->wavepath=path;
+}
+
+QString MainWindow::getWavepath(){
+    return this->wavepath;
+}
 
 void MainWindow::aboutSlot()
 {
     
     aboutwindow=new AboutWindow(this);
-    
     aboutwindow->setModal(1);
     aboutwindow->show();
     

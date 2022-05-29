@@ -55,6 +55,7 @@ class WaveSimple : public Instrmnt
   StkFrames& tick( StkFrames& frames, unsigned int channel = 0 );
   
   void setPressed(bool b=0);
+  void setSine();
   bool isPressed();
   bool isGood();
  

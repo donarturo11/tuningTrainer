@@ -10,6 +10,7 @@
 
 #include "WaveSimple.h"
 #include "SKINImsg.h"
+#include <QDebug>
 
 namespace stk {
 
@@ -18,9 +19,11 @@ WaveSimple :: WaveSimple( void )
   
   loop_ = new FileLoop();
   pitchShift_ = new LentPitShift();
+  sine_ = new SineWave();
   baseFrequency_ = 440.0;
   loopGain_ = 0.0;
   this->setPressed(0);
+  this->setSine();
   
 }  
 
@@ -31,20 +34,31 @@ WaveSimple :: ~WaveSimple( void )
 
 void WaveSimple :: loadWave(std::string filename, bool raw)
 {
+    if (filename=="sine") {
+          this->setBad();
+          this->setSine();
+    }
     try {
-          
           loop_->openFile(filename, raw);
-          setGood();
+          this->setGood();
+          //if (sine_) delete sine_;
+          
         }
     catch(...) // if loading sample fails, set sine generator
         {
-           setBad();
-           sine_ = new SineWave();
+           this->setBad();
+           this->setSine();
         }
 }
 
 
-
+void WaveSimple :: setSine()
+{
+    qDebug() << loop_;
+    this->setBad();
+    //if (loop_) delete loop_;
+    
+}
 
 void WaveSimple :: noteOn( StkFloat frequency, StkFloat amplitude )
 {

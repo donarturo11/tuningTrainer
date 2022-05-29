@@ -13,6 +13,12 @@
 #define BLACK_KEY_HEIGHT 70
 #define WHITE_KEY_HEIGHT (BLACK_KEY_HEIGHT*2)
 
+#ifdef __OS_WINDOWS__
+#define __PATH_SEPARATOR__ "\\"
+#else
+#define __PATH_SEPARATOR__ "/"
+#endif
+
 namespace stk {
 class WaveSimple;
 class WaveSimpleMixer;
