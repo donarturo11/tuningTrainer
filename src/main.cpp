@@ -19,7 +19,7 @@ int main(int argc,  char **argv)
     AudioEngine audioengine;
     stk::WaveSimpleMixer mixer;
     
-    qDebug() << "Vector synth address: " << &synth;
+    //qDebug() << "Vector synth address: " << &synth;
             
     for (int i=0; i<KEY_NUMBERS; i++) {
         synth.push_back(new stk::WaveSimple);
