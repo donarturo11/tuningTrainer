@@ -5,7 +5,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
    // 
+<<<<<<< HEAD
     qDebug() << "MainWindow Constructor:" << this;
+=======
+    //qDebug() << "MainWindow Constructor:" << this;
+>>>>>>> bb0f86b (Improvements in searching harpsichord.wav)
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
     
@@ -62,6 +66,7 @@ MainWindow::~MainWindow()
 //-------------------------------------------
 QString MainWindow::findDefaultWavePath()
 {
+<<<<<<< HEAD
     if (QFile::exists(QCoreApplication::applicationDirPath())){
         return QCoreApplication::applicationDirPath();
     }
@@ -76,11 +81,21 @@ QString MainWindow::findDefaultWavePath()
     
     //searchPaths << this->appconfiglocation;
     //searchPaths << QStandardPaths::writableLocation();
+=======
+    QDir directory = QDir(QCoreApplication::applicationDirPath());
+    QString filename="harpsichord.wav";
+    QString fullpath="";
+    QStringList searchPaths;
+    QStringList foundPaths;
+    
+    searchPaths << directory.path();
+>>>>>>> bb0f86b (Improvements in searching harpsichord.wav)
     
     #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
     searchPaths << "/usr/share/tuningTrainer";
     searchPaths << "/usr/local/share/tuningTrainer";
     #elif(__APPLE__) 
+<<<<<<< HEAD
     searchPaths << "/Applications/tuningTrainer.app/MacOS/Resources";
     #endif
     
@@ -99,6 +114,28 @@ QString MainWindow::findDefaultWavePath()
     } else {
         return "";
     }
+=======
+    if(directory.cd("../Resources")){
+    searchPaths << directory.path();
+    }
+    searchPaths << "/Applications/tuningTrainer.app/Contents/Resources";
+    #else
+    if (directory.cd("../share/tuningTrainer")){
+	searchPaths << directory.path();
+	}
+    #endif
+    
+    for(int i=0; i<searchPaths.size(); i++){
+        fullpath = searchPaths.at(i) + "/" + filename;
+        qDebug() << "Searching directory: " << fullpath;
+        if (QFile::exists(fullpath)) {
+			qDebug() << "Found wave: " << fullpath;
+			return fullpath;
+		}
+    }
+    
+    return "";
+>>>>>>> bb0f86b (Improvements in searching harpsichord.wav)
     
 }
 
@@ -122,6 +159,7 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     
     this->m_synth=synth;
     
+<<<<<<< HEAD
     
     this->wavepath = m_settings->value("samplePath", findDefaultWavePath()).toString();
     if(!QFile::exists(this->wavepath)) {
@@ -130,6 +168,22 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     }
     this->loadWave(this->wavepath);
     qDebug() << "Default wavepath: " << this->wavepath;
+=======
+    this->wavepath = m_settings->value("samplePath", findDefaultWavePath()).toString();
+    if(QFile::exists(this->wavepath)) {
+        this->wavepath=findDefaultWavePath();
+        m_settings->setValue("samplePath", this->wavepath);
+        qDebug() << "Loading wavepath: " << this->wavepath;
+        this->loadWave(this->wavepath);
+        
+    } else {
+		qDebug() << this->wavepath << " does not exist";
+		
+	}
+    
+    
+    
+>>>>>>> bb0f86b (Improvements in searching harpsichord.wav)
     
     
     int ind=0;
