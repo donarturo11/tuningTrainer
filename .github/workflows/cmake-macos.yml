@@ -32,9 +32,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
            cmake -B ${{github.workspace}}/build \
-                 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-                 -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
-                 -DCMAKE_INSTALL_PREFIX=/usr/
+                 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} 
 
     - name: Build
       # Build your program with the given configuration
@@ -47,10 +45,7 @@ jobs:
     - name: Build Package
       run: |
            cd ${{github.workspace}}/build
-           if [[ -x artifacts/ ]]; then
-           mkdir artifacts
-           fi
-           make install DESTDIR=./artifacts/tuningTrainer
+           make install DESTDIR=artifacts/tuningTrainer
            /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
                artifacts/tuningTrainer/tuningTrainer.app
     
