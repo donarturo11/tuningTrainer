@@ -2,7 +2,7 @@
 #define KEYGROUP_H
 #include <vector>
 #include <QDial>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QSettings>
 #include <QThread>
 
@@ -22,7 +22,7 @@ class KeyGroup : public QWidget
        QPushButton *m_keyButton;
        QDial *m_tuneDial;
        QLabel *m_Label;
-       QSpinBox *m_spinbox;
+       QDoubleSpinBox *m_spinbox;
        QSettings *m_settings;
        void setLabel(QString text);
        void connectSynth(stk::WaveSimple *synth);
@@ -30,7 +30,7 @@ class KeyGroup : public QWidget
        int getPosX();
        int getTuneDialPosY();
        int getKeyButtonPosY();
-       int getFrequency();
+       double getFrequency();
        int getKeyId();
        QString getKeyLabel();
     private:
@@ -45,7 +45,7 @@ class KeyGroup : public QWidget
        void setKeyCode(int keyCode);
        void setPressedBg();
        void setDefaultBg();
-       void setFrequency(int frequency);
+       void setFrequency(double frequency);
        void setTuneDialPosY(int posY);
        void setKeyButtonPosY(int posY);
        void setLabelPosY(int posY);
@@ -63,7 +63,7 @@ class KeyGroup : public QWidget
        QString settingsKey;
        int keyCode;
        int keyId;
-       int frequency;
+       double frequency;
        stk::WaveSimple *m_synth;
        bool pressed;
     public slots:
