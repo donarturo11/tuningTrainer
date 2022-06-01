@@ -13,9 +13,9 @@ make
 # Run
 
 To run this program correctly be sure that harpsichord.wav is in same directory as file named tuningTrainer.
-To run on Linux run at first JACK Audio Connection Kit
+To run on Linux run at first JACK Audio Connection Kit.
 
-For now this program is not tested with Windows, but I'm going to make it cross-platform.
+This program was tested on Archlinux, Windows 7 and MacOS Sierra. This program is testing on MacOS Monterey. In artifacts of Actions you can find version for Catallina, but I can't at now give no guarrancy to correct run.
 
 # Requirements
 
