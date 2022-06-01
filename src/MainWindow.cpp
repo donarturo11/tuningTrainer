@@ -4,16 +4,10 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 //MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-   // 
-    //qDebug() << "MainWindow Constructor:" << this;
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
-    
     this->appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    //qDebug() << "Appconfiglocation " << this->appconfiglocation;
-    
-    
-    
+ 
     this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
     
@@ -86,9 +80,7 @@ QString MainWindow::findDefaultWavePath()
     
     for(int i=0; i<searchPaths.size(); i++){
         fullpath = searchPaths.at(i) + "/" + filename;
-        qDebug() << "Searching directory: " << fullpath;
         if (QFile::exists(fullpath)) {
-			qDebug() << "Found wave: " << fullpath;
 			return fullpath;
 		}
     }
@@ -121,16 +113,8 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     if(QFile::exists(this->wavepath)) {
         this->wavepath=findDefaultWavePath();
         m_settings->setValue("samplePath", this->wavepath);
-        qDebug() << "Loading wavepath: " << this->wavepath;
         this->loadWave(this->wavepath);
-        
-    } else {
-		qDebug() << this->wavepath << " does not exist";
-		
-	}
-    
-    
-    
+    } 
     
     
     int ind=0;
@@ -226,20 +210,14 @@ void MainWindow::chooseSampleSlot()
     this->setWavepath(choosesamplewindow->getWavepath());
     
     this->loadWave(this->getWavepath());
-    
-    qDebug() << "End function";
 }
 
 void MainWindow::loadWave(QString path){
-    qDebug() << "Main window | WavePath = " << path;
-    qDebug() << "Main window | Good: " << this->m_synth[0][0]->isGood();
     for (int i=0; i<KEY_NUMBERS; i++)
     {
         this->m_synth[0][i]->loadWave(path.toStdString());
     }
-    
     m_settings->setValue("samplePath", path);
-    qDebug() << "samplePath=" << m_settings->value("samplePath", "").toString();
 }
 
 void MainWindow::setWavepath(QString path)
@@ -247,17 +225,16 @@ void MainWindow::setWavepath(QString path)
     this->wavepath=path;
 }
 
-QString MainWindow::getWavepath(){
+QString MainWindow::getWavepath()
+{
     return this->wavepath;
 }
 
 void MainWindow::aboutSlot()
-{
-    
+{    
     aboutwindow=new AboutWindow(this);
     aboutwindow->setModal(1);
     aboutwindow->show();
-    
 }
 
 void MainWindow::quitSlot()
