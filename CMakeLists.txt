@@ -111,12 +111,22 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION tuningTrainer)
 install (FILES src/harpsichord.wav DESTINATION tuningTrainer)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+set(CMAKE_INSTALL_PREFIX "tuningTrainer.app")
+set_target_properties(
+       ${PROJECT_NAME}
+       PROPERTIES
+       INSTALL_RPATH @executable_path/../Frameworks)
+
+install (TARGETS ${PROJECT_NAME}
+       RUNTIME DESTINATION Contents/MacOS/)
+install (FILES src/harpsichord.wav DESTINATION Contents/Resources/)
 else()
 install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION bin
        LIBRARY DESTINATION lib
        ARCHIVE DESTINATION lib/archive )
-install (FILES src/harpsichord.wav DESTINATION bin)
+install (FILES src/harpsichord.wav DESTINATION share/tuningTrainer)
 endif()
 
 
