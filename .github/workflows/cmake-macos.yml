@@ -32,7 +32,6 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
            cmake -B ${{github.workspace}}/build \
-                 -DCMAKE_INSTALL_PREFIX=artifacts/tuningTrainer.app \
                  -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} 
 
     - name: Build
@@ -47,12 +46,18 @@ jobs:
       run: |
            cd ${{github.workspace}}/build
            make install
-           /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
-               artifacts/tuningTrainer/tuningTrainer.app
+           /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt tuningTrainer.app
+           
+    - name: Prepare Artifact
+      run: |
+           cd ${{github.workspace}}/build
+           if [[ -x artifacts ]]; then rmdir -Rf artifacts
+           mkdir artifacts
+           mv tuningTrainer.app artifacts/tuningTrainer.app
     
     - name: Upload tuningTrainer-mac
       uses: actions/upload-artifact@v3.0.0
       with:
-        name: tuningTrainer-mac
+        name: tuningTrainer-macos-monterrey
         path: ${{github.workspace}}/build/artifacts
         
