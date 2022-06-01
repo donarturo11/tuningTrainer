@@ -51,7 +51,9 @@ jobs:
     - name: Prepare Artifact
       run: |
            cd ${{github.workspace}}/build
-           if [[ -x artifacts ]]; then rmdir -Rf artifacts
+           if [[ -x artifacts ]]; then 
+           rmdir -Rf artifacts
+           fi
            mkdir artifacts
            mv tuningTrainer.app artifacts/tuningTrainer.app
     
