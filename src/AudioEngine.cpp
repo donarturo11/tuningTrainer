@@ -44,7 +44,6 @@ void AudioEngine::start()
 
 void AudioEngine::stop()
 {
-    std::cout << "Stop" << std::endl;
     setRunning(0);
     delete output;       
 }
