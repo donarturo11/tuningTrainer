@@ -109,19 +109,20 @@ void KeyGroup::initSpinBox()
     if (this->white==WHITE) posY+=60;
     //if (this->white==BLACK) posX-=10;
     //else posY+=0;
-    width=50;
+    width=70;
     height=20;
     
-    m_spinbox = new QSpinBox(parentClass);
+    m_spinbox = new QDoubleSpinBox(parentClass);
     
     
     m_spinbox->setGeometry(posX, posY, width, height);
     m_spinbox->setWrapping(false);
+    m_spinbox->setSingleStep(0.1);
     m_spinbox->setMinimum(220);
     m_spinbox->setMaximum(880);
     m_spinbox->show();
     
-    connect (m_spinbox, SIGNAL(valueChanged(int)), this, SLOT(spinboxSlot()));
+    connect (m_spinbox, SIGNAL(valueChanged(double)), this, SLOT(spinboxSlot()));
 }
 //-------------------------------------------
 
@@ -135,14 +136,14 @@ void KeyGroup::tuneDialSlot()
 {
     int value = m_tuneDial->value();
     m_spinbox->setValue(value);
-    this->setFrequency(value);
+    //this->setFrequency(value);
     
     
 }
 //-------------------------------------------
 void KeyGroup::spinboxSlot()
 {
-    int value = m_spinbox->value();
+    double value = m_spinbox->value();
     m_tuneDial->setValue(value);
     this->setFrequency(value);
     this->parentClass->setFocus();
@@ -221,17 +222,16 @@ int KeyGroup::getKeyCode()
 }
 
 //-------------------------------------------
-int KeyGroup::getFrequency()
+double KeyGroup::getFrequency()
 {
     return this->frequency;
 }
 //-------------------------------------------
-void KeyGroup::setFrequency(int frequency)
+void KeyGroup::setFrequency(double frequency)
 {
     this->frequency=frequency;
     m_synth->setFrequency(frequency);
     m_settings->setValue(this->settingsKey, frequency);
-    
 }
 //-------------------------------------------
 

@@ -10,6 +10,7 @@
 
 #include "WaveSimple.h"
 #include "SKINImsg.h"
+//#include <QString>
 #include <QDebug>
 
 namespace stk {
@@ -54,10 +55,7 @@ void WaveSimple :: loadWave(std::string filename, bool raw)
 
 void WaveSimple :: setSine()
 {
-    qDebug() << loop_;
     this->setBad();
-    //if (loop_) delete loop_;
-    
 }
 
 void WaveSimple :: noteOn( StkFloat frequency, StkFloat amplitude )
@@ -92,6 +90,7 @@ void WaveSimple :: setBaseFrequency(StkFloat frequency)
 
 void WaveSimple :: setFrequency( StkFloat frequency )
 {
+  qDebug() << QString::number(frequency, 'f', 2);
   if (isGood()) pitchShift_->setShift(frequency/baseFrequency_);
   else sine_->setFrequency(frequency);
 }
