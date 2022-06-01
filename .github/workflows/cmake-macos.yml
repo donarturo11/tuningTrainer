@@ -47,7 +47,10 @@ jobs:
     - name: Build Package
       run: |
            cd ${{github.workspace}}/build
-           make install DESTDIR=artifacts/tuningTrainer
+           if [[ -x artifacts/ ]]; then
+           mkdir artifacts
+           fi
+           make install DESTDIR=./artifacts/tuningTrainer
            /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
                artifacts/tuningTrainer/tuningTrainer.app
     
