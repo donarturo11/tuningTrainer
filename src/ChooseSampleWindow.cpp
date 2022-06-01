@@ -19,9 +19,6 @@ ChooseSampleWindow::ChooseSampleWindow(QWidget *parent, QString wavepath) : QDia
 //-------------------------------------------
 void ChooseSampleWindow::init(){
     
-    //QMetaObject::invokeMethod(parent, "getWavepath", Q_RETURN_ARG(QString, this->wavepath));
-    //(MainWindow*)parent()->getWavepath();
-    //qDebug() << *this->wavepath;
     m_browse_btn = new QPushButton("Browse", this);
     m_browse_btn->setGeometry(605, 0, 60, 30);
     m_browse_btn->show();

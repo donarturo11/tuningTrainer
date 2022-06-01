@@ -8,9 +8,12 @@
 #include <QApplication>
 #include <QDebug>
 #include "MainWindow.h"
+#define qPrettyDebug() qDebug() << Q_FUNC_INFO
+#define qPrettyWarning() qWarning() << Q_FUNC_INFO
 
 int main(int argc,  char **argv)
 {
+    qSetMessagePattern("%{function} | %{message}");
     stk::Stk::showWarnings( false );
     stk::Stk::printErrors( false );
 
@@ -19,14 +22,10 @@ int main(int argc,  char **argv)
     AudioEngine audioengine;
     stk::WaveSimpleMixer mixer;
     
-    qDebug() << "Vector synth address: " << &synth;
-            
     for (int i=0; i<KEY_NUMBERS; i++) {
         synth.push_back(new stk::WaveSimple);
-        //synth[i]->loadWave("harpsichord.wav");
         synth[i]->setBaseFrequency(220);
         mixer.addInstrument(synth[i]);
-        //qDebug() << "Main | Synth[" << i << "]=" << synth[i];
     }
 
     audioengine.connectMixer(&mixer);
