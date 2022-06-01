@@ -41,22 +41,15 @@ jobs:
       run: |
            echo "Github workspace=${{github.workspace}}"
            echo "PWD=${PWD}"
-           cmake --build ${{github.workspace}}/build \
-                 --config ${{env.BUILD_TYPE}}
+           cd ${{github.workspace}}/build
+           make
     
     - name: Build Package
       run: |
            cd ${{github.workspace}}/build
-           mkdir -p artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/
-           cp bin/tuningTrainer artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/
+           make install DESTDIR=artifacts/tuningTrainer
            /usr/local/Cellar/qt@5/5.15.3/bin/macdeployqt \
                artifacts/tuningTrainer/tuningTrainer.app
-           curl -fsSLO https://github.com/aurelien-rainone/macdeployqtfix/archive/master.zip
-           bsdtar xf master.zip
-           python macdeployqtfix-master/macdeployqtfix.py \
-                     artifacts/tuningTrainer/tuningTrainer.app/Contents/MacOS/tuningTrainer \
-                     /usr/local/Cellar/qt@5/5.15.3/
-           rm -rf macdeployqtfix-master master.zip
     
     - name: Upload tuningTrainer-mac
       uses: actions/upload-artifact@v3.0.0
