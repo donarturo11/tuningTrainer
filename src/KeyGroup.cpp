@@ -5,6 +5,7 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
 {
     
     this->parentClass=parent;
+    this->setFrequencyRange(32, 1024);
     
     this->setKeyButtonPosY(150);
     this->setTuneDialPosY(0);
@@ -17,6 +18,7 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
     this->settingsKey=settingsKey; 
     this->m_settings=settings;
     
+    
                
     
 }
@@ -24,10 +26,17 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
 KeyGroup::~KeyGroup()
 {
     m_settings->setValue(this->settingsKey, this->getFrequency());
-    
 }
 
-//-------------------------------------------
+void KeyGroup::setFrequencyRange(int min, int max)
+{
+    if(min>max){
+        std::swap(min, max);
+    }
+    
+    this->frequencyMinimal=min;
+    this->frequencyMaximal=max;
+}
 
 void KeyGroup::initKeyButton(int posX, int white, int nId, int keyCode, QWidget* parent)
 {
@@ -92,8 +101,8 @@ void KeyGroup::initTuneDial()
     m_tuneDial = new QDial(parentClass);
     m_tuneDial->setGeometry(posX, posY, width, height);
     m_tuneDial->setWrapping(false);
-    m_tuneDial->setMinimum(220);
-    m_tuneDial->setMaximum(880);
+    m_tuneDial->setMinimum(this->frequencyMinimal);
+    m_tuneDial->setMaximum(this->frequencyMaximal);
     m_tuneDial->show();
     
     connect (m_tuneDial, SIGNAL(valueChanged(int)), this, SLOT(tuneDialSlot()));
@@ -103,23 +112,28 @@ void KeyGroup::initTuneDial()
 void KeyGroup::initSpinBox() 
 {
     int posX, posY, width, height;
+    QString style;
+    
     posY=this->getTuneDialPosY();
     posX=this->getPosX();
     posY+=5;
     if (this->white==WHITE) posY+=60;
     //if (this->white==BLACK) posX-=10;
     //else posY+=0;
+    
+    style="font-size: 7pt";
+    
+    
     width=70;
     height=20;
     
     m_spinbox = new QDoubleSpinBox(parentClass);
-    
-    
     m_spinbox->setGeometry(posX, posY, width, height);
     m_spinbox->setWrapping(false);
+    m_spinbox->setStyleSheet(style);
     m_spinbox->setSingleStep(0.1);
-    m_spinbox->setMinimum(220);
-    m_spinbox->setMaximum(880);
+    m_spinbox->setMinimum(this->frequencyMinimal);
+    m_spinbox->setMaximum(this->frequencyMaximal);
     m_spinbox->show();
     
     connect (m_spinbox, SIGNAL(valueChanged(double)), this, SLOT(spinboxSlot()));
@@ -276,8 +290,6 @@ void KeyGroup::connectSynth(stk::WaveSimple* synth)
     this->m_synth = synth;
     int defFreq=m_settings->value(this->settingsKey, 440).toInt();
     this->m_tuneDial->setValue(defFreq);
-    
-    
 }
 
 

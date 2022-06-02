@@ -33,6 +33,7 @@ class KeyGroup : public QWidget
        double getFrequency();
        int getKeyId();
        QString getKeyLabel();
+       
     private:
        void setPosX(int posX);
        QString getShortcutString();
@@ -46,6 +47,7 @@ class KeyGroup : public QWidget
        void setPressedBg();
        void setDefaultBg();
        void setFrequency(double frequency);
+       void setFrequencyRange(int min, int max);
        void setTuneDialPosY(int posY);
        void setKeyButtonPosY(int posY);
        void setLabelPosY(int posY);
@@ -64,6 +66,8 @@ class KeyGroup : public QWidget
        int keyCode;
        int keyId;
        double frequency;
+       int frequencyMinimal;
+       int frequencyMaximal;
        stk::WaveSimple *m_synth;
        bool pressed;
     public slots:

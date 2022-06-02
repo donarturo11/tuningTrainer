@@ -56,7 +56,7 @@ jobs:
            fi
            mkdir artifacts
            mv tuningTrainer.app artifacts/tuningTrainer.app
-    
+
     - name: Upload tuningTrainer-mac
       uses: actions/upload-artifact@v3.0.0
       with:
