@@ -88,11 +88,12 @@ jobs:
            if [[ -x artifacts ]]; then 
            rm -Rf artifacts
            fi
+           mkdir artifacts/
            echo ${MINGW_ROOT}
            make install
-           tree ${MINGW_GIT_WORKSPACE}/build/ || find ${MINGW_GIT_WORKSPACE}/build/
-           mv ${MINGW_ROOT}/tuningTrainer-win \
+           mv -v ${MINGW_ROOT}/tuningTrainer-win \
                    ${MINGW_GIT_WORKSPACE}/build/artifacts/
+           tree ${MINGW_GIT_WORKSPACE}/build/ || find ${MINGW_GIT_WORKSPACE}/build/
            
            
     - name: Upload tuningTrainer-win.zip
