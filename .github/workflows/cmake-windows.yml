@@ -4,7 +4,7 @@ on:
   push:
     branches:
        - main
-       - CI-cmake
+       - Improve-CI
   pull_request:
     branches: [ main ]
 
@@ -45,7 +45,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: base base-devel autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+        install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
     
     - name: Git checkout
       uses: actions/checkout@v3
@@ -59,6 +59,7 @@ jobs:
     - name: Build and install stk
       run: |
            echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
+           cd ${MINGW_GIT_WORKSPACE}
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
@@ -71,6 +72,7 @@ jobs:
       run: |
            echo $env || echo "This variable does not exist"
            echo $env || echo "This variable does not exist"
+           cd ${MINGW_GIT_WORKSPACE}
            mkdir build
            cd build
            cmake .. \
@@ -83,12 +85,18 @@ jobs:
     - name: Package tuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
-           echo $(pwd)
+           if [[ -x artifacts ]]; then 
+           rm -Rf artifacts
+           fi
+           echo ${MINGW_ROOT}
            make install
+           tree ${MINGW_GIT_WORKSPACE}/build/ || find ${MINGW_GIT_WORKSPACE}/build/
+           mv ${MINGW_ROOT}/tuningTrainer-win \
+                   ${MINGW_GIT_WORKSPACE}/build/artifacts/
+           
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win
-        path: ${{github.workspace}}\build\tuningTrainer
-        
+        path: ${MINGW_ROOT}\build\artifacts\tuningTrainer-win\
