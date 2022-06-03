@@ -83,12 +83,17 @@ jobs:
     - name: Package tuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
-           echo $(pwd)
+           if [[ -x artifacts ]]; then 
+           rm -Rf artifacts
+           fi
+           echo ${MINGW_ROOT}
            make install
+           mv ${MINGW_ROOT}/tuningTrainer-win \
+                   ${MINGW_GIT_WORKSPACE}/build/artifacts/
+           ls -lah ${MINGW_GIT_WORKSPACE}/build/artifacts/
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win
-        path: ${{github.workspace}}\build\tuningTrainer
-        
+        path: ${MINGW_ROOT}\build\artifacts\tuningTrainer-win\
