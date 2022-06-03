@@ -4,7 +4,7 @@ on:
   push:
     branches:
        - main
-       - CI-cmake
+       - Improve-CI
   pull_request:
     branches: [ main ]
 
