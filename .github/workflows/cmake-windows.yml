@@ -59,6 +59,7 @@ jobs:
     - name: Build and install stk
       run: |
            echo "MINGW_GIT_WORKSPACE=${PWD}" >> $GITHUB_ENV
+           cd ${MINGW_GIT_WORKSPACE}
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
@@ -71,6 +72,7 @@ jobs:
       run: |
            echo $env || echo "This variable does not exist"
            echo $env || echo "This variable does not exist"
+           cd ${MINGW_GIT_WORKSPACE}
            mkdir build
            cd build
            cmake .. \
