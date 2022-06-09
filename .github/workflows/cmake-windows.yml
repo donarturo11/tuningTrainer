@@ -4,7 +4,6 @@ on:
   push:
     branches:
        - main
-       - CI-Windows
   pull_request:
     branches: [ main ]
 
