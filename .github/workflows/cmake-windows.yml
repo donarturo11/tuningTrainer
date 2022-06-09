@@ -92,7 +92,7 @@ jobs:
            echo ${MINGW_ROOT}
            make install
            mv -v ${MINGW_ROOT}/tuningTrainer-win \
-                   /d/artifacts/
+                   /d/artifacts/tuningTrainer-win
            tree /d/artifacts
            
            
