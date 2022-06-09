@@ -13,6 +13,9 @@
 #define BLACK_KEY_HEIGHT 70
 #define WHITE_KEY_HEIGHT (BLACK_KEY_HEIGHT*2)
 
+#define FREQ_MIN 32.00
+#define FREQ_MAX 1024.00
+
 #ifdef __OS_WINDOWS__
 #define __PATH_SEPARATOR__ "\\"
 #else

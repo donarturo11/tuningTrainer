@@ -5,7 +5,7 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
 {
     
     this->parentClass=parent;
-    this->setFrequencyRange(32, 1024);
+    this->setFrequencyRange(FREQ_MIN, FREQ_MAX);
     
     this->setKeyButtonPosY(150);
     this->setTuneDialPosY(0);

@@ -48,6 +48,8 @@ class MainWindow : public QWidget
         void setWavepath(QString path);
         QString getWavepath();
         void loadWave(QString path);
+        void setBaseFreq(double freq);
+        double getBaseFreq();
         
 	private:
         
@@ -65,11 +67,14 @@ class MainWindow : public QWidget
         QString findDefaultWavePath();
         QStringList searchPath(QString dir, QString filename);
         std::vector <stk::WaveSimple*> *m_synth;
-        
-        
+        void setDefaultFrequencies();
+        void setDefaultBaseFrequency();
+        void setDefaultWavepath();
+        void setDefaults();
         
     protected:
         int waitCount;
+        double baseFreq;
     
     public slots:
         void aboutSlot();

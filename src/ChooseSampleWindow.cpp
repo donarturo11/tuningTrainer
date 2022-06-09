@@ -9,6 +9,7 @@ ChooseSampleWindow::ChooseSampleWindow(QWidget *parent, QString wavepath) : QDia
     this->setWindowTitle("Choose sample window");
     this->wavepath = wavepath;
     
+    this->parentClass=parent;
     //m_label = new QLabel(label_str, this);
     //m_label->show();
         
@@ -42,13 +43,14 @@ void ChooseSampleWindow::init(){
     
     m_baseFreq_label = new QLabel("Frequency of source sample:", this);
     m_baseFreq_label->setGeometry(200, 30, 200, 30);
-    //m_baseFreq_label->show();
+    m_baseFreq_label->show();
     
-    m_baseFreq_spin = new QSpinBox(this);
+    m_baseFreq_spin = new QDoubleSpinBox(this);
     m_baseFreq_spin->setGeometry(400, 30, 60, 30);
-    m_baseFreq_spin->setRange(30, 880);
+    m_baseFreq_spin->setRange(FREQ_MIN, FREQ_MAX);
     m_baseFreq_spin->setValue(220);
-    //m_baseFreq_spin->show();
+    connect (m_baseFreq_spin, SIGNAL(valueChanged(double)), this, SLOT(baseFreqSlot()));
+    m_baseFreq_spin->show();
 }
 
 
@@ -65,6 +67,12 @@ QString ChooseSampleWindow::getWavepath()
 void ChooseSampleWindow::setWavepath(QString path)
 {
     this->wavepath=path;
+}
+
+void ChooseSampleWindow::baseFreqSlot()
+{
+    double value = m_baseFreq_spin->value();
+    this->setBaseFreq(value);
 }
 
 void ChooseSampleWindow::browseSlot()
@@ -84,3 +92,16 @@ void ChooseSampleWindow::quitSlot()
 {
     this->close();
 }
+
+double ChooseSampleWindow::getBaseFreq()
+{
+    return this->baseFreq;
+}
+
+void ChooseSampleWindow::setBaseFreq(double freq)
+{
+    this->baseFreq=freq;
+    qDebug() << "Base frequency: " << getBaseFreq();
+}
+
+

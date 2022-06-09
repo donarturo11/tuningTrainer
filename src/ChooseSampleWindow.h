@@ -1,6 +1,7 @@
 #ifndef CHOOSESAMPLEWINDOW_H
 #define CHOOSESAMPLEWINDOW_H
 
+#include "globals.h"
 #include <QApplication>
 #include <QWidget>
 #include <QDialog>
@@ -8,7 +9,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLabel>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QString>
 #include <QVBoxLayout>
 
@@ -24,6 +25,8 @@ class ChooseSampleWindow : public QDialog
 		ChooseSampleWindow(QWidget *parent, QString wavepath);
         void init();
         void setWavepath(QString path);
+        void setBaseFreq(double freq);
+        double getBaseFreq();
         QString getWavepath();
         QPushButton *m_quit_btn;
         QLabel *m_label;
@@ -36,10 +39,10 @@ class ChooseSampleWindow : public QDialog
         QPushButton *m_apply_btn;
         QPushButton *m_cancel_btn;
         QLabel *m_baseFreq_label;
-        QSpinBox *m_baseFreq_spin;
+        QDoubleSpinBox *m_baseFreq_spin;
         
         QString wavepath;
-        int baseFreq;
+        double baseFreq;
         
     protected:
         QString label_str="";
@@ -49,6 +52,7 @@ class ChooseSampleWindow : public QDialog
         void quitSlot();
         void browseSlot();
         void applySlot();
+        void baseFreqSlot();
         
     signals:
         

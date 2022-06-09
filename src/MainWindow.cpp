@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_reset_btn->show();
     connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
     
-    
+    m_settings->sync();
     
     
 }
@@ -89,6 +89,11 @@ QString MainWindow::findDefaultWavePath()
     
 }
 
+void MainWindow::setDefaults()
+{
+    
+}
+
 QStringList MainWindow::searchPath(QString dir, QString filename)
 {
     QStringList foundPath;
@@ -109,6 +114,7 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     
     this->m_synth=synth;
     
+    this->baseFreq = m_settings->value("baseFreq", 220).toDouble();
     this->wavepath = m_settings->value("samplePath", findDefaultWavePath()).toString();
     if(QFile::exists(this->wavepath)) {
         this->wavepath=findDefaultWavePath();
@@ -117,10 +123,12 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     } 
     
     
+    
+    
     int ind=0;
     int posX=0;
     int color=WHITE;
-    
+    //this->createKey args: keyLetter, X offset, color (white=1/black=0), KEYCODE, QSettings
     this->createKey(0, posX, color, ind, Qt::Key_Q, m_settings); 
     this->createKey(0, posX, color, ind, Qt::Key_W, m_settings); 
     this->createKey(0, posX, color, ind, Qt::Key_E, m_settings); 
@@ -207,9 +215,29 @@ void MainWindow::chooseSampleSlot()
     choosesamplewindow->setModal(1);
     choosesamplewindow->exec();
     
+    qDebug() << "Choosen Sample: " << choosesamplewindow->getWavepath();
+    qDebug() << "Base Freq: " << choosesamplewindow->getWavepath();
+    
     this->setWavepath(choosesamplewindow->getWavepath());
+    this->setBaseFreq(choosesamplewindow->getBaseFreq());
     
     this->loadWave(this->getWavepath());
+    
+}
+
+void MainWindow::setBaseFreq(double freq)
+{
+    this->baseFreq=freq;
+    for (int i=0; i<KEY_NUMBERS; i++)
+    {
+        this->m_synth[0][i]->setBaseFrequency(freq);
+    }
+    m_settings->setValue("baseFreq", freq);
+}
+
+double MainWindow::getBaseFreq()
+{
+    return this->baseFreq;
 }
 
 void MainWindow::loadWave(QString path){
@@ -244,9 +272,32 @@ void MainWindow::quitSlot()
 
 void MainWindow::resetSlot()
 {
+    setDefaultFrequencies();
+    setDefaultBaseFrequency();
+    setDefaultWavepath();
+    m_settings->sync();
+}
+
+void MainWindow::clearSlot()
+{
+    m_settings->clear();    
+}
+
+void MainWindow::setDefaultFrequencies()
+{
     for (int i=0; i<KEY_NUMBERS; i++)
     {
         myKeyGroup[i]->m_spinbox->setValue(440);
     }
-    m_settings->clear();
+}
+
+void MainWindow::setDefaultBaseFrequency()
+{
+    setBaseFreq(220);
+}
+
+void MainWindow::setDefaultWavepath()
+{
+    setWavepath(findDefaultWavePath());
+    qDebug() << "WavePath: " << this->wavepath;
 }
