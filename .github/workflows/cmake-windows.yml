@@ -85,11 +85,10 @@ jobs:
     - name: Package tuningTrainer
       run: |
            cd ${MINGW_GIT_WORKSPACE}/build
-           if [[ -x artifacts ]]; then 
+           if [[ -x /d/artifacts ]]; then 
            rm -Rf artifacts
            fi
-           mkdir artifacts/
-           echo ${MINGW_ROOT}
+           mkdir /d/artifacts/
            make install
            mv -v ${MINGW_ROOT}/tuningTrainer-win \
                    /d/artifacts/tuningTrainer-win
