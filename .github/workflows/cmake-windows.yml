@@ -92,12 +92,12 @@ jobs:
            echo ${MINGW_ROOT}
            make install
            mv -v ${MINGW_ROOT}/tuningTrainer-win \
-                   ${MINGW_GIT_WORKSPACE}/build/artifacts/
-           tree ${MINGW_GIT_WORKSPACE}/build/ || find ${MINGW_GIT_WORKSPACE}/build/
+                   /d/artifacts/
+           tree /d/artifacts
            
            
     - name: Upload tuningTrainer-win.zip
       uses: actions/upload-artifact@v3.0.0
       with:
         name: tuningTrainer-win
-        path: ${{GITHUB_WORKSPACE}}\build\artifacts\tuningTrainer-win\
+        path: D:\artifacts\tuningTrainer-win\
