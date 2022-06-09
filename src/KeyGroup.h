@@ -75,6 +75,8 @@ class KeyGroup : public QWidget
        void releasedSlot();
        void tuneDialSlot();
        void spinboxSlot();
+       void spinboxTextSlot();
+       void spinboxEditFinishedSlot();
         
         
 };

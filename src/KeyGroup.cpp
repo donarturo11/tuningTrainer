@@ -137,6 +137,8 @@ void KeyGroup::initSpinBox()
     m_spinbox->show();
     
     connect (m_spinbox, SIGNAL(valueChanged(double)), this, SLOT(spinboxSlot()));
+    connect (m_spinbox, SIGNAL(editingFinished()), this, SLOT(spinboxEditFinishedSlot()));
+    connect (m_spinbox, SIGNAL(textChanged(QString)), this, SLOT(spinboxTextSlot()));
 }
 //-------------------------------------------
 
@@ -149,22 +151,33 @@ void KeyGroup::initLabel()
 void KeyGroup::tuneDialSlot()
 {
     int value = m_tuneDial->value();
-    m_spinbox->setValue(value);
-    //this->setFrequency(value);
-    
-    
+    m_spinbox->setValue(value);   
 }
 //-------------------------------------------
 void KeyGroup::spinboxSlot()
 {
+    m_spinbox->setKeyboardTracking(0);
     double value = m_spinbox->value();
     m_tuneDial->setValue(value);
     this->setFrequency(value);
-    this->parentClass->setFocus();
+    spinboxEditFinishedSlot();
+    
     
     
 }
+
+void KeyGroup::spinboxTextSlot()
+{
+    //qDebug() << "Text changed";
+}
 //-------------------------------------------
+
+void KeyGroup::spinboxEditFinishedSlot()
+{
+    //qDebug() << "Text edited";
+    this->parentClass->setFocus();
+}
+
 void KeyGroup::setPressedBg()
 {
     m_keyButton->setStyleSheet(btnStylePressed);
