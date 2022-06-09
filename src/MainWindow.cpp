@@ -44,6 +44,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_reset_btn->show();
     connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
     
+    posY+=height;
+    
+    m_clear_btn = new QPushButton("Clear config", this);
+    m_clear_btn->setGeometry(posX, posY, width, height);
+    m_clear_btn->show();
+    connect (m_clear_btn, SIGNAL(pressed()), this, SLOT(clearSlot()));
+    
     m_settings->sync();
     
     
@@ -280,6 +287,7 @@ void MainWindow::resetSlot()
 
 void MainWindow::clearSlot()
 {
+    resetSlot();
     m_settings->clear();    
 }
 
