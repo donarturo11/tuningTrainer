@@ -56,6 +56,7 @@ class MainWindow : public QWidget
         KeyGroup *myKeyGroup[KEY_NUMBERS];
         QPushButton *m_about_btn;
         QPushButton *m_chooseSample_btn;
+        QPushButton *m_clear_btn;
         QPushButton *m_quit_btn;
         QPushButton *m_reset_btn;
         QString wavepath="";
@@ -80,6 +81,7 @@ class MainWindow : public QWidget
         void aboutSlot();
         void chooseSampleSlot();
         void resetSlot();
+        void clearSlot();
         void quitSlot();
         
     signals:
