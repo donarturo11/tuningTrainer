@@ -60,6 +60,6 @@ jobs:
     - name: Upload tuningTrainer-mac
       uses: actions/upload-artifact@v3.0.0
       with:
-        name: tuningTrainer-macos-monterrey
+        name: tuningTrainer-macos-11
         path: ${{github.workspace}}/build/artifacts
         
