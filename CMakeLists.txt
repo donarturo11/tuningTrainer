@@ -164,7 +164,6 @@ if(MINGW)
         $ENV{MSYSTEM_PREFIX}/bin/libzstd.dll
         $ENV{MSYSTEM_PREFIX}/bin/zlib1.dll
     DESTINATION tuningTrainer)
-    endif() # MINGW64
     install( FILES
         $ENV{MSYSTEM_PREFIX}/bin/Qt5Core.dll
         $ENV{MSYSTEM_PREFIX}/bin/Qt5Gui.dll
@@ -174,4 +173,4 @@ if(MINGW)
         $ENV{MSYSTEM_PREFIX}/share/qt5/plugins/platforms
         $ENV{MSYSTEM_PREFIX}/share/qt5/plugins/styles
         DESTINATION tuningTrainer)
-endif() # STREQUAL WINDOWS
+endif()
