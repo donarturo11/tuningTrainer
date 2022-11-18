@@ -21,6 +21,13 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 message(${CMAKE_SYSTEM_NAME})
 
+# DETECT MINGW
+if(MINGW)
+message(STATUS ">>> Detected MINGW")
+message(STATUS ">>> MSYSTEM = $ENV{MSYSTEM}")
+message(STATUS ">>> PREFIX = $ENV{MSYSTEM_PREFIX}")
+endif()
+
 #set (EXTRA_INCLUDE_PATHS)
 #set (EXTRA_LINKER_FLAGS)
 
@@ -37,10 +44,14 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         add_compile_definitions(__OS_WINDOWS__)
         add_compile_definitions(__WINDOWS_WASAPI__)
         #add_compile_definitions(__WINDOWS_DS__)
-        INCLUDE_DIRECTORIES(C:/Windows/System32 /mingw64/include/stk src/ ${EXTRA_INCLUDE_PATHS})
+        INCLUDE_DIRECTORIES(C:/Windows/System32 $ENV{MSYSTEM_PREFIX}/include/stk src/ ${EXTRA_INCLUDE_PATHS})
         LINK_DIRECTORIES(C:/Windows/System32 ${EXTRA_LINKER_PATHS})
-        set (CMAKE_CXX_FLAGS "-static -static-libstdc++ -isystem /mingw64/include/stk -L/mingw64/lib")
-        set (CMAKE_EXE_LINKER_FLAGS "-static")
+        if(MINGW)
+        set (CMAKE_CXX_FLAGS "-static -static-libstdc++ -isystem $ENV{MSYSTEM_PREFIX}/include/stk -L$ENV{MSYSTEM_PREFIX}/lib")
+        #set (CMAKE_EXE_LINKER_FLAGS "-static")
+        set (CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic")
+        endif()
+
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         message(STATUS ">>> MacOS")
         add_compile_definitions(__APPLE__)
@@ -63,13 +74,7 @@ else()
     list(APPEND API_DEFS "-D__MACOSX_CORE__")
     list(APPEND API_LIST "core")
     set(STK_PATH_DEFAULT "/usr/local/Cellar/stk/4.6.2")
-    if(NOT ${STK_PATH})
-       setset(STK_PATH ${STK_PATH})
-    else()
-       set(STK_PATH ${STK_PATH_DEFAULT})
-       message(STATUS "STK_PATH defined")
-    endif()
-    message(STATUS "Found STK in ${STK_PATH}")
+
     # Qt 5
     set(Qt5_PATH_DEFAULT /usr/local/Cellar/qt@5//5.15.3)
     if(NOT ${Qt5_PATH})
@@ -99,6 +104,8 @@ else()
         )        
 endif()
 
+
+
 find_library(stk $STKPATH)
 
 message(STATUS "EXTRA_INCLUDE_PATHS=" ${EXTRA_INCLUDE_PATHS})
@@ -108,9 +115,10 @@ add_subdirectory(src/)
 
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-install (TARGETS ${PROJECT_NAME}
+    install (TARGETS ${PROJECT_NAME}
        RUNTIME DESTINATION tuningTrainer)
-install (FILES src/harpsichord.wav DESTINATION tuningTrainer)
+       install (FILES src/harpsichord.wav DESTINATION tuningTrainer)
+
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 set(CMAKE_INSTALL_PREFIX "tuningTrainer.app")
 set_target_properties(
@@ -130,39 +138,40 @@ install (FILES src/harpsichord.wav DESTINATION share/tuningTrainer)
 endif()
 
 
-## FILES REQUIRED TO RUN
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-install( FILES
-        ${MINGW_ROOT}/mingw64/bin/libbrotlicommon.dll
-		${MINGW_ROOT}/mingw64/bin/libbrotlidec.dll
-		${MINGW_ROOT}/mingw64/bin/libbz2-1.dll
-		${MINGW_ROOT}/mingw64/bin/libdouble-conversion.dll
-		${MINGW_ROOT}/mingw64/bin/libfreetype-6.dll
-		${MINGW_ROOT}/mingw64/bin/libgcc_s_seh-1.dll
-		${MINGW_ROOT}/mingw64/bin/libglib-2.0-0.dll
-		${MINGW_ROOT}/mingw64/bin/libgraphite2.dll
-		${MINGW_ROOT}/mingw64/bin/libharfbuzz-0.dll
-		${MINGW_ROOT}/mingw64/bin/libiconv-2.dll
-		${MINGW_ROOT}/mingw64/bin/libicudt69.dll
-		${MINGW_ROOT}/mingw64/bin/libicuin69.dll
-		${MINGW_ROOT}/mingw64/bin/libicuuc69.dll
-		${MINGW_ROOT}/mingw64/bin/libintl-8.dll
-		${MINGW_ROOT}/mingw64/bin/libmd4c.dll
-		${MINGW_ROOT}/mingw64/bin/libpcre-1.dll
-		${MINGW_ROOT}/mingw64/bin/libpcre2-16-0.dll
-		${MINGW_ROOT}/mingw64/bin/libpng16-16.dll
-		${MINGW_ROOT}/mingw64/bin/libstdc++-6.dll
-		${MINGW_ROOT}/mingw64/bin/libwinpthread-1.dll
-		${MINGW_ROOT}/mingw64/bin/libzstd.dll
-		${MINGW_ROOT}/mingw64/bin/zlib1.dll
+## MINGW - FILES REQUIRED TO RUN
+if(MINGW)
+    install( FILES
+        $ENV{MSYSTEM_PREFIX}/bin/libbrotlicommon.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libbrotlidec.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libbz2-1.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libdouble-conversion.dll
+        $ENV{MSYSTEM_PREFIX}bin/libfreetype-6.dll
+        $ENV{MSYSTEM_PREFIX}bin/libgcc_s_seh-1.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libglib-2.0-0.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libgraphite2.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libharfbuzz-0.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libiconv-2.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicudt69.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicuin69.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicuuc69.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libintl-8.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libmd4c.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libpcre-1.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libpcre2-16-0.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libpng16-16.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libstdc++-6.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libwinpthread-1.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libzstd.dll
+        $ENV{MSYSTEM_PREFIX}/bin/zlib1.dll
+    DESTINATION tuningTrainer)
+    endif() # MINGW64
+    install( FILES
+        $ENV{MSYSTEM_PREFIX}/bin/Qt5Core.dll
+        $ENV{MSYSTEM_PREFIX}/bin/Qt5Gui.dll
+        $ENV{MSYSTEM_PREFIX}/bin/Qt5Widgets.dll
         DESTINATION tuningTrainer)
-install( FILES         
-        ${MINGW_ROOT}/mingw64/bin/Qt5Core.dll
-        ${MINGW_ROOT}/mingw64/bin/Qt5Gui.dll
-        ${MINGW_ROOT}/mingw64/bin/Qt5Widgets.dll
+    install( DIRECTORY
+        $ENV{MSYSTEM_PREFIX}/share/qt5/plugins/platforms
+        $ENV{MSYSTEM_PREFIX}/share/qt5/plugins/styles
         DESTINATION tuningTrainer)
-install( DIRECTORY
-         ${MINGW_ROOT}/mingw64/share/qt5/plugins/platforms
-         ${MINGW_ROOT}/mingw64/share/qt5/plugins/styles
-         DESTINATION tuningTrainer)
-endif()               
+endif() # STREQUAL WINDOWS
