@@ -76,9 +76,7 @@ jobs:
            cd build
            cmake .. \
               -G "Unix Makefiles" \
-              -DMINGW_ROOT="/$(cd /; pwd -W | sed "s/://g" | tr [:upper:] [:lower:])" \
-              -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/tuningTrainer-win \
-              -DCMAKE_CXX_FLAGS="-static -L /mingw64/lib/ -isystem /mingw64/include/stk"
+              -DCMAKE_INSTALL_PREFIX=${BUILD_DIR}/tuningTrainer-win 
            make 
     
     - name: Package tuningTrainer
