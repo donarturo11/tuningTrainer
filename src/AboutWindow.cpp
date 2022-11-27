@@ -37,6 +37,8 @@ void AboutWindow::setAboutString()
     label_str+="<b>QT5:</b><br>";
     label_str+="<a href=\"https://www.qt.io/\">https://www.qt.io/</a>";
     label_str+="<br><br>";
+    label_str+="You can support author by buying him coffee to improve performance of his brain";
+    label_str+="<a href=\"https://www.buymeacoffee.com/donarturo11\" target=\"_blank\"><img src=\"https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png\" alt=\"Buy Me A Coffee\" style=\"height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;\" ></a>";
     label_str+="To contact me, please write me at address:<br>";
     label_str+="<a href=\"" + mailtoString + "\">"+mailaddress+"</a><br><br>";
     label_str+="To close this window press &lt;esc&gt;";
