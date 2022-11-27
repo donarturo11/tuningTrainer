@@ -18,10 +18,13 @@ To run on Linux run at first JACK Audio Connection Kit.
 This program was tested on Archlinux, Windows 7 and MacOS Sierra. This program is testing on MacOS Monterey. In artifacts of Actions you can find version for Catallina, but I can't at now give no guarrancy to correct run.
 
 # Requirements
-
 * STK Synthesis Toolkit [https://ccrma.stanford.edu/software/stk/](https://ccrma.stanford.edu/software/stk/)
 * Realtime Audio [https://www.music.mcgill.ca/~gary/rtaudio/](https://www.music.mcgill.ca/~gary/rtaudio/)
 * QT 5
+
+# Support
+If are you pleased with this program, you can support the Author by buying him a coffee for improve the performance of his brain.
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/donarturo11)
 
 # Contact
 To contact with me please write on arturwrona91(at)gmail(dot)com .
