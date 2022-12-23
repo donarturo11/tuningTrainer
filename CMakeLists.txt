@@ -73,7 +73,6 @@ else()
     list(APPEND LIBS_REQUIRES "-framework CoreAudio -framework CoreFoundation")
     list(APPEND API_DEFS "-D__MACOSX_CORE__")
     list(APPEND API_LIST "core")
-    set(STK_PATH_DEFAULT "/usr/local/Cellar/stk/4.6.2")
 
     # Qt 5
     #set(Qt5_PATH_DEFAULT /usr/local/Cellar/qt@5//5.15.3)
@@ -91,22 +90,21 @@ else()
     #set(Qt5Widgets_DIR "${Qt5_PATH}/lib/cmake/Qt5Widgets")
     find_package (Qt5 COMPONENTS Core REQUIRED)
     find_package (Qt5 COMPONENTS Widgets REQUIRED)
-    #INCLUDE_DIRECTORIES(
-    #    ${STK_PATH}/include/stk/
+    INCLUDE_DIRECTORIES(${STK_DIR}/include/stk/)
     #    ${Qt5_PATH}/include/
     #    ${Qt5_PATH}/lib/QtWidgets.framework/Versions/5/Headers/
     #    ${Qt5_PATH}/lib/QtCore.framework/Versions/5/Headers/
     #    ${Qt5_PATH}/lib/QtGui.framework/Versions/5/Headers/
     #    )
     LINK_DIRECTORIES(
-        ${STK_PATH}/lib/
+        ${STK_DIR}/lib/
         ${Qt5_DIR}/lib/
         )        
 endif()
 
 
 
-find_library(stk $STKPATH)
+find_library(stk $STK_DIR)
 
 message(STATUS "EXTRA_INCLUDE_PATHS=" ${EXTRA_INCLUDE_PATHS})
 message(STATUS "EXTRA_LINKER_PATHS=" ${EXTRA_LINKER_PATHS})
