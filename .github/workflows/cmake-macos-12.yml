@@ -25,13 +25,8 @@ jobs:
     - name: Install dependencies
       run: |
            brew update
-           rm /usr/local/bin/2to3
-           rm /usr/local/bin/idle3
-           rm /usr/local/bin/pydoc3
-           rm /usr/local/bin/python3
-           rm /usr/local/bin/python3-config
-           brew upgrade
-           brew install qt@5 cmake extra-cmake-modules stk
+           brew upgrade --overwrite
+           brew install --overwrite qt@5 cmake extra-cmake-modules stk
            
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
