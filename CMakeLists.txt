@@ -145,8 +145,8 @@ if(MINGW)
         $ENV{MSYSTEM_PREFIX}/bin/libbrotlidec.dll
         $ENV{MSYSTEM_PREFIX}/bin/libbz2-1.dll
         $ENV{MSYSTEM_PREFIX}/bin/libdouble-conversion.dll
-        $ENV{MSYSTEM_PREFIX}bin/libfreetype-6.dll
-        $ENV{MSYSTEM_PREFIX}bin/libgcc_s_seh-1.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libfreetype-6.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libgcc_s_seh-1.dll
         $ENV{MSYSTEM_PREFIX}/bin/libglib-2.0-0.dll
         $ENV{MSYSTEM_PREFIX}/bin/libgraphite2.dll
         $ENV{MSYSTEM_PREFIX}/bin/libharfbuzz-0.dll
