@@ -39,13 +39,13 @@ jobs:
            echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
            echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
            echo "Github workspace = $MINGW_GIT_WORKSPACE"
-           
+
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-    
+        install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-pcre
+           
     - name: Git checkout
       uses: actions/checkout@v3
       
@@ -62,15 +62,10 @@ jobs:
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
-           cd $MINGW_GIT_WORKSPACE
-           pacman -Ql mingw-w64-x86_64-stk
-           
-              
+
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           echo $env || echo "This variable does not exist"
-           echo $env || echo "This variable does not exist"
            cd ${MINGW_GIT_WORKSPACE}
            mkdir build
            cd build
