@@ -63,19 +63,10 @@ jobs:
            cd .github/mingw-deps/stk/
            dos2unix PKGBUILD
            makepkg-mingw -si --noconfirm
-           cd $MINGW_GIT_WORKSPACE
-           pacman -Ql mingw-w64-x86_64-stk
 
-    - name: Diagnostics
-      run: |
-           ls /d/a/_temp/msys64/mingw64/bin
-           tree /d/a/_temp/msys64/mingw64
-              
     - name: Build tuningTrainer
       # Build your program with the given configuration
       run: |
-           echo $env || echo "This variable does not exist"
-           echo $env || echo "This variable does not exist"
            cd ${MINGW_GIT_WORKSPACE}
            mkdir build
            cd build
