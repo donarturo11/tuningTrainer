@@ -151,9 +151,9 @@ if(MINGW)
         $ENV{MSYSTEM_PREFIX}/bin/libgraphite2.dll
         $ENV{MSYSTEM_PREFIX}/bin/libharfbuzz-0.dll
         $ENV{MSYSTEM_PREFIX}/bin/libiconv-2.dll
-        $ENV{MSYSTEM_PREFIX}/bin/libicudt*.dll
-        $ENV{MSYSTEM_PREFIX}/bin/libicuin*.dll
-        $ENV{MSYSTEM_PREFIX}/bin/libicuuc*.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicudt72.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicuin72.dll
+        $ENV{MSYSTEM_PREFIX}/bin/libicuuc72.dll
         $ENV{MSYSTEM_PREFIX}/bin/libintl-8.dll
         $ENV{MSYSTEM_PREFIX}/bin/libmd4c.dll
         $ENV{MSYSTEM_PREFIX}/bin/libpcre-1.dll
