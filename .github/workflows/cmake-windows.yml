@@ -4,6 +4,7 @@ on:
   push:
     branches:
        - main
+       - Improve-CI
   pull_request:
     branches: [ main ]
 
@@ -39,7 +40,11 @@ jobs:
            echo "MINGW_ROOT = ${{env.MINGW_ROOT}}"
            echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
            echo "Github workspace = $MINGW_GIT_WORKSPACE"
-           
+
+    - name: Diagnostics
+      run: |
+           ls /d/a/_temp/msys64/mingw64/bin
+
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
       with:
