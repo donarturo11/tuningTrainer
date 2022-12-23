@@ -45,7 +45,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
+        install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-pcre
            
     - name: Git checkout
       uses: actions/checkout@v3
