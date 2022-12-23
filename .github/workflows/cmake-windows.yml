@@ -41,16 +41,17 @@ jobs:
            echo "MINGW_RUNNER_TEMP = ${{env.MINGW_RUNNER_TEMP}}"
            echo "Github workspace = $MINGW_GIT_WORKSPACE"
 
-    - name: Diagnostics
-      run: |
-           ls /d/a/_temp/msys64/mingw64/bin
-
     - name: Setup MinGW Build environment
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
         install: base base-devel tree autoconf automake-wrapper dos2unix zip git mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-    
+
+    - name: Diagnostics
+      run: |
+           ls /d/a/_temp/msys64/mingw64/bin
+           tree /d/a/_temp/msys64/mingw64
+           
     - name: Git checkout
       uses: actions/checkout@v3
       
