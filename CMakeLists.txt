@@ -76,31 +76,31 @@ else()
     set(STK_PATH_DEFAULT "/usr/local/Cellar/stk/4.6.2")
 
     # Qt 5
-    set(Qt5_PATH_DEFAULT /usr/local/Cellar/qt@5//5.15.3)
-    if(NOT ${Qt5_PATH})
-        message(STATUS "Qt5_PATH older: ${Qt5_PATH}")
-        set(Qt5_PATH ${Qt5_PATH})
-    else()
-        message(STATUS "Qt5_PATH is defined")
-        set(Qt5_PATH ${Qt5_PATH_DEFAULT})
-    endif()
-    message(STATUS "Found Qt5 in ${Qt5_PATH}")
-    set(Qt5_DIR "${Qt5_PATH}/lib/cmake/Qt5/")
-    set(QT_QMAKE_EXECUTABLE "${Qt5_PATH}/bin/qmake")
-    set(Qt5Core_DIR "${Qt5_PATH}/lib/cmake/Qt5Core")
-    set(Qt5Widgets_DIR "${Qt5_PATH}/lib/cmake/Qt5Widgets")
+    #set(Qt5_PATH_DEFAULT /usr/local/Cellar/qt@5//5.15.3)
+    #if(NOT ${Qt5_PATH})
+    #    message(STATUS "Qt5_PATH older: ${Qt5_PATH}")
+    #    set(Qt5_PATH ${Qt5_PATH})
+    #else()
+    #    message(STATUS "Qt5_PATH is defined")
+    #    set(Qt5_PATH ${Qt5_PATH_DEFAULT})
+    #endif()
+    #message(STATUS "Found Qt5 in ${Qt5_PATH}")
+    #set(Qt5_DIR "${Qt5_PATH}/lib/cmake/Qt5/")
+    #set(QT_QMAKE_EXECUTABLE "${Qt5_PATH}/bin/qmake")
+    #set(Qt5Core_DIR "${Qt5_PATH}/lib/cmake/Qt5Core")
+    #set(Qt5Widgets_DIR "${Qt5_PATH}/lib/cmake/Qt5Widgets")
     find_package (Qt5 COMPONENTS Core REQUIRED)
     find_package (Qt5 COMPONENTS Widgets REQUIRED)
-    INCLUDE_DIRECTORIES(
-        ${STK_PATH}/include/stk/
-        ${Qt5_PATH}/include/
-        ${Qt5_PATH}/lib/QtWidgets.framework/Versions/5/Headers/
-        ${Qt5_PATH}/lib/QtCore.framework/Versions/5/Headers/
-        ${Qt5_PATH}/lib/QtGui.framework/Versions/5/Headers/
-        )
+    #INCLUDE_DIRECTORIES(
+    #    ${STK_PATH}/include/stk/
+    #    ${Qt5_PATH}/include/
+    #    ${Qt5_PATH}/lib/QtWidgets.framework/Versions/5/Headers/
+    #    ${Qt5_PATH}/lib/QtCore.framework/Versions/5/Headers/
+    #    ${Qt5_PATH}/lib/QtGui.framework/Versions/5/Headers/
+    #    )
     LINK_DIRECTORIES(
         ${STK_PATH}/lib/
-        ${Qt5_PATH}/lib/
+        ${Qt5_DIR}/lib/
         )        
 endif()
 
