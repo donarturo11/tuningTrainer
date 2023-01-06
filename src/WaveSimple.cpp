@@ -9,7 +9,7 @@
 /***************************************************/
 
 #include "WaveSimple.h"
-#include "SKINImsg.h"
+#include "stk/SKINImsg.h"
 //#include <QString>
 #include <QDebug>
 
@@ -90,7 +90,9 @@ void WaveSimple :: setBaseFrequency(StkFloat frequency)
 
 void WaveSimple :: setFrequency( StkFloat frequency )
 {
+#ifdef DEBUG
   qDebug() << QString::number(frequency, 'f', 2);
+#endif
   if (isGood()) pitchShift_->setShift(frequency/baseFrequency_);
   else sine_->setFrequency(frequency);
 }
