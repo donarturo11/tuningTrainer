@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
 
+include(cmake/cmake-build-type.cmake)
 include(cmake/findos.cmake)
 include(cmake/findaudio.cmake)
-
+include(cmake/findstk.cmake)
 include(cmake/config-installdir.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/findstk.cmake)
- 
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -16,9 +16,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
-
-message(STATUS ">>> PREFIX=${PREFIX}")
-message(STATUS ">>> CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 
 FILE(GLOB HEADERS src/*.h)
 FILE(GLOB SOURCES src/*.cpp)
@@ -34,11 +31,8 @@ else()
         )
 endif()
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets)
-#target_link_libraries(${PROJECT_NAME} stk)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets stk)
+target_link_libraries(${PROJECT_NAME} PRIVATE stk)
 
 if(MINGW) 
 include(cmake/mingw-deploy.cmake)
