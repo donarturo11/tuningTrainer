@@ -7,22 +7,25 @@ on:
     branches: [ main, ci-qt6 ]
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
+env:
+  pkgname: tuningTrainer
+  qt-version: 6.4.0
 
 jobs:
   build:
     strategy:
       matrix:
        include:
-        - { os: windows-latest, stk-prefix: "C:/STK", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-path: "C:/Qt", cmake-flags: "-DCMAKE_PREFIX_PATH=C:/Qt/6.4.0/msvc2019;C:/STK" }
-        - { os: ubuntu-latest, stk-prefix: "~/STK", aqt-os: "linux", aqt-arch: " ", aqt-path: "~/Qt", cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/6.4.0/gcc_64;~/STK" }
-        - { os: macos-latest, stk-prefix: "~/STK", aqt-os: "macos", aqt-arch: "macos", aqt-path: "~/Qt", cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/6.4.0/macos;~/STK" }
+        - { os: windows-latest, stk-prefix: "C:/STK", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "C:/Qt", aqt-module: "msvc2019" }
+        - { os: ubuntu-latest, stk-prefix: "~/STK", aqt-os: "linux", aqt-arch: " ", aqt-prefix: "~/Qt", aqt-module: gcc_64}
+        - { os: macos-latest, stk-prefix: "~/STK", aqt-os: "macos", aqt-arch: "macos", aqt-prefix: "~/Qt", aqt-module: macos }
     runs-on: ${{matrix.os}}
 
     steps:
     - name: Install Qt6
       run: |
            pip3 install aqtinstall
-           python3 -m aqt install-qt -O ${{matrix.aqt-path}} ${{matrix.aqt-os}} desktop ${{matrix.QT_Version}} ${{matrix.aqt-arch}}
+           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
 
     - name: Install STK
       run: |
@@ -35,20 +38,22 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run Configure
-      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build ${{matrix.cmake-flags}}
+      run: |
+           cmake -S ${{github.workspace}} \
+                 -B ${{github.workspace}}/build \
+                 -DCMAKE_PREFIX_PATH={{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}
 
     - name: Compile Code
       run: cmake --build ${{github.workspace}}/build
 
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/${{ env.NAME }}
+      run: cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
       with:
         name: build-${{runner.os}}
-        path: |
-          src/${{matrix.bin}}
+        path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
   publish:
     needs: build
@@ -62,20 +67,20 @@ jobs:
       - name: Get macOS Binary
         uses: actions/download-artifact@v2
         with:
-          name: build-macOS
-          path: build-macOS
+          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
       - name: Get Linux Binary
         uses: actions/download-artifact@v2
         with:
-          name: build-Linux
-          path: build-Linux
+          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
           
       - name: Get Windows Binary
         uses: actions/download-artifact@v2
         with:
-          name: build-Windows
-          path: build-Windows
+          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -86,9 +91,9 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            build-macOS/*
-            build-Linux/*
-            build-Windows/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -107,8 +112,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: build-macOS/tuningTrainer-macOS-x86_64
-          asset_name: tuningTrainer-macOS-x86_64
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_name: ${{env.pkgname}}-macOS
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Linux binary
@@ -118,8 +123,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: build-Linux/emusc-linux-x86_64
-          asset_name: tuningTrainer-linux-x86_64
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_name: ${{env.pkgname}}-linux-x86_64
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Windows binary
@@ -129,8 +134,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: build-Windows/emusc-win32-x86_64.exe
-          asset_name: tuningTrainer-win32-x86_64.exe
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_name: ${{env.pkgname}}-win-x86_64
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id == 0 # otherwise release does not exist, create one and upload binaries
@@ -142,6 +147,6 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            build-macOS/*
-            build-Linux/*
-            build-Windows/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
