@@ -11,13 +11,13 @@ on:
 jobs:
   build:
     strategy:
-      QtVer: [6.4.0]
-      pkgname: [tuningTrainer]
       matrix:
+       QtVer: ["6.4.0"]
+       pkgname: ["tuningTrainer"]
        include:
-        - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ inputs.QtVer }}\msvc2019;C:\STK'}
-        - { os: ubuntu-latest, stk-prefix: '~/STK', aqt-os: linux, aqt-arch: '', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ inputs.QtVer }}/gcc_64;~/STK" }
-        - { os: macos-latest, stk-prefix: '~/STK', aqt-os: macos, aqt-arch: 'macos', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ inputs.QtVer }}/macos;~/STK" }
+        - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: 'windows', aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ QtVer }}\msvc2019;C:\STK'}
+        - { os: ubuntu-latest, stk-prefix: '~/STK', aqt-os: 'linux', aqt-arch: '', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ QtVer }}/gcc_64;~/STK" }
+        - { os: macos-latest, stk-prefix: '~/STK', aqt-os: 'macos', aqt-arch: 'macos', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ QtVer }}/macos;~/STK" }
     runs-on: ${{matrix.os}}
 
     steps:
