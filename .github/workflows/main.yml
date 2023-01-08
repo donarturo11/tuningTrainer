@@ -24,7 +24,7 @@ jobs:
     steps:
     - name: Print Info
       run: |
-           echo "::notify::${{runner.os}}"
+           echo "::notify:: ${{runner.os}}"
     - name: Install Qt6
       run: |
            pip3 install aqtinstall
@@ -48,6 +48,9 @@ jobs:
 
     - name: Run Configure
       run: |
+           echo "::notify:: {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}"
+           ls -lah "{{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}" || echo "::warning:: No such command"
+           dir {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}} || echo "::warning:: No such command"
            cmake -S ${{github.workspace}} \
                  -B ${{github.workspace}}/build \
                  -DCMAKE_PREFIX_PATH={{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}
