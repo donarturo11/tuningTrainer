@@ -54,7 +54,7 @@ jobs:
       run: |
            cmake -S ${{github.workspace}} \
                  -B ${{github.workspace}}/build \
-                 -DCMAKE_PREFIX_PATH="{{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}"
+                 -DCMAKE_PREFIX_PATH="${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}};${{matrix.stk-prefix}}"
 
     - name: Compile Code
       run: cmake --build ${{github.workspace}}/build
