@@ -27,7 +27,6 @@ jobs:
            echo "::notify::${{runner.os}}"
     - name: Install Qt6
       run: |
-           python3 -m pip3 i
            pip3 install aqtinstall
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
 
