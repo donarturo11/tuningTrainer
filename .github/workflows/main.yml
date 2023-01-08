@@ -38,7 +38,7 @@ jobs:
 
     - name: Install STK
       run: |
-           git clone https://github.com/donarturo11/stk -b cmake-install ../stk
+           git clone https://github.com/thestk/stk ../stk
            cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0
            cmake --build ../stk/build
            cmake --install ../stk/build --prefix ${{matrix.stk-prefix}}
