@@ -63,7 +63,8 @@ jobs:
 
     - name: macdeployqt
       if: ${{runner.os == 'macOS'}}
-      run: {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}/bin/macdeployqt ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+      run: |
+           {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}/bin/macdeployqt ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
