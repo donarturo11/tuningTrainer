@@ -7,17 +7,12 @@ on:
     branches: [ main, ci-qt6 ]
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
-inputs:
-  name:
-    default: tuningTrainer
-    type: string
-  QtVer:
-    default: 6.4.0
-    type: string
 
 jobs:
   build:
     strategy:
+      QtVer: [6.4.0]
+      pkgname: [tuningTrainer]
       matrix:
        include:
         - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ inputs.QtVer }}\msvc2019;C:\STK'}
