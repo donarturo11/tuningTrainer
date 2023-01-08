@@ -14,8 +14,8 @@ jobs:
   build:
     strategy:
       matrix:
-       name: "tuningTrainer"
-       QtVer: 6.4.0
+       "name": "tuningTrainer"
+       "QtVer": "6.4.0"
        include:
         - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ QtVer }}\msvc2019;C:\STK'}
         - { os: ubuntu-latest, stk-prefix: '~/STK', aqt-os: linux, aqt-arch: '', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ QtVer }}/gcc_64;~/STK" }
