@@ -46,11 +46,12 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v2
 
+    - name: Test Linux
+      if: ${{runner.os == 'Linux'}}
+      run: tree {{matrix.aqt-prefix}}
+
     - name: Run Configure
       run: |
-           echo "::notify:: {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}"
-           ls -lah "{{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}" || echo "::warning:: No such command"
-           dir {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}} || echo "::warning:: No such command"
            cmake -S ${{github.workspace}} \
                  -B ${{github.workspace}}/build \
                  -DCMAKE_PREFIX_PATH="{{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}"
