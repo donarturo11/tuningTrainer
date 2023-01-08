@@ -221,10 +221,10 @@ void MainWindow::chooseSampleSlot()
     choosesamplewindow = new ChooseSampleWindow(this, getWavepath());
     choosesamplewindow->setModal(1);
     choosesamplewindow->exec();
-    
+#ifdef DEBUG
     qDebug() << "Choosen Sample: " << choosesamplewindow->getWavepath();
     qDebug() << "Base Freq: " << choosesamplewindow->getWavepath();
-    
+#endif    
     this->setWavepath(choosesamplewindow->getWavepath());
     this->setBaseFreq(choosesamplewindow->getBaseFreq());
     
@@ -307,5 +307,7 @@ void MainWindow::setDefaultBaseFrequency()
 void MainWindow::setDefaultWavepath()
 {
     setWavepath(findDefaultWavePath());
+#ifdef DEBUG
     qDebug() << "WavePath: " << this->wavepath;
+#endif
 }
