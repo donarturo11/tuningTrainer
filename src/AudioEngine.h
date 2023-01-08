@@ -6,8 +6,8 @@
 
 
 #include "globals.h"
-#include "RtWvOut.h"
-#include "Stk.h"
+#include "stk/RtWvOut.h"
+#include "stk/Stk.h"
 #include "WaveSimpleMixer.h"
 #include "WaveSimple.h"
 namespace stk {

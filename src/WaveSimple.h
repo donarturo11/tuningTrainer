@@ -3,10 +3,10 @@
 
 #include <thread>
 
-#include "Instrmnt.h"
-#include "FileLoop.h"
-#include "LentPitShift.h"
-#include "SineWave.h"
+#include "stk/Instrmnt.h"
+#include "stk/FileLoop.h"
+#include "stk/LentPitShift.h"
+#include "stk/SineWave.h"
 
 namespace stk {
 

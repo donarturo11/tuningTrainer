@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Stk.h"
+#include "stk/Stk.h"
 #include "WaveSimple.h"
 #include "AudioEngine.h"
 

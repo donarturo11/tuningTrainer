@@ -10,12 +10,8 @@ ChooseSampleWindow::ChooseSampleWindow(QWidget *parent, QString wavepath) : QDia
     this->wavepath = wavepath;
     
     this->parentClass=parent;
-    //m_label = new QLabel(label_str, this);
-    //m_label->show();
-        
+
     init();
-    
-    
 }
 //-------------------------------------------
 void ChooseSampleWindow::init(){
@@ -79,7 +75,9 @@ void ChooseSampleWindow::browseSlot()
 {
     QString wavepath = QFileDialog::getOpenFileName(m_waveurl, "Browse wave", this->wavepath, tr("Wave file (*.wav)"));
     m_waveurl->setText(wavepath);
+#ifdef DEBUG
     qDebug() << "End browse slot: " << this->wavepath;
+#endif
 }
 
 void ChooseSampleWindow::applySlot()
@@ -101,7 +99,9 @@ double ChooseSampleWindow::getBaseFreq()
 void ChooseSampleWindow::setBaseFreq(double freq)
 {
     this->baseFreq=freq;
+#ifdef DEBUG
     qDebug() << "Base frequency: " << getBaseFreq();
+#endif
 }
 
 
