@@ -17,14 +17,14 @@ jobs:
       matrix:
        include:
         - { os: windows-latest, stk-prefix: "C:/STK", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "C:/Qt", aqt-module: "msvc2019_64" }
-        - { os: ubuntu-latest, stk-prefix: "~/STK", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "~/Qt", aqt-module: "gcc_64"}
-        - { os: macos-latest, stk-prefix: "~/STK", aqt-os: "mac", aqt-arch: "", aqt-prefix: "~/Qt", aqt-module: "macos" }
+        - { os: ubuntu-latest, stk-prefix: "/home/runner/STK", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: macos-latest, stk-prefix: "/home/runner/STK", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/home/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
 
     steps:
     - name: Print Info
       run: |
-           echo ${{runner.os}}
+           echo "::notify::${{runner.os}}"
     - name: Install Qt6
       run: |
            pip3 install aqtinstall
