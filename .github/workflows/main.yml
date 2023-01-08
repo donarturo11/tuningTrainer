@@ -8,9 +8,12 @@ on:
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
 inputs:
-  name: tuningTrainer
-  QtVer: 6.4.0
-  common_cmake_flags: -S ${{github.workspace}} -B ${{github.workspace}}/build
+  name:
+    default: tuningTrainer
+    type: string
+  QtVer:
+    default: 6.4.0
+    type: string
 
 jobs:
   build:
