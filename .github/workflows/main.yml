@@ -17,8 +17,8 @@ jobs:
       matrix:
        include:
         - { os: windows-latest, stk-prefix: "C:/STK", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "C:/Qt", aqt-module: "msvc2019" }
-        - { os: ubuntu-latest, stk-prefix: "~/STK", aqt-os: "linux", aqt-arch: " ", aqt-prefix: "~/Qt", aqt-module: gcc_64}
-        - { os: macos-latest, stk-prefix: "~/STK", aqt-os: "macos", aqt-arch: "macos", aqt-prefix: "~/Qt", aqt-module: macos }
+        - { os: ubuntu-latest, stk-prefix: "~/STK", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "~/Qt", aqt-module: gcc_64}
+        - { os: macos-latest, stk-prefix: "~/STK", aqt-os: "macos", aqt-arch: "mac", aqt-prefix: "~/Qt", aqt-module: macos }
     runs-on: ${{matrix.os}}
 
     steps:
