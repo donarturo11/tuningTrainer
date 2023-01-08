@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
-
 include(cmake/cmake-build-type.cmake)
-include(cmake/findos.cmake)
-include(cmake/findaudio.cmake)
-include(cmake/findstk.cmake)
-include(cmake/config-installdir.cmake)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -16,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
+find_package(stk)
 
 FILE(GLOB HEADERS src/*.h)
 FILE(GLOB SOURCES src/*.cpp)
