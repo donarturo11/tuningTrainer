@@ -48,7 +48,7 @@ jobs:
 
     - name: Test Linux
       if: ${{runner.os == 'Linux'}}
-      run: tree {{matrix.aqt-prefix}}
+      run: tree /home/runner/Qt
 
     - name: Run Configure
       run: |
