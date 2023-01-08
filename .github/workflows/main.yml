@@ -22,7 +22,7 @@ jobs:
     - name: Install Qt6
       run: |
            pip3 install aqtinstall
-           python -m aqt install-qt -O ${{matrix.aqt-path}} ${{matrix.aqt-os}} desktop ${{matrix.QT_Version}} ${{matrix.aqt-arch}}
+           python3 -m aqt install-qt -O ${{matrix.aqt-path}} ${{matrix.aqt-os}} desktop ${{matrix.QT_Version}} ${{matrix.aqt-arch}}
 
     - name: Install STK
       run: |
