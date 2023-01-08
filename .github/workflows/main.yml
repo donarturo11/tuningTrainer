@@ -12,10 +12,10 @@ env:
 
 jobs:
   build:
+    env:
+      NAME: tuningTrainer
+      QT_VER: 6.4.0
     strategy:
-      env:
-        NAME: tuningTrainer
-        QT_VER: 6.4.0
       matrix:
        include:
         - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ env.QT_VER }}\msvc2019;C:\STK'}
