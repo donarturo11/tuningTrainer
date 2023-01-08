@@ -7,14 +7,15 @@ on:
     branches: [ main, ci-qt6 ]
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
+env:
+  QT_Version: 6.4.0
+  common_cmake_flags: -S ${{github.workspace}} -B ${{github.workspace}}/build
 
 jobs:
   build:
     strategy:
       matrix:
        include:
-        - QT_Version: 6.4.0
-        - common_cmake_flags: -S ${{github.workspace}} -B ${{github.workspace}}/build
         - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: 'C:\Qt', cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{ QT_Version }}\msvc2019;C:\STK'}
         - { os: ubuntu-latest, stk-prefix: '~/STK', aqt-os: linux, aqt-arch: '', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ QT_Version }}/gcc_64;~/STK" }
         - { os: macos-latest, stk-prefix: '~/STK', aqt-os: macos, aqt-arch: 'macos', aqt-path: '~/Qt', cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{ QT_Version }}/macos;~/STK" }
