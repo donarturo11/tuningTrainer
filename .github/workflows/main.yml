@@ -53,13 +53,17 @@ jobs:
            dir {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}} || echo "::warning:: No such command"
            cmake -S ${{github.workspace}} \
                  -B ${{github.workspace}}/build \
-                 -DCMAKE_PREFIX_PATH={{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}
+                 -DCMAKE_PREFIX_PATH="{{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}};${{matrix.stk-prefix}}"
 
     - name: Compile Code
       run: cmake --build ${{github.workspace}}/build
 
     - name: Install
       run: cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+
+    - name: macdeployqt
+      if: ${{runner.os == 'macOS'}}
+      run: {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}/bin/macdeployqt ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
