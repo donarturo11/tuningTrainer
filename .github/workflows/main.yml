@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
        QT_Version: 6.4.0
-       common_cmake_flags: -S ${{github.workspace}} -B ${{github.workspace}}/build
        include:
         - { os: windows-latest, stk-prefix: 'C:\STK', aqt-os: windows, aqt-arch: 'win64_msvc2019_64', aqt-path: C:\Qt, cmake-flags: '-DCMAKE_PREFIX_PATH=C:\Qt\${{matrix.QT_Version}}\msvc2019;C:\STK'}
         - { os: ubuntu-latest, stk-prefix: '~/STK', aqt-os: linux, aqt-arch: '', aqt-path: ~/Qt, cmake-flags: "-DCMAKE_PREFIX_PATH=~/Qt/${{matrix.QT_Version}}/gcc_64;~/STK" }
