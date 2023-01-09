@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
 include(cmake/cmake-build-type.cmake)
+include(cmake/findos.cmake)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
