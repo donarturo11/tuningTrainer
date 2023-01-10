@@ -18,6 +18,7 @@ add_compile_definitions(__OS_WINDOWS__)
 elseif(DARWIN)
 message(STATUS "${MSG} MacOS")
 add_compile_definitions(__APPLE__)
+add_compile_definitions(__OS_MACOSX__)
 else()
 
 endif()
