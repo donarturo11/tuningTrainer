@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
 include(cmake/cmake-build-type.cmake)
+include(cmake/findos.cmake)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -11,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
-find_package(stk)
+find_package(stk REQUIRED)
 
 FILE(GLOB HEADERS src/*.h)
 FILE(GLOB SOURCES src/*.cpp)
@@ -28,7 +29,7 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets stk)
-target_link_libraries(${PROJECT_NAME} PRIVATE stk)
+target_link_libraries(${PROJECT_NAME} PUBLIC stk)
 
 if(MINGW) 
 include(cmake/mingw-deploy.cmake)
