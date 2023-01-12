@@ -10,49 +10,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
  
     this->setWindowTitle("TuningTrainer");
     this->waitCount=0;
+    init(); //temp
     
-    int posX=800;
-    int posY=0;
-    int width=140;
-    int height=20;
-    
-    
-      
-    m_about_btn = new QPushButton("About", this);
-    m_about_btn->setGeometry(posX, posY, width, height);
-    m_about_btn->show();
-    connect (m_about_btn, SIGNAL(pressed()), this, SLOT(aboutSlot()));
-    
-    posY+=height;
-    
-    m_quit_btn = new QPushButton("Quit", this);
-    m_quit_btn->setGeometry(posX, posY, width, height);
-    m_quit_btn->show();
-    connect (m_quit_btn, SIGNAL(pressed()), this, SLOT(quitSlot()));
-    
-    posY+=height*2;
-    
-    m_chooseSample_btn = new QPushButton("Choose sample", this);
-    m_chooseSample_btn->setGeometry(posX, posY, width, height);
-    m_chooseSample_btn->show();
-    connect (m_chooseSample_btn, SIGNAL(pressed()), this, SLOT(chooseSampleSlot()));
-    
-    posY+=height;
-    
-    m_reset_btn = new QPushButton("Reset", this);
-    m_reset_btn->setGeometry(posX, posY, width, height);
-    m_reset_btn->show();
-    connect (m_reset_btn, SIGNAL(pressed()), this, SLOT(resetSlot()));
-    
-    posY+=height;
-    
-    m_clear_btn = new QPushButton("Clear config", this);
-    m_clear_btn->setGeometry(posX, posY, width, height);
-    m_clear_btn->show();
-    connect (m_clear_btn, SIGNAL(pressed()), this, SLOT(clearSlot()));
+    connect (mainButtons, SIGNAL(quit()), this, SLOT(quitSlot()));
     
     m_settings->sync();
-    
     
 }
 
@@ -60,6 +22,21 @@ MainWindow::~MainWindow()
 {
     m_settings->sync();
 }
+
+void MainWindow::init()
+{
+    mainButtons = new MainButtons(this);
+    mainButtons->show();
+    
+    
+}
+
+void MainWindow::quitSlot()
+{
+    this->close();
+}
+
+
 //-------------------------------------------
 QString MainWindow::findDefaultWavePath()
 {
@@ -216,21 +193,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         
 }
 
-void MainWindow::chooseSampleSlot()
-{
-    choosesamplewindow = new ChooseSampleWindow(this, getWavepath());
-    choosesamplewindow->setModal(1);
-    choosesamplewindow->exec();
-#ifdef DEBUG
-    qDebug() << "Choosen Sample: " << choosesamplewindow->getWavepath();
-    qDebug() << "Base Freq: " << choosesamplewindow->getWavepath();
-#endif    
-    this->setWavepath(choosesamplewindow->getWavepath());
-    this->setBaseFreq(choosesamplewindow->getBaseFreq());
-    
-    this->loadWave(this->getWavepath());
-    
-}
 
 void MainWindow::setBaseFreq(double freq)
 {
@@ -265,31 +227,7 @@ QString MainWindow::getWavepath()
     return this->wavepath;
 }
 
-void MainWindow::aboutSlot()
-{    
-    aboutwindow=new AboutWindow(this);
-    aboutwindow->setModal(1);
-    aboutwindow->show();
-}
-
-void MainWindow::quitSlot()
-{
-    this->close();
-}
-
-void MainWindow::resetSlot()
-{
-    setDefaultFrequencies();
-    setDefaultBaseFrequency();
-    setDefaultWavepath();
-    m_settings->sync();
-}
-
-void MainWindow::clearSlot()
-{
-    resetSlot();
-    m_settings->clear();    
-}
+  
 
 void MainWindow::setDefaultFrequencies()
 {

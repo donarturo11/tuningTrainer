@@ -22,9 +22,10 @@
 #include <map>
 #include <vector>
 
-#include "AboutWindow.h"
-#include "ChooseSampleWindow.h"
-#include "KeyGroup.h"
+#include "gui/MainButtons.h"
+
+#include "KeyGroup.h" /* to move */
+
 #include "globals.h"
 #include "semitones.h"
 
@@ -41,9 +42,11 @@ class MainWindow : public QWidget
 	public:
 		explicit MainWindow(QWidget *parent=0);
 		~MainWindow();
-        AboutWindow *aboutwindow;
-        ChooseSampleWindow *choosesamplewindow;
+        void init();
+        
+        
         QSettings *m_settings;
+        
         void initKeyboard(std::vector <stk::WaveSimple*> *synth);
         void setWavepath(QString path);
         QString getWavepath();
@@ -54,11 +57,7 @@ class MainWindow : public QWidget
 	private:
         
         KeyGroup *myKeyGroup[KEY_NUMBERS];
-        QPushButton *m_about_btn;
-        QPushButton *m_chooseSample_btn;
-        QPushButton *m_clear_btn;
-        QPushButton *m_quit_btn;
-        QPushButton *m_reset_btn;
+        
         QString wavepath="";
         QString appconfiglocation="";
         std::map<int, int> keyBindMap;
@@ -76,13 +75,12 @@ class MainWindow : public QWidget
     protected:
         int waitCount;
         double baseFreq;
+        
+        MainButtons *mainButtons;
     
     public slots:
-        void aboutSlot();
-        void chooseSampleSlot();
-        void resetSlot();
-        void clearSlot();
         void quitSlot();
+
         
     signals:
         void noteOn(int value);
