@@ -35,8 +35,13 @@ find_package(RtAudio REQUIRED)
 #    set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
 #endif()
 
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 FILE(GLOB HEADERS src/*.h)
-FILE(GLOB SOURCES src/*.cpp)
+
+FILE(GLOB SOURCES src/*.cpp
+                  src/gui/*.cpp
+                           )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
