@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
@@ -35,31 +36,47 @@ find_package(RtAudio REQUIRED)
 #    set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
 #endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(
+       ${PROJECT_SOURCE_DIR}/include
+       ${PROJECT_SOURCE_DIR}/src
+       )
 
-FILE(GLOB HEADERS src/*.h)
+FILE(GLOB HEADERS include/*.h
+                  include/gui/*.h
+                  include/keyboard/*.h
+                  include/audio/*.h )
 
 FILE(GLOB SOURCES src/*.cpp
                   src/gui/*.cpp
+                  src/keyboard/*.cpp
+                  src/audio/*.cpp
                            )
+set(RESOURCES resources/resources.qrc)                                                      
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
-        ${SOURCES}
+        ${RESOURCES}
+        ${HEADERS}
+        ${SOURCES} 
     )
 else()
         add_executable(${PROJECT_NAME}
-            ${SOURCES}
+            ${RESOURCES}
+            ${HEADERS}
+            ${SOURCES} 
         )
 endif()
 
 #if (MSVC)
 #        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL /NODEFAULTLIB:msvcrt")
 #endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Gui)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
 target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets)
+
 
 install(TARGETS ${PROJECT_NAME}
 BUNDLE DESTINATION .

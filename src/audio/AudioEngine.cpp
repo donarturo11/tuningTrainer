@@ -1,4 +1,4 @@
-#include "AudioEngine.h"
+#include "audio/AudioEngine.h"
 
 AudioEngine::AudioEngine() 
 {
@@ -34,11 +34,13 @@ void AudioEngine::connectMixer(stk::WaveSimpleMixer *mixer)
 void AudioEngine::start()
 {
    stk::StkFloat value;
+   /*
    while (this->running)
    {
        value=0.0;
-       output->tick(m_mixer->tick());
+       //output->tick(m_mixer->tick());
    }
+   */
         
 }
 
@@ -55,8 +57,8 @@ void AudioEngine::probeSampleRate()
     {
         try
         {
-            stk::Stk::setSampleRate(sRates[i]);
-            output = new stk::RtWvOut( 1 );
+            //stk::Stk::setSampleRate(sRates[i]);
+            //output = new stk::RtWvOut( 1 );
             break;
         }
         catch(...)

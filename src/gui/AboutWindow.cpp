@@ -1,4 +1,5 @@
-#include "AboutWindow.h"
+#include "gui/AboutWindow.h"
+#include "gui/MainButtons.h"
 #include <QString>
 
 AboutWindow::AboutWindow(QWidget *parent) : QDialog(parent)

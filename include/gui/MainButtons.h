@@ -4,8 +4,11 @@
 #include <QPushButton>
 #include <QVector>
 
-#include "AboutWindow.h"
-#include "ChooseSampleWindow.h"
+#include "gui/AboutWindow.h"
+#include "gui/ChooseSampleWindow.h"
+#include "MainWindow.h"
+
+class AboutWindow;
 
 class MainButtons : public QWidget
 {
@@ -38,6 +41,8 @@ class MainButtons : public QWidget
         
     signals:
         void quit();
+        void clear();
+        void reset();
 
     
         

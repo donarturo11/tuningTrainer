@@ -36,66 +36,9 @@ void MainWindow::quitSlot()
     this->close();
 }
 
-
-//-------------------------------------------
-QString MainWindow::findDefaultWavePath()
-{
-    QDir directory = QDir(QCoreApplication::applicationDirPath());
-    QString filename="harpsichord.wav";
-    QString fullpath="";
-    QStringList searchPaths;
-    QStringList foundPaths;
-    
-    searchPaths << directory.path();
-    
-    #if !defined(__OS_WINDOWS__) && !defined(__APPLE__) 
-    searchPaths << "/usr/share/tuningTrainer";
-    searchPaths << "/usr/local/share/tuningTrainer";
-    #elif(__APPLE__) 
-    if(directory.cd("../Resources")){
-    searchPaths << directory.path();
-    }
-    searchPaths << "/Applications/tuningTrainer.app/Contents/Resources";
-    #else
-    if (directory.cd("../share/tuningTrainer")){
-	searchPaths << directory.path();
-	}
-    #endif
-    
-    for(int i=0; i<searchPaths.size(); i++){
-        fullpath = searchPaths.at(i) + "/" + filename;
-        if (QFile::exists(fullpath)) {
-			return fullpath;
-		}
-    }
-    
-    return "";
-    
-}
-
-void MainWindow::setDefaults()
-{
-    
-}
-
-QStringList MainWindow::searchPath(QString dir, QString filename)
-{
-    QStringList foundPath;
-    QDirIterator it(dir, QDirIterator::Subdirectories);
-    QString path;
-    while (it.hasNext()){
-        path = it.next();
-        if (path.contains(filename)){
-            foundPath << path;
-        }
-    }
-    return foundPath;
-}
-
-
 void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
 {
-    
+ /*   
     this->m_synth=synth;
     
     this->baseFreq = m_settings->value("baseFreq", 220).toDouble();
@@ -105,10 +48,7 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
         m_settings->setValue("samplePath", this->wavepath);
         this->loadWave(this->wavepath);
     } 
-    
-    
-    
-    
+
     int ind=0;
     int posX=0;
     int color=WHITE;
@@ -129,11 +69,13 @@ void MainWindow::initKeyboard(std::vector <stk::WaveSimple*> *synth)
     this->createKey(KEY_A_SHARP, posX, color, ind, Qt::Key_0, m_settings);    
     this->createKey(KEY_B, posX, color, ind, Qt::Key_P, m_settings);    
     this->createKey(KEY_C_HIGH, posX, color, ind, 91, m_settings);
+    */ 
     
 }
 
 void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, int keyCode, QSettings *settings)
 {
+    /*
     QString keyName=QKeySequence(keyCode).toString();
     //------------
     QString settingsKey="keyID";
@@ -161,9 +103,8 @@ void MainWindow::createKey(int nextSemitone, int &posX, int &color, int &index, 
     //myKeyGroup[index]->m_tuneDial->setValue(440);
     //myKeyGroup[index]->m_spinbox->setValue(440);
     
-    
-    
     ++index;
+    */ 
 }
 //-------------------------------------------
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -241,11 +182,12 @@ void MainWindow::setDefaultBaseFrequency()
 {
     setBaseFreq(220);
 }
-
+/*
 void MainWindow::setDefaultWavepath()
 {
-    setWavepath(findDefaultWavePath());
+    //setWavepath(findDefaultWavePath());
 #ifdef DEBUG
     qDebug() << "WavePath: " << this->wavepath;
 #endif
 }
+*/

@@ -1,17 +1,19 @@
 #ifndef KEYGROUP_H
 #define KEYGROUP_H
 #include <vector>
+#include <QPushButton>
 #include <QDial>
 #include <QDoubleSpinBox>
+#include <QLabel>
 #include <QSettings>
 #include <QThread>
 
-#include "MainWindow.h"
+//#include "MainWindow.h"
 #include "globals.h"
 #include "semitones.h"
-#include "WaveSimple.h"
+#include "audio/WaveSimple.h"
 
-class QPushButton;
+//class QPushButton;
 
 class KeyGroup : public QWidget
 {

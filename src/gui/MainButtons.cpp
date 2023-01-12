@@ -1,4 +1,4 @@
-#include "MainButtons.h"
+#include "gui/MainButtons.h"
 
 MainButtons::MainButtons(QWidget *parent) : QWidget(parent)
 {

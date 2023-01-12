@@ -1,4 +1,4 @@
-#include "WaveSimpleMixer.h"
+#include "audio/WaveSimpleMixer.h"
 namespace stk {
 WaveSimpleMixer::WaveSimpleMixer()
 {

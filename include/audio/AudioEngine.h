@@ -6,7 +6,7 @@
 
 
 #include "globals.h"
-#include "stk/RtWvOut.h"
+#include "rtaudio/RtAudio.h"
 #include "stk/Stk.h"
 #include "WaveSimpleMixer.h"
 #include "WaveSimple.h"
@@ -34,7 +34,7 @@ private:
     
 
 protected:
-    stk::RtWvOut *output;
+    RtAudio *output;
     bool running;
     stk::StkFloat audioValue;
     stk::StkFloat buffer_[1024];

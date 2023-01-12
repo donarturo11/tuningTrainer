@@ -1,7 +1,7 @@
 #ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
-#include <QApplication>
+//#include <QApplication>
 #include <QWidget>
 #include <QDialog>
 #include <QLineEdit>
@@ -10,14 +10,15 @@
 #include <QLabel>
 #include <QString>
 #include <QVBoxLayout>
+#include "MainWindow.h"
 //class QPushButton;
 
 class AboutWindow : public QDialog
 {
 	Q_OBJECT
 	public:
-		explicit AboutWindow(QWidget *parent=0);
-        
+		AboutWindow(QWidget *parent=0);
+		
         QPushButton *m_quit_btn;
         QLabel *m_label;
         

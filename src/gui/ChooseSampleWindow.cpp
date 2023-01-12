@@ -1,4 +1,4 @@
-#include "ChooseSampleWindow.h"
+#include "gui/ChooseSampleWindow.h"
 #include <QString>
 #include <QFileDialog>
 #include <QDebug>

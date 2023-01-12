@@ -1,10 +1,10 @@
-#include "MainWindow.h"
-#include "KeyGroup.h"
+//#include "MainWindow.h"
+#include "keyboard/KeyGroup.h"
 
 KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *settings, QString settingsKey, QWidget* parent) //: public QWidget(parent)
 {
     
-    this->parentClass=parent;
+//    this->parentClass=parent;
     this->setFrequencyRange(FREQ_MIN, FREQ_MAX);
     
     this->setKeyButtonPosY(150);
@@ -12,11 +12,11 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
     
     this->initKeyButton(posX, white, nId, keyCode, parent);
     
-    this->initTuneDial();
-    this->initSpinBox();
-    this->setConnections();   
-    this->settingsKey=settingsKey; 
-    this->m_settings=settings;
+  //  this->initTuneDial();
+  //  this->initSpinBox();
+  //  this->setConnections();   
+  //  this->settingsKey=settingsKey; 
+  //  this->m_settings=settings;
     
     
                
@@ -180,12 +180,12 @@ void KeyGroup::spinboxEditFinishedSlot()
 
 void KeyGroup::setPressedBg()
 {
-    m_keyButton->setStyleSheet(btnStylePressed);
+//    m_keyButton->setStyleSheet(btnStylePressed);
 }
 //-------------------------------------------
 void KeyGroup::setDefaultBg()
 {
-    m_keyButton->setStyleSheet(this->btnStyle);
+//    m_keyButton->setStyleSheet(this->btnStyle);
 }
 //-------------------------------------------
 void KeyGroup::setKeyId(int nId)
@@ -264,6 +264,7 @@ void KeyGroup::setFrequency(double frequency)
 
 void KeyGroup::setConnections() 
 {
+/*
     connect(
              m_keyButton, 
              SIGNAL (pressed() ), 
@@ -277,6 +278,7 @@ void KeyGroup::setConnections()
              this, 
              SLOT( releasedSlot() ) 
            );
+*/
 }
 //-------------------------------------------
 void KeyGroup::pressedSlot() 

@@ -8,7 +8,7 @@
 */
 /***************************************************/
 
-#include "WaveSimple.h"
+#include "audio/WaveSimple.h"
 #include "stk/SKINImsg.h"
 //#include <QString>
 #include <QDebug>

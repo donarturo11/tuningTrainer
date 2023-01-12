@@ -24,23 +24,24 @@
 
 #include "gui/MainButtons.h"
 
-#include "KeyGroup.h" /* to move */
+#include "keyboard/KeyGroup.h" /* to move */
 
 #include "globals.h"
 #include "semitones.h"
 
-#include "AudioEngine.h"
-#include "WaveSimple.h"
-#include "WaveSimpleMixer.h"
+#include "audio/AudioEngine.h"
+#include "audio/WaveSimple.h"
+#include "audio/WaveSimpleMixer.h"
 
 //class QPushButton;
 class KeyGroup;
+class MainButtons;
 class MainWindow : public QWidget
 //class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 	public:
-		explicit MainWindow(QWidget *parent=0);
+		MainWindow(QWidget *parent=0);
 		~MainWindow();
         void init();
         
@@ -69,7 +70,7 @@ class MainWindow : public QWidget
         std::vector <stk::WaveSimple*> *m_synth;
         void setDefaultFrequencies();
         void setDefaultBaseFrequency();
-        void setDefaultWavepath();
+        //void setDefaultWavepath();
         void setDefaults();
         
     protected:
