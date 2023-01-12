@@ -1,5 +1,4 @@
 include(FindPackageHandleStandardArgs)
-set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 find_path(STK_INCLUDE_DIR stk/Stk.h stk REQUIRED)
 find_library(STK_LIBRARY NAMES stk libstk REQUIRED)
 

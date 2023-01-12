@@ -1,6 +1,6 @@
 include(FindPackageHandleStandardArgs)
-set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
-find_path(RTAUDIO_INCLUDE_DIR NAMER rtaudio/RtAudio.h rtaudio.h REQUIRED)
+
+find_path(RTAUDIO_INCLUDE_DIR NAMES rtaudio/RtAudio.h rtaudio.h REQUIRED)
 find_library(RTAUDIO_LIBRARY NAMES rtaudio librtaudio REQUIRED)
 
 find_package_handle_standard_args(RtAudio
@@ -26,9 +26,9 @@ if(RTAUDIO_FOUND)
     )
   endif()
   include(SetupRtAudio)
-#  message("RTAUDIO FOUND")
-#  message("RTAUDIO_LIBRARIES: ${RTAUDIO_LIBRARIES}")
-#  message("RTAUDIO_INCLUDE_DIRS: ${RTAUDIO_INCLUDE_DIRS}")
+  message("RTAUDIO FOUND")
+  message("RTAUDIO_LIBRARIES: ${RTAUDIO_LIBRARIES}")
+  message("RTAUDIO_INCLUDE_DIRS: ${RTAUDIO_INCLUDE_DIRS}")
   
 else()
   message("RTAUDIO NOT FOUND")
