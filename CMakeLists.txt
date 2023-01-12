@@ -24,7 +24,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 include(cmake-build-type)
 
-
 find_package(Stk REQUIRED)
 find_package(RtAudio REQUIRED)
 #include(SetupSTK)
@@ -67,6 +66,12 @@ else()
             ${SOURCES} 
         )
 endif()
+
+# Solution from https://forum.qt.io/topic/121502/cmake-shows-console/3
+# It prevents of showing console
+IF(WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
+ENDIF(WIN32)
 
 #if (MSVC)
 #        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL /NODEFAULTLIB:msvcrt")
