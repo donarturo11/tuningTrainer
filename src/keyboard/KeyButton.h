@@ -1,6 +1,6 @@
 #ifndef KEYBUTTON_H
 #define KEYBUTTON_H
-
+#include <QPushButton>
 
 class KeyButton : public QPushButton
 {
