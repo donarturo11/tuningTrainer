@@ -2,7 +2,6 @@
 #define MAINBUTTONS_H
 #include <QWidget>
 #include <QPushButton>
-#include <QVector>
 
 #include "gui/AboutWindow.h"
 #include "gui/ChooseSampleWindow.h"
@@ -29,7 +28,6 @@ class MainButtons : public QWidget
         
         AboutWindow *aboutwindow;
         ChooseSampleWindow *choosesamplewindow;
-        QVector<QWidget*> m_buttons;
     
     public slots:
         void aboutSlot();
@@ -38,7 +36,6 @@ class MainButtons : public QWidget
         void clearSlot();
         void quitSlot();
 
-        
     signals:
         void quit();
         void clear();
