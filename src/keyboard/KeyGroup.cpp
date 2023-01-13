@@ -10,7 +10,7 @@ KeyGroup::KeyGroup(int posX, int white, int nId, int keyCode, QSettings *setting
     this->setKeyButtonPosY(150);
     this->setTuneDialPosY(0);
     
-    this->initKeyButton(posX, white, nId, keyCode, parent);
+  //  this->initKeyButton(posX, white, nId, keyCode, parent);
     
   //  this->initTuneDial();
   //  this->initSpinBox();
