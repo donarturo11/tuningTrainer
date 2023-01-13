@@ -50,7 +50,8 @@ FILE(GLOB SOURCES src/*.cpp
                   src/keyboard/*.cpp
                   src/audio/*.cpp
                            )
-set(RESOURCES resources/resources.qrc)                                                      
+set(RESOURCES resources/resources.qrc
+              qss/qss.qrc )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
