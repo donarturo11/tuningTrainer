@@ -40,16 +40,19 @@ include_directories(
        ${PROJECT_SOURCE_DIR}/src
        )
 
-FILE(GLOB HEADERS include/*.h
-                  include/gui/*.h
-                  include/keyboard/*.h
-                  include/audio/*.h )
+#FILE(GLOB HEADERS include/*.h
+#                  include/gui/*.h
+#                  include/keyboard/*.h
+#                  include/audio/*.h )
+#FILE(GLOB SOURCES src/*.cpp
+#                  src/gui/*.cpp
+#                  src/keyboard/*.cpp
+#                  src/audio/*.cpp
+#                           )
 
-FILE(GLOB SOURCES src/*.cpp
-                  src/gui/*.cpp
-                  src/keyboard/*.cpp
-                  src/audio/*.cpp
-                           )
+FILE(GLOB_RECURSE HEADERS include/*.h)
+FILE(GLOB_RECURSE SOURCES src/*.cpp)
+
 set(RESOURCES resources/resources.qrc
               qss/qss.qrc )
 
