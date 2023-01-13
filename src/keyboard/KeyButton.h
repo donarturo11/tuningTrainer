@@ -9,7 +9,7 @@ public:
     KeyButton(QWidget* parent);
     ~KeyButton();
 protected:
-    bool semitone = false;
+    bool semitoneKey = false;
 
 };
 
