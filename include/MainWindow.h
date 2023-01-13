@@ -7,16 +7,15 @@
 #include <QSettings>
 
 #include "gui/MainButtons.h"
-#include "keyboard/KeyGroup.h"
 
 #include "globals.h"
 #include "semitones.h"
 
-//class QPushButton;
-class KeyGroup;
+namespace GUI {
 class MainButtons;
+}
+
 class MainWindow : public QWidget
-//class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 	public:
@@ -32,8 +31,7 @@ class MainWindow : public QWidget
         int waitCount;
         double baseFreq;
         
-        MainButtons *mainButtons;
-        KeyGroup* m_keygroup;
+        GUI::MainButtons *mainButtons;
         QSettings *m_settings;
     
     public slots:

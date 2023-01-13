@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     
-    mainButtons = new MainButtons(this);
+    mainButtons = new GUI::MainButtons(this);
     mainButtons->show();
     loadStyle();
 }
