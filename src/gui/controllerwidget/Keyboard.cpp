@@ -1,13 +1,13 @@
-#include "gui/controllerwidget/KeyButton.h"
+#include "gui/controllerwidget/Keyboard.h"
 
 namespace GUI {
 namespace ControllerWidget {
 /* --------------- */
-KeyButton::KeyButton(QWidget* parent)
+Keyboard::Keyboard(QWidget* parent)
 {
 }
 
-KeyButton::~KeyButton()
+Keyboard::~Keyboard()
 {
 }
 

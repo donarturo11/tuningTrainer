@@ -2,6 +2,8 @@
 #define KEYBUTTON_H
 #include <QPushButton>
 
+namespace GUI {
+
 namespace ControllerWidget {
 
 class KeyButton : public QPushButton
@@ -17,4 +19,5 @@ protected:
 
 } // namespace ControllerWidget
 
+} // namespace GUI
 #endif // KEYBUTTON_H
