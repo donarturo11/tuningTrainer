@@ -2,6 +2,8 @@
 #define KEYBUTTON_H
 #include <QPushButton>
 
+namespace ControllerWidget {
+
 class KeyButton : public QPushButton
 {
 Q_OBJECT
@@ -12,5 +14,7 @@ protected:
     bool semitoneKey = false;
 
 };
+
+} // namespace ControllerWidget
 
 #endif // KEYBUTTON_H
