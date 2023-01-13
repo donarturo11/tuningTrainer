@@ -7,8 +7,8 @@
 #include "gui/ChooseSampleWindow.h"
 #include "MainWindow.h"
 
+namespace GUI {
 class AboutWindow;
-
 class MainButtons : public QWidget
 {
 	Q_OBJECT
@@ -46,6 +46,6 @@ class MainButtons : public QWidget
 	//private slots:
         
 };
-
+} // namespace GUI
 
 #endif

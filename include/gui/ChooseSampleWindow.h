@@ -17,6 +17,8 @@
 //class QPushButton;
 class MainWindow;
 
+namespace GUI {
+
 class ChooseSampleWindow : public QDialog
 {
 	Q_OBJECT
@@ -59,6 +61,8 @@ class ChooseSampleWindow : public QDialog
 	//private slots:
         
 };
+
+} // namespace GUI
 
 
 #endif // CHOOSESAMPLEWINDOW_H

@@ -12,18 +12,18 @@
 #include <QVBoxLayout>
 #include "MainWindow.h"
 //class QPushButton;
-
+namespace GUI {
 class AboutWindow : public QDialog
 {
-	Q_OBJECT
-	public:
-		AboutWindow(QWidget *parent=0);
+    Q_OBJECT
+    public:
+  	AboutWindow(QWidget *parent=0);
 		
         QPushButton *m_quit_btn;
         QLabel *m_label;
         
     
-	private:
+    private:
         void setAboutString();
         
     protected:
@@ -37,6 +37,6 @@ class AboutWindow : public QDialog
 	//private slots:
         
 };
-
+} // namespace GUI
 
 #endif // ABOUTWINDOW_H

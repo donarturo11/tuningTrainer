@@ -1,7 +1,7 @@
 #include "gui/AboutWindow.h"
 #include "gui/MainButtons.h"
 #include <QString>
-
+namespace GUI {
 AboutWindow::AboutWindow(QWidget *parent) : QDialog(parent)
 {
     this->setAboutString();
@@ -45,3 +45,4 @@ void AboutWindow::setAboutString()
     label_str+="To close this window press &lt;esc&gt;";
     
 }
+} // namespace GUI

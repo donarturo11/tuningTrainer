@@ -1,5 +1,5 @@
 #include "gui/MainButtons.h"
-
+namespace GUI {
 MainButtons::MainButtons(QWidget *parent) : QWidget(parent)
 {
     init();
@@ -74,4 +74,6 @@ void MainButtons::chooseSampleSlot()
     //this->setBaseFreq(choosesamplewindow->getBaseFreq());
     
     //this->loadWave(this->getWavepath());
-}    
+}
+
+} //namespace GUI

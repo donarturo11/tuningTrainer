@@ -2,7 +2,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QDebug>
-
+namespace GUI {
 ChooseSampleWindow::ChooseSampleWindow(QWidget *parent, QString wavepath) : QDialog(parent)
 {
     this->setString();
@@ -104,4 +104,4 @@ void ChooseSampleWindow::setBaseFreq(double freq)
 #endif
 }
 
-
+} // namespace GUI
