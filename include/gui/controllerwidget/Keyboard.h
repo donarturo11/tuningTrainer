@@ -1,22 +1,30 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 #include <QWidget>
+#include <QVector>
+#include "gui/controllerwidget/KeyButton.h"
 
 namespace GUI {
-
-namespace ControllerWidget {
 
 class Keyboard : public QWidget
 {
 Q_OBJECT
 public:
-    Keyboard(QWidget* parent);
+    Keyboard(QWidget* parent=0);
     ~Keyboard();
+public slots:
+    void keyPressed(int index);    
+    void keyReleased(int index);    
+signals:
+    int noteOn(int index);
+    int noteOff(int index);
+private: 
+    void initKey(bool semitone=false);    
 protected:
+    QVector<KeyButton*> keys;
+
 
 };
-
-} // namespace ControllerWidget
 
 } // namespace GUI
 #endif // KEYBOARD_H

@@ -24,8 +24,12 @@ void MainWindow::init()
 {
     
     mainButtons = new GUI::MainButtons(this);
-    mainButtons->show();
+    controllerWidget = new GUI::ControllerWidget(this);
+    //mainButtons->show();
     loadStyle();
+    m_layout = new QHBoxLayout();
+    m_layout->addWidget(controllerWidget);
+    m_layout->addWidget(mainButtons);
 }
 
 void MainWindow::initSettings()

@@ -2,9 +2,8 @@
 #define MAINBUTTONS_H
 #include <QWidget>
 #include <QPushButton>
+#include <QVBoxLayout>
 
-#include "gui/AboutWindow.h"
-#include "gui/ChooseSampleWindow.h"
 #include "MainWindow.h"
 
 namespace GUI {
@@ -25,10 +24,8 @@ class MainButtons : public QWidget
         QPushButton *m_clear_btn;
         QPushButton *m_quit_btn;
         QPushButton *m_reset_btn;
-        
-        AboutWindow *aboutwindow;
-        ChooseSampleWindow *choosesamplewindow;
-    
+        QVBoxLayout *m_buttons_layout;
+            
     public slots:
         void aboutSlot();
         void chooseSampleSlot();

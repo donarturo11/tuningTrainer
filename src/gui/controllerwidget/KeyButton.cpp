@@ -1,10 +1,12 @@
 #include "gui/controllerwidget/KeyButton.h"
 
 namespace GUI {
-namespace ControllerWidget {
+
+//KeyButton::index = 0;
 /* --------------- */
-KeyButton::KeyButton(QWidget* parent)
+KeyButton::KeyButton(QWidget *parent) : QPushButton(parent)
 {
+
 }
 
 KeyButton::~KeyButton()
@@ -12,5 +14,5 @@ KeyButton::~KeyButton()
 }
 
 /* --------------- */
-} // namespace ControllerWidget
+
 } // namespace GUI

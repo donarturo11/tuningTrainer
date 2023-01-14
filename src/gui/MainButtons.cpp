@@ -1,4 +1,7 @@
 #include "gui/MainButtons.h"
+#include "gui/AboutWindow.h"
+#include "gui/ChooseSampleWindow.h"
+
 namespace GUI {
 MainButtons::MainButtons(QWidget *parent) : QWidget(parent)
 {
@@ -17,7 +20,7 @@ MainButtons::~MainButtons()
 
 void MainButtons::init()
 {
-    int posX=800;
+    int posX=0;
     int posY=0;
     int width=140;
     int height=20;
@@ -28,18 +31,19 @@ void MainButtons::init()
     m_reset_btn = new QPushButton("Reset", this);
     m_clear_btn = new QPushButton("Clear config", this);
     
+    m_buttons_layout = new QVBoxLayout(this);
+    m_buttons_layout->setSpacing(0);
+    
     for (auto button : {m_about_btn, m_quit_btn, m_chooseSample_btn, m_reset_btn, m_clear_btn}) {
-        button->setGeometry(posX, posY, width, height);
-        button->show();    
-        posY+=height;
+        m_buttons_layout->addWidget(button);
     }
 }
 
 void MainButtons::aboutSlot()
 {    
-    aboutwindow=new AboutWindow(this);
-    aboutwindow->setModal(1);
-    aboutwindow->show();
+    AboutWindow aboutwindow(this);
+    aboutwindow.setModal(1);
+    aboutwindow.exec();
 }
 
 void MainButtons::quitSlot()
@@ -63,17 +67,9 @@ void MainButtons::clearSlot()
 
 void MainButtons::chooseSampleSlot()
 {
-    choosesamplewindow = new ChooseSampleWindow(this, "");
-    choosesamplewindow->setModal(1);
-    choosesamplewindow->exec();
-#ifdef DEBUG
-    qDebug() << "Choosen Sample: " << choosesamplewindow->getWavepath();
-    qDebug() << "Base Freq: " << choosesamplewindow->getWavepath();
-#endif    
-    //this->setWavepath(choosesamplewindow->getWavepath());
-    //this->setBaseFreq(choosesamplewindow->getBaseFreq());
-    
-    //this->loadWave(this->getWavepath());
+    ChooseSampleWindow choosesamplewindow(this, "");
+    choosesamplewindow.setModal(1);
+    choosesamplewindow.exec();
 }
 
 } //namespace GUI

@@ -5,8 +5,10 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QSettings>
+#include <QHBoxLayout>
 
 #include "gui/MainButtons.h"
+#include "gui/ControllerWidget.h"
 
 #include "globals.h"
 #include "semitones.h"
@@ -32,7 +34,9 @@ class MainWindow : public QWidget
         double baseFreq;
         
         GUI::MainButtons *mainButtons;
+        GUI::ControllerWidget *controllerWidget;
         QSettings *m_settings;
+        QHBoxLayout* m_layout;
     
     public slots:
         

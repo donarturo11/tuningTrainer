@@ -4,19 +4,15 @@
 
 namespace GUI {
 
-namespace ControllerWidget {
-
 class ControllerGroup : public QWidget
 {
 Q_OBJECT
 public:
-    ControllerGroup(QWidget* parent);
+    ControllerGroup(QWidget* parent=0);
     ~ControllerGroup();
 protected:
 
 };
-
-} // namespace ControllerWidget
 
 } // namespace GUI
 #endif // CONTROLLERGROUP_H
