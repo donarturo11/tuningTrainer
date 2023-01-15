@@ -10,6 +10,7 @@ class KeyButton : public QPushButton
 Q_OBJECT
 public:
     inline static int index = 0;
+    inline static int position_x = 0;
     KeyButton(QWidget* parent=0, bool semitone=false);
     ~KeyButton();
     void init();
@@ -23,10 +24,12 @@ public slots:
     void sendNoteOn();
     void sendNoteOff(); 
 private:
-    void setSemitone(bool b){ semitoneKey = b; }    
+    void setSemitone(bool b){ semitoneKey = b; }
+    void loadStyle();
 protected:
     bool semitoneKey = false;
     int btn_index;
+    int pos_x;
 };
 
 } // namespace GUI
