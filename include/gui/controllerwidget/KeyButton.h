@@ -9,6 +9,7 @@ class KeyButton : public QPushButton
 {
 Q_OBJECT
 public:
+    Q_PROPERTY(bool semitoneKey READ isSemitone)
     inline static int index = 0;
     inline static int position_x = 0;
     KeyButton(QWidget* parent=0, bool semitone=false);
@@ -25,7 +26,6 @@ public slots:
     void sendNoteOff(); 
 private:
     void setSemitone(bool b){ semitoneKey = b; }
-    void loadStyle();
 protected:
     bool semitoneKey = false;
     int btn_index;

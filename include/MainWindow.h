@@ -26,7 +26,6 @@ class MainWindow : public QWidget
     private:
         void init();
         void initSettings();
-        void loadStyle();
         void setDefaults();
         
     protected:

@@ -1,35 +1,34 @@
-.KeyButton {
+KeyButton {
     text-align: bottom; 
     font-size: 30px;
 }
 
-.KeyButton[semitoneKey=false] {
+KeyButton[semitoneKey=false] {
     color: #000000;
     background: #ffffff;    
 }
 
-.KeyButton[semitoneKey=false]:pressed {
+KeyButton[semitoneKey=false]:pressed {
     color: #101010;
     background: #c0c0c0;    
 }
 
-.KeyButton[semitoneKey=true] {
+KeyButton[semitoneKey=true] {
     color: #ffffff;
     background: #000000;
 }
 
-.KeyButton[semitoneKey=true]:pressed {
+KeyButton[semitoneKey=true]:pressed {
     color: #c0c0c0;
     background: #404040;
 }
 
-.KeyButton[semitoneKey=false] {
+KeyButton[semitoneKey=false] {
     width: 72;
     height: 140;
 }
 
-.KeyButton[semitoneKey=true] {
+KeyButton[semitoneKey=true] {
     width: 48;
     height: 70;
 }
-

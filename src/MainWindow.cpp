@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "gui/load_style.h"
 #include <QFile>
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
@@ -23,10 +24,10 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     
-    mainButtons = new GUI::MainButtons(this);
+    GUI::load_style(this, ":/qss/main.qss");
+	mainButtons = new GUI::MainButtons(this);
     controllerWidget = new GUI::ControllerWidget(this);
     //mainButtons->show();
-    loadStyle();
     m_layout = new QHBoxLayout(this);
     m_layout->addWidget(controllerWidget);
     m_layout->addWidget(mainButtons);
@@ -37,14 +38,6 @@ void MainWindow::initSettings()
     m_settings=new QSettings("donarturo11", "tuningTrainer");
     m_settings->setDefaultFormat(QSettings::IniFormat);
     //appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-}
-
-void MainWindow::loadStyle()
-{
-    QFile mainStyle(":/qss/main.qss");
-    mainStyle.open( QFile::ReadOnly );
-    QString styleString = QLatin1String(mainStyle.readAll());
-    this->setStyleSheet( styleString );
 }
 
 void MainWindow::quitSlot()

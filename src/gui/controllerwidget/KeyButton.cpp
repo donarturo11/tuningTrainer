@@ -1,5 +1,5 @@
 #include "gui/controllerwidget/KeyButton.h"
-#include "gui/load_style.cpp"
+#include "gui/load_style.h"
 namespace GUI {
 
 //KeyButton::index = 0;
@@ -14,7 +14,7 @@ KeyButton::KeyButton(QWidget *parent, bool semitone) : QPushButton(parent)
     fprintf(stderr, "-- Keybutton C-tor ------\n");
     fprintf(stderr, "-- Created Key number: %i\n", btn_index);
     fprintf(stderr, "-- Pos X: %i\n", pos_x);
-    qDebug() << "Geometry: " << this->geometry();
+    //qDebug() << "Geometry: " << this->geometry();
     fprintf(stderr, "---------------------\n\n");
     
 }
@@ -25,7 +25,7 @@ KeyButton::~KeyButton()
 
 void KeyButton::init()
 {
-    loadStyle();
+    GUI::load_style(this, ":/qss/keyboard.qss");
     btn_index = index;
     pos_x = KeyButton::position_x;
     int multi = isSemitone() ? 1 : 3;
@@ -34,11 +34,6 @@ void KeyButton::init()
     setGeometry(pos_x, 0, width, height);
     
     KeyButton::position_x += width;
-}
-
-void KeyButton::loadStyle()
-{
-    load_style(this, ":/qss/keyboard.qss");
 }
 
 void KeyButton::sendNoteOn()
