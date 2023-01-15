@@ -1,5 +1,7 @@
 #include "gui/controllerwidget/KeyButton.h"
 #include <iostream>
+#include <QWidget>
+#include <QDebug>
 namespace GUI {
 
 //KeyButton::index = 0;

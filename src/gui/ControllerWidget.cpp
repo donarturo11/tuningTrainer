@@ -1,5 +1,6 @@
 #include "gui/ControllerWidget.h"
 #include <QString>
+#include <QDebug>
 
 namespace GUI {
 
@@ -26,6 +27,7 @@ ControllerWidget::~ControllerWidget()
 
 void ControllerWidget::labelPressed(int number)
 {
+    qDebug() << number << " pressed";
     QString s="";
     s="Key number " + QString::number(number) + " pressed";
     label->setText(s);
