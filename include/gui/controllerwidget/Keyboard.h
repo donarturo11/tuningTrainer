@@ -21,7 +21,6 @@ signals:
     int noteOff(int index);
 private: 
     void initKey(bool semitone=false);
-    void initConnections();
 protected:
     QVector<KeyButton*> keys;
 

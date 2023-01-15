@@ -17,11 +17,12 @@ namespace GUI {
 class MainButtons;
 }
 
-class MainWindow : public QWidget
+//class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 	public:
-		MainWindow(QWidget *parent=0);
+		MainWindow();
 		~MainWindow();
     private:
         void init();
@@ -36,6 +37,7 @@ class MainWindow : public QWidget
         GUI::ControllerWidget *controllerWidget;
         QSettings *m_settings;
         QHBoxLayout* m_layout;
+        QWidget* mainwidget;
     
     public slots:
         

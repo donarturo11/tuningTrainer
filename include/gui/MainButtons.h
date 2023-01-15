@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QCheckBox>
 
 #include "MainWindow.h"
 
@@ -25,6 +26,7 @@ class MainButtons : public QWidget
         QPushButton *m_quit_btn;
         QPushButton *m_reset_btn;
         QVBoxLayout *m_buttons_layout;
+        QCheckBox* toggleDebug;
             
     public slots:
         void aboutSlot();

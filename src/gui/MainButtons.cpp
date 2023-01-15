@@ -30,6 +30,7 @@ void MainButtons::init()
     m_chooseSample_btn = new QPushButton("Choose sample", this);
     m_reset_btn = new QPushButton("Reset", this);
     m_clear_btn = new QPushButton("Clear config", this);
+    toggleDebug = new QCheckBox("Show debug window", this);
     
     m_buttons_layout = new QVBoxLayout(this);
     m_buttons_layout->setSpacing(0);
@@ -37,6 +38,7 @@ void MainButtons::init()
     for (auto button : {m_about_btn, m_quit_btn, m_chooseSample_btn, m_reset_btn, m_clear_btn}) {
         m_buttons_layout->addWidget(button);
     }
+    m_buttons_layout->addWidget(toggleDebug);
 }
 
 void MainButtons::aboutSlot()

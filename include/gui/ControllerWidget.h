@@ -2,6 +2,7 @@
 #define CONTROLLERWIDGET_H
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QLabel>
 #include "gui/controllerwidget/Keyboard.h"
 #include "gui/controllerwidget/ControllerGroup.h"
 
@@ -13,6 +14,9 @@ Q_OBJECT
 public:
     ControllerWidget(QWidget *parent=0);
     ~ControllerWidget();
+public slots:
+    void labelPressed(int number);   
+    void labelReleased(int number);
 signals:
     int noteOn(int number);
     int noteOff(int number);
@@ -20,6 +24,7 @@ signals:
 protected:
     Keyboard *keyboard;
     ControllerGroup *controls;
+    QLabel *label;
     QVBoxLayout *controllerLayout;
 };
 

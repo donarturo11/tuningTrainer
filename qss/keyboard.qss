@@ -3,7 +3,7 @@ KeyButton {
     font-size: 30px;
 }
 
-KeyButton[semitoneKey=false] {
+KeyButton[semitoneKey=false]:default {
     color: #000000;
     background: #ffffff;    
 }
@@ -13,7 +13,7 @@ KeyButton[semitoneKey=false]:pressed {
     background: #c0c0c0;    
 }
 
-KeyButton[semitoneKey=true] {
+KeyButton[semitoneKey=true]:default {
     color: #ffffff;
     background: #000000;
 }
