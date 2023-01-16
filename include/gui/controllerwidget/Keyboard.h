@@ -13,14 +13,15 @@ public:
     Keyboard(QWidget* parent=0);
     ~Keyboard();
     KeyButton* getKeyAt(int idx){ return keys[idx]; };
+    void initKey(bool semitone=false);
 public slots:
     void keyPressed(int index);    
     void keyReleased(int index);
 signals:
-    int noteOn(int index);
-    int noteOff(int index);
+    void noteOn(int index);
+    void noteOff(int index);
 private: 
-    void initKey(bool semitone=false);
+
 protected:
     QVector<KeyButton*> keys;
 
