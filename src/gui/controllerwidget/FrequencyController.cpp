@@ -30,13 +30,48 @@ void FrequencyController::init()
     pos_y = semitoneKey ? 0 : 70;
     
     m_dial->setGeometry(0, 0, 50, 50);
-    m_spin->setGeometry(0, 50, 50, 20);
+    m_spin->setGeometry(0, 50, 60, 20);
     m_spin->show();
     m_dial->show();
     
+    connect(m_dial, 
+            &QDial::valueChanged, 
+            this, 
+            &FrequencyController::onDialValueChanged);
+            
+    connect(m_spin, 
+            &QDoubleSpinBox::valueChanged, 
+            this, 
+            &FrequencyController::onSpinValueChanged);
+    
+    connect(this,
+            &FrequencyController::frequencyChanged,
+            this,
+            &FrequencyController::changeFrequency);
+            
+    m_dial->setMaximum(freq_max);
+    m_dial->setMinimum(freq_min);
+    m_spin->setMaximum(freq_max);
+    m_spin->setMinimum(freq_min);
     setGeometry(pos_x, pos_y, 70, 120);
     FrequencyController::position_x=pos_x;
     
+}
+
+void FrequencyController::onSpinValueChanged(double value)
+{
+    m_dial->setValue((int) value);
+    emit frequencyChanged(value);
+}
+
+void FrequencyController::onDialValueChanged(int value)
+{
+    m_spin->setValue((double) value);
+    emit frequencyChanged((double) value);
+}
+void FrequencyController::changeFrequency(double frequency)
+{
+    qDebug() << "Frequency is: " << frequency;
 }
 
 /* --------------- */

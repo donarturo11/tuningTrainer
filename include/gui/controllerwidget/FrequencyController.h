@@ -1,8 +1,8 @@
 #ifndef FREQUENCYCONTROLLER_H
 #define FREQUENCYCONTROLLER_H
 #include <QWidget>
-#include <QDial>
 #include <QDoubleSpinBox>
+#include <QDial>
 #include <QVBoxLayout>
 
 namespace GUI {
@@ -16,14 +16,20 @@ public:
     FrequencyController(bool semitone = false, QWidget* parent=0);
     ~FrequencyController();
     void init();
+private slots:
+    void onSpinValueChanged(double value);
+    void onDialValueChanged(int value);
+    void changeFrequency(double frequency);
 signals:
-    //frequencyChanged(double freq);
+    void frequencyChanged(double freq);
 protected:
     int pos_x;
     QDial *m_dial;
     QDoubleSpinBox *m_spin;
     QVBoxLayout *m_layout;
     bool semitoneKey;
+    const int freq_min=32.00;
+    const int freq_max=2048.00;
     
 
 };
