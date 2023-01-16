@@ -19,6 +19,7 @@ public:
 signals:
     //frequencyChanged(double freq);
 protected:
+    int pos_x;
     QDial *m_dial;
     QDoubleSpinBox *m_spin;
     QVBoxLayout *m_layout;

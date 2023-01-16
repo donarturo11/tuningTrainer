@@ -2,6 +2,8 @@
 #include "gui/ControllerWidget.h"
 #include <QString>
 #include <QDebug>
+#include "gui/controllerwidget/KeyButton.h"
+#include "gui/controllerwidget/FrequencyController.h"
 
 namespace GUI {
 
@@ -19,6 +21,7 @@ ControllerWidget::ControllerWidget(QWidget *parent)
     for (bool black : {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0}) {
         qDebug() << "============";
         keyboard->initKey(black);
+        FrequencyController::position_x=keyboard->getKeyLast()->getX();
         controls->createController(black);
         qDebug() << "============";
     }

@@ -13,6 +13,7 @@ public:
     Keyboard(QWidget* parent=0);
     ~Keyboard();
     KeyButton* getKeyAt(int idx){ return keys[idx]; };
+    KeyButton* getKeyLast(){ return keys.last(); };
     void initKey(bool semitone=false);
 public slots:
     void keyPressed(int index);    

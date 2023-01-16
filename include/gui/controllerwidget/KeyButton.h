@@ -18,6 +18,7 @@ public:
     void setIndex(int idx){ KeyButton::index=idx; }
     bool isSemitone(){ return semitoneKey; }
     int getIndex(){ return btn_index; }
+    int getX(){ return pos_x; }
 signals:
     void noteOn(int idx);
     void noteOff(int idx);

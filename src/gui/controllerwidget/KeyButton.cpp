@@ -15,6 +15,7 @@ KeyButton::KeyButton(QWidget *parent, bool semitone) : QPushButton(parent)
     connect(this, SIGNAL(pressed()), this, SLOT(sendNoteOn()));
     connect(this, SIGNAL(released()), this, SLOT(sendNoteOff()));
     qDebug() << "Created KeyButton at " << KeyButton::index;
+    qDebug() << "KeyButton Geometry:  " << geometry();
     KeyButton::index++;
     
 }
@@ -26,7 +27,7 @@ KeyButton::~KeyButton()
 void KeyButton::init()
 {
     btn_index = index;
-    pos_x = KeyButton::position_x;
+    int pos_x = KeyButton::position_x;
     int width, height;
 
     if (isSemitone()) {
@@ -39,7 +40,7 @@ void KeyButton::init()
         height = 140;
         lower();
     }
-    
+    this->pos_x = pos_x;
     setGeometry(pos_x, 0, width, height);
     setAutoFillBackground("true");
     if (isSemitone())
