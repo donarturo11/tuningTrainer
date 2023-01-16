@@ -3,22 +3,22 @@ KeyButton {
     font-size: 30px;
 }
 
-KeyButton[semitoneKey=false]:default {
+*[semitoneKey=false] {
     color: #000000;
     background: #ffffff;    
 }
 
-KeyButton[semitoneKey=false]:pressed {
+*[semitoneKey=false]:pressed {
     color: #101010;
     background: #c0c0c0;    
 }
 
-KeyButton[semitoneKey=true]:default {
+*[semitoneKey=true] {
     color: #ffffff;
     background: #000000;
 }
 
-KeyButton[semitoneKey=true]:pressed {
+*[semitoneKey=true]:pressed {
     color: #c0c0c0;
     background: #404040;
 }

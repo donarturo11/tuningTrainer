@@ -1,4 +1,3 @@
-#include "gui/load_style.h"
 #include "gui/ControllerWidget.h"
 #include <QString>
 #include <QDebug>
@@ -13,10 +12,8 @@ ControllerWidget::ControllerWidget(QWidget *parent)
     controllerLayout = new QVBoxLayout(this);
     keyboard = new Keyboard(this);
     controls = new ControllerGroup(this);
-    label = new QLabel("Press key: " , this);
     controllerLayout->addWidget(controls);
     controllerLayout->addWidget(keyboard);
-    controllerLayout->addWidget(label);
     
     for (bool black : {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0}) {
         qDebug() << "============";
@@ -25,10 +22,10 @@ ControllerWidget::ControllerWidget(QWidget *parent)
         controls->createController(black);
         qDebug() << "============";
     }
-    GUI::load_style(this, ":/qss/keyboard.qss");
+    
     connect(keyboard, &Keyboard::noteOn, this, &ControllerWidget::sendNoteOn);
     connect(keyboard, &Keyboard::noteOff, this, &ControllerWidget::sendNoteOff);
-    
+    setFixedSize(FrequencyController::position_x+100, 400);
 }
 
 ControllerWidget::~ControllerWidget()

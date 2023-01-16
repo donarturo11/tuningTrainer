@@ -12,6 +12,7 @@ KeyButton::KeyButton(QWidget *parent, bool semitone) : QPushButton(parent)
     //setAutoRepeat(1);
     setSemitone(semitone);
     init();
+    setProperty("semitoneKey", semitone);
     connect(this, SIGNAL(pressed()), this, SLOT(sendNoteOn()));
     connect(this, SIGNAL(released()), this, SLOT(sendNoteOff()));
     qDebug() << "Created KeyButton at " << KeyButton::index;
