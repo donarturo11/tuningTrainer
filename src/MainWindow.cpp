@@ -5,6 +5,7 @@
 //MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 MainWindow::MainWindow() : QMainWindow()
 {
+    MainWindow::mainWindow = this;
     initSettings();
  
     setWindowTitle("TuningTrainer");
@@ -36,6 +37,10 @@ void MainWindow::init()
     mainwidget->setLayout(m_layout);
     setCentralWidget(mainwidget);
     updateGeometry();
+    
+    //keyEvents = new KeyEvents(this);
+    //connect(this, &MainWindow::keyPressed, keyEvents, &KeyEvents::sendKeyPressed);
+    //connect(this, &MainWindow::keyReleased, keyEvents, &KeyEvents::sendKeyReleased);
 }
 
 void MainWindow::initSettings()
@@ -50,3 +55,18 @@ void MainWindow::quitSlot()
     this->close();
 }
 
+
+
+void MainWindow::keyPressEvent(QKeyEvent * event)
+{
+    if (!event->isAutoRepeat()) {
+        emit keyPressed(event->key());
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent * event)
+{
+    if (!event->isAutoRepeat()) {
+        emit keyReleased(event->key());
+    }   
+}
