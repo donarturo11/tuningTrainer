@@ -1,17 +1,22 @@
 #include "gui/ControllerWidget.h"
 #include <QString>
 #include <QDebug>
+#include "MainWindow.h"
 #include "gui/controllerwidget/KeyButton.h"
+#include "gui/KeyEvents.h"
 #include "gui/controllerwidget/FrequencyController.h"
 
 namespace GUI {
 
 /* ------------ */
-ControllerWidget::ControllerWidget(QWidget *parent)
+ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
 {
+    MainWindow* mainWindow = MainWindow::getMainWindow();
     controllerLayout = new QVBoxLayout(this);
     keyboard = new Keyboard(this);
     controls = new ControllerGroup(this);
+    events = new KeyEvents(this);
+    
     controllerLayout->addWidget(controls);
     controllerLayout->addWidget(keyboard);
     
@@ -25,6 +30,8 @@ ControllerWidget::ControllerWidget(QWidget *parent)
     
     connect(keyboard, &Keyboard::noteOn, this, &ControllerWidget::sendNoteOn);
     connect(keyboard, &Keyboard::noteOff, this, &ControllerWidget::sendNoteOff);
+    connect(mainWindow, &MainWindow::keyPressed, events, &KeyEvents::sendKeyPressed);
+    connect(mainWindow, &MainWindow::keyReleased, events, &KeyEvents::sendKeyReleased);
     setFixedSize(FrequencyController::position_x+100, 400);
 }
 
@@ -36,16 +43,12 @@ ControllerWidget::~ControllerWidget()
 void ControllerWidget::sendNoteOn(int number)
 {
     qDebug() << number << " pressed";
-    QString s="";
-    s="Key number " + QString::number(number) + " pressed";
-    label->setText(s);
+    
 }
 
 void ControllerWidget::sendNoteOff(int number)
 {
     qDebug() << number << " released";
-    QString s="";
-    s="Key number " + QString::number(number) + " released";
 }
 
 void ControllerWidget::sendFrequencyChange(int number, double frequency)

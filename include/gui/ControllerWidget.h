@@ -2,9 +2,9 @@
 #define CONTROLLERWIDGET_H
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QLabel>
 #include "gui/controllerwidget/Keyboard.h"
 #include "gui/controllerwidget/ControllerGroup.h"
+#include "gui/KeyEvents.h"
 
 namespace GUI {
 
@@ -25,8 +25,8 @@ signals:
 protected:
     Keyboard *keyboard;
     ControllerGroup *controls;
-    QLabel *label;
     QVBoxLayout *controllerLayout;
+    KeyEvents *events;
 };
 
 }
