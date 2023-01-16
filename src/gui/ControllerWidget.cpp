@@ -1,3 +1,4 @@
+#include "gui/load_style.h"
 #include "gui/ControllerWidget.h"
 #include <QString>
 #include <QDebug>
@@ -15,6 +16,13 @@ ControllerWidget::ControllerWidget(QWidget *parent)
     controllerLayout->addWidget(keyboard);
     controllerLayout->addWidget(label);
     
+    for (bool black : {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0}) {
+        qDebug() << "============";
+        keyboard->initKey(black);
+        controls->createController(black);
+        qDebug() << "============";
+    }
+    GUI::load_style(this, ":/qss/keyboard.qss");
     connect(keyboard, &Keyboard::noteOn, this, &ControllerWidget::labelPressed);
     connect(keyboard, &Keyboard::noteOff, this, &ControllerWidget::labelReleased);
     
