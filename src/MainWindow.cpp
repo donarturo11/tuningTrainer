@@ -9,7 +9,7 @@ MainWindow::MainWindow() : QMainWindow()
  
     setWindowTitle("TuningTrainer");
     init();
-    //setFixedSize(800, 200);
+    setFixedSize(800, 300);
     connect (mainButtons, SIGNAL(quit()), this, SLOT(quitSlot()));
     
     m_settings->sync();
@@ -35,6 +35,7 @@ void MainWindow::init()
     mainwidget = new QWidget(this);
     mainwidget->setLayout(m_layout);
     setCentralWidget(mainwidget);
+    updateGeometry();
 }
 
 void MainWindow::initSettings()
