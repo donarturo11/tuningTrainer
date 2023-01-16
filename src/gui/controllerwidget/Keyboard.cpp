@@ -6,10 +6,9 @@ namespace GUI {
 Keyboard::Keyboard(QWidget *parent) : QWidget(parent)
 {
     GUI::load_style(this, ":/qss/keyboard.qss");
-    initKey();
-    initKey(1);
-    initKey(0);
-    //static int KeyButton::index=0;
+    for (bool s : {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0}) {
+        initKey(s);
+    }
 }
 
 Keyboard::~Keyboard()

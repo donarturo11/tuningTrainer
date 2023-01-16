@@ -32,13 +32,26 @@ void KeyButton::init()
 {
     btn_index = index;
     pos_x = KeyButton::position_x;
-    int multi = isSemitone() ? 1 : 3;
-    int width = 10*multi;
-    int height = 20*multi;
+    int width, height;
+
+    if (isSemitone()) {
+        width = 20;
+        height = 50;
+        pos_x -= width/2;
+        raise();
+    } else {
+        width = 30;
+        height = 70;
+        lower();
+    }
+    
     setGeometry(pos_x, 0, width, height);
     setAutoFillBackground("true");
-    
-    KeyButton::position_x += width;
+    if (isSemitone())
+        pos_x += width/2;
+    else
+        pos_x += width;
+    KeyButton::position_x = pos_x;
 }
 
 void KeyButton::sendNoteOn()
