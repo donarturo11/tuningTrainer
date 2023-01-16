@@ -30,13 +30,13 @@ void KeyButton::init()
     int width, height;
 
     if (isSemitone()) {
-        width = 20;
-        height = 50;
+        width = 36;
+        height = 80;
         pos_x -= width/2;
         raise();
     } else {
-        width = 30;
-        height = 70;
+        width = 70;
+        height = 140;
         lower();
     }
     

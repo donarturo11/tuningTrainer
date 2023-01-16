@@ -11,9 +11,11 @@ class FrequencyController : public QWidget
 {
 Q_OBJECT
 public:
+    inline static int index = 0;
+    inline static int position_x = 0;
     FrequencyController(bool semitone = false, QWidget* parent=0);
     ~FrequencyController();
-    inline static int index = 0;
+    void init();
 signals:
     //frequencyChanged(double freq);
 protected:

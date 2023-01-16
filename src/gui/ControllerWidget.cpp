@@ -23,8 +23,8 @@ ControllerWidget::ControllerWidget(QWidget *parent)
         qDebug() << "============";
     }
     GUI::load_style(this, ":/qss/keyboard.qss");
-    connect(keyboard, &Keyboard::noteOn, this, &ControllerWidget::labelPressed);
-    connect(keyboard, &Keyboard::noteOff, this, &ControllerWidget::labelReleased);
+    connect(keyboard, &Keyboard::noteOn, this, &ControllerWidget::sendNoteOn);
+    connect(keyboard, &Keyboard::noteOff, this, &ControllerWidget::sendNoteOff);
     
 }
 
@@ -33,7 +33,7 @@ ControllerWidget::~ControllerWidget()
 
 }
 
-void ControllerWidget::labelPressed(int number)
+void ControllerWidget::sendNoteOn(int number)
 {
     qDebug() << number << " pressed";
     QString s="";
@@ -41,11 +41,16 @@ void ControllerWidget::labelPressed(int number)
     label->setText(s);
 }
 
-void ControllerWidget::labelReleased(int number)
+void ControllerWidget::sendNoteOff(int number)
 {
     qDebug() << number << " released";
     QString s="";
     s="Key number " + QString::number(number) + " released";
+}
+
+void ControllerWidget::sendFrequencyChange(int number, double frequency)
+{
+    
 }
 
 /* ------------ */

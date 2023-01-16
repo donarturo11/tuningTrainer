@@ -15,12 +15,13 @@ public:
     ControllerWidget(QWidget *parent=0);
     ~ControllerWidget();
 public slots:
-    void labelPressed(int number);   
-    void labelReleased(int number);
+    void sendNoteOn(int number);   
+    void sendNoteOff(int number);
+    void sendFrequencyChange(int number, double frequency);
 signals:
-    int noteOn(int number);
-    int noteOff(int number);
-    int frequencyChanged(int number, int frequency);
+    void noteOn(int number);
+    void noteOff(int number);
+    void frequencyChanged(int number, double frequency);
 protected:
     Keyboard *keyboard;
     ControllerGroup *controls;
