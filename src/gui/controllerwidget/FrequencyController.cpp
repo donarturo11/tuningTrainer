@@ -8,8 +8,6 @@ FrequencyController::FrequencyController(bool semitone, QWidget* parent) : QWidg
     semitoneKey = semitone;
     _index = FrequencyController::index;
     init();
-    qDebug() << "Created FrequencyController at:" << FrequencyController::index;
-    qDebug() << "FrequencyController Geometry: " << geometry();
     FrequencyController::index++;
 }
 
