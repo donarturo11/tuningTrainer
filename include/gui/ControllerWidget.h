@@ -16,6 +16,7 @@ Q_OBJECT
 public:
     ControllerWidget(QWidget *parent=0);
     ~ControllerWidget();
+    KeyEvents* getKeyEvents() { return _events; }
 public slots:
     void sendNoteOn(int number);   
     void sendNoteOff(int number);
