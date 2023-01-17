@@ -4,6 +4,7 @@ namespace Synth {
 Voice::Voice()
 {
     _index = Voice::index;
+    _noteOn = false;
     fprintf(stderr, "Voice c-tor, index: %i\n", _index);
     Voice::index++;
 }
