@@ -6,6 +6,7 @@ namespace GUI {
 FrequencyController::FrequencyController(bool semitone, QWidget* parent) : QWidget(parent)
 {
     semitoneKey = semitone;
+    _index = FrequencyController::index;
     init();
     qDebug() << "Created FrequencyController at:" << FrequencyController::index;
     qDebug() << "FrequencyController Geometry: " << geometry();
@@ -60,18 +61,17 @@ void FrequencyController::init()
 
 void FrequencyController::onSpinValueChanged(double value)
 {
+    int idx = getIndex();
     m_dial->setValue((int) value);
-    emit frequencyChanged(value);
+    emit frequencyChanged(idx, value);
 }
 
 void FrequencyController::onDialValueChanged(int value)
 {
     m_spin->setValue((double) value);
-    emit frequencyChanged((double) value);
 }
-void FrequencyController::changeFrequency(double frequency)
+void FrequencyController::changeFrequency(int index, double frequency)
 {
-    qDebug() << "Frequency is: " << frequency;
 }
 
 /* --------------- */

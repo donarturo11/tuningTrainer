@@ -27,7 +27,7 @@ KeyButton::~KeyButton()
 
 void KeyButton::init()
 {
-    btn_index = index;
+    _index = index;
     int pos_x = KeyButton::position_x;
     int width, height;
 
@@ -41,7 +41,8 @@ void KeyButton::init()
         height = 140;
         lower();
     }
-    this->pos_x = pos_x;
+    _pos_x = pos_x;
+    
     setGeometry(pos_x, 0, width, height);
     setAutoFillBackground("true");
     if (isSemitone())

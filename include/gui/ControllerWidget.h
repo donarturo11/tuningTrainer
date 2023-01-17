@@ -2,10 +2,12 @@
 #define CONTROLLERWIDGET_H
 #include <QWidget>
 #include <QVBoxLayout>
+#include "MainWindow.h"
 #include "gui/controllerwidget/Keyboard.h"
 #include "gui/controllerwidget/ControllerGroup.h"
 #include "gui/KeyEvents.h"
 
+class MainWindow;
 namespace GUI {
 
 class ControllerWidget : public QWidget
@@ -23,10 +25,11 @@ signals:
     void noteOff(int number);
     void frequencyChanged(int number, double frequency);
 protected:
-    Keyboard *keyboard;
-    ControllerGroup *controls;
-    QVBoxLayout *controllerLayout;
-    KeyEvents *events;
+    MainWindow *_mainWindow;
+    Keyboard *_keyboard;
+    ControllerGroup *_controls;
+    QVBoxLayout *_controllerLayout;
+    KeyEvents *_events;
 };
 
 }

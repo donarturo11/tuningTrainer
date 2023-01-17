@@ -16,9 +16,9 @@ public:
     ~KeyButton();
     void init();
     void setIndex(int idx){ KeyButton::index=idx; }
-    bool isSemitone(){ return semitoneKey; }
-    int getIndex(){ return btn_index; }
-    int getX(){ return pos_x; }
+    bool isSemitone(){ return _semitoneKey; }
+    int getIndex(){ return _index; }
+    int getX(){ return _pos_x; }
 signals:
     void noteOn(int idx);
     void noteOff(int idx);
@@ -26,11 +26,11 @@ public slots:
     void sendNoteOn();
     void sendNoteOff(); 
 private:
-    void setSemitone(bool b){ semitoneKey = b; }
+    void setSemitone(bool b){ _semitoneKey = b; }
 protected:
-    bool semitoneKey = false;
-    int btn_index;
-    int pos_x;
+    bool _semitoneKey = false;
+    int _index;
+    int _pos_x;
 };
 
 } // namespace GUI
