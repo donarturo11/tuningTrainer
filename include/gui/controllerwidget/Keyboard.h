@@ -16,8 +16,8 @@ public:
     KeyButton* getKeyLast(){ return _keys.last(); };
     void initKey(bool semitone=false);
 public slots:
-    void keyPressed(int index);    
-    void keyReleased(int index);
+    void sendNoteOn(int index);
+    void sendNoteOff(int index);
 signals:
     void noteOn(int index);
     void noteOff(int index);

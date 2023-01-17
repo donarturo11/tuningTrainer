@@ -26,7 +26,7 @@ signals:
     void noteOff(int idx);
 public slots:
     void sendNoteOn();
-    void sendNoteOff(); 
+    void sendNoteOff();
 private:
     void setSemitone(bool b){ _semitoneKey = b; }
 protected:

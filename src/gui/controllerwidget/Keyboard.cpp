@@ -22,15 +22,15 @@ void Keyboard::initKey(bool semitone)
     int index = keyButton->getIndex();
     QString keyName = events->getNameByIndex(index);
     keyButton->setText(keyName);
-    connect(keyButton, &KeyButton::noteOn, this, &Keyboard::keyPressed );
-    connect(keyButton, &KeyButton::noteOff, this, &Keyboard::keyReleased );
+    connect(keyButton, &KeyButton::noteOn, this, &Keyboard::sendNoteOn );
+    connect(keyButton, &KeyButton::noteOff, this, &Keyboard::sendNoteOff );
 }
 
-void Keyboard::keyPressed(int index)
+void Keyboard::sendNoteOn(int index)
 {
     emit noteOn(index);
 }   
-void Keyboard::keyReleased(int index)
+void Keyboard::sendNoteOff(int index)
 {
     emit noteOff(index);
 }
