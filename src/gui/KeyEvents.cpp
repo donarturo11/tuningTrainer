@@ -1,3 +1,4 @@
+#include <QKeySequence>
 #include "gui/KeyEvents.h"
 #include "MainWindow.h"
 
@@ -6,10 +7,30 @@ namespace GUI {
 /* ------------ */
 KeyEvents::KeyEvents(QWidget *parent) : QWidget(parent)
 {
-    shortcut = new QShortcut(parent);
-    shortcut->setKey(Qt::Key_Q);
-    shortcut->setContext(Qt::ApplicationShortcut);
-    shortcut->setEnabled(1);
+   // shortcut = new QKeySequence(parent);
+   int keyCodes[] = {  
+       Qt::Key_Q,
+       Qt::Key_W,
+       Qt::Key_E,
+       Qt::Key_R,
+       Qt::Key_5,
+       Qt::Key_T,
+       Qt::Key_6,
+       Qt::Key_Y,
+       Qt::Key_U,
+       Qt::Key_8,
+       Qt::Key_I,
+       Qt::Key_9,
+       Qt::Key_O,
+       Qt::Key_0,
+       Qt::Key_P,
+       91 // "{" code
+   };
+   
+   for (int code : keyCodes) {
+       addShortcut(code);
+       addName(code);
+   }
 }
 
 KeyEvents::~KeyEvents()
@@ -17,15 +38,33 @@ KeyEvents::~KeyEvents()
 
 }
 
+void KeyEvents::addShortcut(int code)
+{
+    int index=KeyEvents::shortcutIndex;
+    keyMap[code]=index;
+    KeyEvents::shortcutIndex++;
+}
+
+void KeyEvents::addName(int code)
+{
+    QString keyName=QKeySequence(code).toString();
+    keyNames.push_back(keyName);
+}
+
 void KeyEvents::sendKeyPressed(int code)
 {
-    qDebug() << "Key " << code << " pressed ";
+    //qDebug() << "Key " << code << " pressed ";
+    if (keyMap.find(code)!=keyMap.end())
+        qDebug() << "Calls index " << keyMap[code];
+    
 }
 
 
 void KeyEvents::sendKeyReleased(int code)
 {
-    qDebug() << "Key " << code << " released";
+    //qDebug() << "Key " << code << " released";
+    if (keyMap.find(code)!=keyMap.end())
+        qDebug() << "Release at " << keyMap[code];
 }
 
 
