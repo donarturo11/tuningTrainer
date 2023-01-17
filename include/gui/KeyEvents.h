@@ -14,8 +14,6 @@ public:
     inline static int shortcutIndex = 0;
     KeyEvents(QWidget *parent=0);
 	~KeyEvents();
-    void sendKeyPressed(int code);
-    void sendKeyReleased(int code);
     QString getNameByIndex(int idx) { return keyNames[idx]; }
     int getShortcutIndex(int code) { return keyMap[code]; }
 private:
@@ -25,11 +23,11 @@ protected:
     QMap<int, int> keyMap; // keyMap[code]=index
     QVector<QString> keyNames;
 public slots:
-    
-public slots:
-
+    void sendKeyPressed(int code);
+    void sendKeyReleased(int code);
 signals:
-
+    void keyPressed(int index);
+    void keyReleased(int index);
 
 	//private slots:
         

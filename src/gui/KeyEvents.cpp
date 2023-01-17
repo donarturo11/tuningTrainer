@@ -53,18 +53,15 @@ void KeyEvents::addName(int code)
 
 void KeyEvents::sendKeyPressed(int code)
 {
-    //qDebug() << "Key " << code << " pressed ";
     if (keyMap.find(code)!=keyMap.end())
-        qDebug() << "Calls index " << keyMap[code];
-    
+        emit keyPressed(keyMap[code]);
 }
 
 
 void KeyEvents::sendKeyReleased(int code)
 {
-    //qDebug() << "Key " << code << " released";
     if (keyMap.find(code)!=keyMap.end())
-        qDebug() << "Release at " << keyMap[code];
+        emit keyReleased(keyMap[code]);
 }
 
 
