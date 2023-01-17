@@ -10,43 +10,38 @@ MainWindow::MainWindow() : QMainWindow()
  
     setWindowTitle("TuningTrainer");
     init();
-    //setFixedSize(800, 300);
-    connect (mainButtons, SIGNAL(quit()), this, SLOT(quitSlot()));
+    connect (_mainButtons, SIGNAL(quit()), this, SLOT(quitSlot()));
     
-    m_settings->sync();
+    _settings->sync();
     
 }
 
 MainWindow::~MainWindow()
 {
-    m_settings->sync();
+    _settings->sync();
 }
 
 void MainWindow::init()
 {
     
     GUI::load_style(this, ":/qss/main.qss");
-	mainButtons = new GUI::MainButtons(this);
-    controllerWidget = new GUI::ControllerWidget(this);
+	_mainButtons = new GUI::MainButtons(this);
+    _controllerWidget = new GUI::ControllerWidget(this);
 
-    m_layout = new QHBoxLayout(this);
-    m_layout->addWidget(controllerWidget);
-    m_layout->addWidget(mainButtons);
+    _layout = new QHBoxLayout(this);
+    _layout->addWidget(_controllerWidget);
+    _layout->addWidget(_mainButtons);
     
-    mainwidget = new QWidget(this);
-    mainwidget->setLayout(m_layout);
-    setCentralWidget(mainwidget);
+    _mainwidget = new QWidget(this);
+    _mainwidget->setLayout(_layout);
+    setCentralWidget(_mainwidget);
     updateGeometry();
-    
-    //keyEvents = new KeyEvents(this);
-    //connect(this, &MainWindow::keyPressed, keyEvents, &KeyEvents::sendKeyPressed);
-    //connect(this, &MainWindow::keyReleased, keyEvents, &KeyEvents::sendKeyReleased);
 }
 
 void MainWindow::initSettings()
 {
-    m_settings=new QSettings("donarturo11", "tuningTrainer");
-    m_settings->setDefaultFormat(QSettings::IniFormat);
+    _settings=new QSettings("donarturo11", "tuningTrainer");
+    _settings->setDefaultFormat(QSettings::IniFormat);
     //appconfiglocation = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 }
 
