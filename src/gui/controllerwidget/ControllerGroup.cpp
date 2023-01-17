@@ -16,12 +16,14 @@ ControllerGroup::~ControllerGroup()
 void ControllerGroup::createController(bool semitone)
 {
     frequency_controllers.push_back(new FrequencyController(semitone, this));
-    frequency_controllers.last()->show();
+    auto lastController = frequency_controllers.last();
+    connect(lastController, &FrequencyController::frequencyChanged, this, &ControllerGroup::onFrequencyChanged);
+    lastController->show();
 }
 
 void ControllerGroup::onFrequencyChanged(int nr, double frequency)
 {
-    
+    emit frequencyChanged(nr, frequency);
 }
 
 /* --------------- */
