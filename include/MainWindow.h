@@ -17,6 +17,7 @@
 
 namespace GUI {
 class MainButtons;
+class ControllerWidget;
 }
 
 //class MainWindow : public QWidget
@@ -36,15 +37,12 @@ class MainWindow : public QMainWindow
         void keyReleaseEvent(QKeyEvent *event);
         
     protected:
-        int waitCount;
-        double baseFreq;
-        
-        GUI::MainButtons *mainButtons;
-        GUI::ControllerWidget *controllerWidget;
-        QSettings *m_settings;
-        QHBoxLayout* m_layout;
-        QWidget* mainwidget;
-        GUI::KeyEvents *keyEvents; 
+        GUI::MainButtons* _mainButtons;
+        GUI::ControllerWidget* _controllerWidget;
+        QSettings* _settings;
+        QHBoxLayout* _layout;
+        QWidget* _mainwidget;
+        GUI::KeyEvents* _keyEvents; 
     
     public slots:
         
