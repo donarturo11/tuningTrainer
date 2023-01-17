@@ -35,6 +35,9 @@ ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
     connect(_mainWindow, &MainWindow::keyReleased, _events, &KeyEvents::sendKeyReleased);
     connect(_controls, &ControllerGroup::frequencyChanged, this, &ControllerWidget::sendFrequencyChange);
     setFixedSize(FrequencyController::position_x+100, 400);
+    
+    connect(_events, &KeyEvents::keyPressed, _keyboard, &Keyboard::setButtonPressed);
+    connect(_events, &KeyEvents::keyReleased, _keyboard, &Keyboard::setButtonReleased);
 }
 
 ControllerWidget::~ControllerWidget()

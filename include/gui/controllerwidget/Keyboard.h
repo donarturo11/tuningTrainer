@@ -18,6 +18,8 @@ public:
 public slots:
     void sendNoteOn(int index);
     void sendNoteOff(int index);
+    void setButtonPressed(int index);
+    void setButtonReleased(int index);
 signals:
     void noteOn(int index);
     void noteOff(int index);
