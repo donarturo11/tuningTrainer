@@ -19,6 +19,7 @@ MainWindow::MainWindow() : QMainWindow()
 MainWindow::~MainWindow()
 {
     _settings->sync();
+    MainWindow::mainWindow = 0;
 }
 
 void MainWindow::init()
