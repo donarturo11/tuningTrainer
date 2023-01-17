@@ -8,17 +8,11 @@ namespace GUI {
 /* --------------- */
 KeyButton::KeyButton(QWidget *parent, bool semitone) : QPushButton(parent)
 {
-    
-    //setAutoRepeat(1);
     setSemitone(semitone);
     init();
-    setProperty("semitoneKey", semitone);
     connect(this, SIGNAL(pressed()), this, SLOT(sendNoteOn()));
     connect(this, SIGNAL(released()), this, SLOT(sendNoteOff()));
-    qDebug() << "Created KeyButton at " << KeyButton::index;
-    qDebug() << "KeyButton Geometry:  " << geometry();
     KeyButton::index++;
-    
 }
 
 KeyButton::~KeyButton()
@@ -41,6 +35,7 @@ void KeyButton::init()
         height = 140;
         lower();
     }
+    
     _pos_x = pos_x;
     
     setGeometry(pos_x, 0, width, height);

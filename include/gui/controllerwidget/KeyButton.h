@@ -9,7 +9,8 @@ class KeyButton : public QPushButton
 {
 Q_OBJECT
 public:
-    //Q_PROPERTY(bool semitoneKey READ isSemitone)
+    Q_PROPERTY(QString class READ cssClass)
+    Q_PROPERTY(bool semitoneKey READ isSemitone)
     inline static int index = 0;
     inline static int position_x = 0;
     KeyButton(QWidget* parent=0, bool semitone=false);
@@ -19,6 +20,7 @@ public:
     bool isSemitone(){ return _semitoneKey; }
     int getIndex(){ return _index; }
     int getX(){ return _pos_x; }
+    QString cssClass() { return QString("KeyButton"); }
 signals:
     void noteOn(int idx);
     void noteOff(int idx);
