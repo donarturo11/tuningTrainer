@@ -1,3 +1,4 @@
+#include "gui/ControllerWidget.h"
 #include "gui/controllerwidget/Keyboard.h"
 #include "gui/controllerwidget/KeyButton.h"
 #include "gui/load_style.h"
@@ -15,10 +16,14 @@ Keyboard::~Keyboard()
 
 void Keyboard::initKey(bool semitone)
 {
-    int idx = KeyButton::index;
-    keys.push_back(new KeyButton(this, semitone));
-    connect(keys[idx], &KeyButton::noteOn, this, &Keyboard::keyPressed );
-    connect(keys[idx], &KeyButton::noteOff, this, &Keyboard::keyReleased );
+    _keys.push_back(new KeyButton(this, semitone));
+    auto keyButton = getKeyLast();
+    auto events = ((ControllerWidget*) parentWidget())->getKeyEvents();
+    int index = keyButton->getIndex();
+    QString keyName = events->getNameByIndex(index);
+    keyButton->setText(keyName);
+    connect(keyButton, &KeyButton::noteOn, this, &Keyboard::keyPressed );
+    connect(keyButton, &KeyButton::noteOff, this, &Keyboard::keyReleased );
 }
 
 void Keyboard::keyPressed(int index)
