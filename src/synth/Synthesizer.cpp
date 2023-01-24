@@ -10,7 +10,6 @@ Synthesizer::Synthesizer(int voices)
 {
     fprintf(stderr, "Synthesizer c-tor\n");
     setPolyphony(voices);
-    
 }
 
 Synthesizer::~Synthesizer()
@@ -18,24 +17,31 @@ Synthesizer::~Synthesizer()
     
 }
 
-VoicesContainer Synthesizer::getNotesOn()
+void Synthesizer::setNotesOn()
 {
-    VoicesContainer notesOn;
+    std::vector<int> notesOn;
     for (auto voice : _voices) {
         if (voice->noteOn()) {
-            notesOn.push_back(voice);
+            notesOn.push_back(voice->getIndex());
         }
     }
-    return notesOn;
+    _notesOn.clear();
+    _notesOn = notesOn;
 }
 
-void Synthesizer::printNotesOn()
+void Synthesizer::loadWave(Samples s) {
+    if (s.empty()) return;
+    for (auto v : _voices)
+        v->loadWave(s);
+}
+
+float Synthesizer::tick()
 {
-    auto notesOn = getNotesOn();
-    fprintf(stderr, "Notes on: ");
-    for (auto voice : notesOn)
-        fprintf(stderr, "%i ", voice->getIndex());
-    fprintf(stderr, "\n");
+    float value = 0;
+    if (_notesOn.empty()) return 0;
+    for (int idx : _notesOn )
+        value += _voices[idx]->tick();
+    return value;
 }
 
 void Synthesizer::setPolyphony(int voices)
@@ -53,7 +59,7 @@ void Synthesizer::sendNoteOn(int index)
 {
     if (index < _voices.size())
         _voices[index]->setNoteOn();
-    printNotesOn();
+    setNotesOn();
 }
 
 void Synthesizer::sendNoteOff(int index)

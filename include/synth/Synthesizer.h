@@ -2,9 +2,9 @@
 #define SYNTHESIZER_H
 #include <vector>
 #include "synth/Voice.h"
+#include "synth/common.h"
 
 namespace Synth {
-typedef std::vector<Voice*> VoicesContainer;
 class Synthesizer
 {
 public:
@@ -17,9 +17,14 @@ public:
     void addVoice();
     void setPolyphony(int voices);
     void printNotesOn();
-    VoicesContainer getNotesOn();
+    void loadWave(Samples s);
+    float tick();
+    void setNotesOn();
 protected:
     VoicesContainer _voices;
+    std::vector<int> _notesOn;
+    Samples _wave;
+    unsigned int _samplerate;
 };
 }
 #endif
