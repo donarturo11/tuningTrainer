@@ -7,6 +7,7 @@
 #include "gui/controllerwidget/ControllerGroup.h"
 #include "gui/KeyEvents.h"
 #include "synth/Synthesizer.h"
+#include "audio/AudioEngine.h"
 
 namespace Synth {
     class Synthesizer;
@@ -25,15 +26,18 @@ public:
 private:
     void init();
     void setupWidgets();
+    void initAudio();
     void initSynth();
     void connectWidgets();
     void connectEvents();
+    void loadWave(QString filename);
     void setPolyphony(int voices) { _voices = voices; }
     int getPolyphony() { return _voices; }
 public slots:
     void sendNoteOn(int number);   
     void sendNoteOff(int number);
     void sendFrequencyChange(int number, double frequency);
+    void loadWaveToSynth(std::vector <float> wave);
 signals:
     void noteOn(int number);
     void noteOff(int number);
@@ -45,7 +49,10 @@ protected:
     QVBoxLayout *_controllerLayout;
     KeyEvents *_events;
     Synth::Synthesizer* _synth;
+    AudioEngine* _audio;
     int _voices;
+    int _samplerate;
+    int _nChannels;
 };
 
 }

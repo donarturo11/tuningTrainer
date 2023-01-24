@@ -6,6 +6,7 @@
 #include "gui/controllerwidget/KeyButton.h"
 #include "gui/KeyEvents.h"
 #include "gui/controllerwidget/FrequencyController.h"
+#include "gui/WaveLoader.h"
 
 namespace GUI {
 
@@ -17,6 +18,8 @@ ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
     connectWidgets();
     connectEvents();
     initSynth();
+    initAudio();
+    
     setFixedSize(FrequencyController::position_x+100, 400);
 }
 
@@ -27,6 +30,7 @@ ControllerWidget::~ControllerWidget()
 
 void ControllerWidget::init()
 {
+    _samplerate = 44100;
     _events = new KeyEvents(this);
     _controllerLayout = new QVBoxLayout(this);
     _keyboard = new Keyboard(this);
@@ -66,11 +70,19 @@ void ControllerWidget::connectEvents()
     connect(_events, &KeyEvents::keyReleased, _keyboard, &Keyboard::setButtonReleased);
 }
 
+void ControllerWidget::initAudio()
+{
+    _audio = new AudioEngine();
+    _audio->setSamplerate(_samplerate);
+    _audio->connectSource(_synth);
+    _audio->startStream();
+}
+
 void ControllerWidget::initSynth()
 {
-    //using namespace Synth;
     int voices = getPolyphony();
     _synth = new Synth::Synthesizer(voices);
+    loadWave(":/resources/harpsichord.wav");
 }
 
 void ControllerWidget::sendNoteOn(int number)
@@ -90,6 +102,20 @@ void ControllerWidget::sendFrequencyChange(int number, double frequency)
     //qDebug() << "Synth number " << number << " has frequency " << frequency << "Hz";
     _synth->sendFrequencyChange(number, frequency);
     setFocus();
+}
+
+void ControllerWidget::loadWave(QString filename)
+{
+    if (!_synth) return;
+    WaveLoader loader(this, _samplerate, _nChannels);
+    
+    connect(&loader, &WaveLoader::sendWave, this, &ControllerWidget::loadWaveToSynth);
+    loader.load(filename);
+}
+
+void ControllerWidget::loadWaveToSynth(std::vector <float> wave)
+{
+    _synth->loadWave(wave);
 }
 
 /* ------------ */
