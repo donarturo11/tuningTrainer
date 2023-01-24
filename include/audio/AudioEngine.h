@@ -1,46 +1,44 @@
 #ifndef AUDIOENGINE_H
 #define AUDIOENGINE_H
-
-#include <vector>
-#include <thread>
-
-
-#include "globals.h"
 #include "rtaudio/RtAudio.h"
-#include "stk/Stk.h"
-#include "WaveSimpleMixer.h"
-#include "WaveSimple.h"
-namespace stk {
-class WaveSimpleMixer;
-}
-class AudioEngine {
+#include <vector>
+#include "audio/AudioSource.h"
+
+class NoJackError{};
+class AudioEngine
+{
 public:
     AudioEngine();
     ~AudioEngine();
-    
-    std::vector <stk::WaveSimple*> *m_synth;
-    stk::WaveSimpleMixer *m_mixer;
-    
-    void start();
-    void stop();
+    static int audioCallback(void *outputBuffer, 
+                             void *inputBuffer,
+                             unsigned int nFrames,
+                             double streamTime,
+                             RtAudioStreamStatus status,
+                             void *source );                            
     void init();
-    void setRunning(bool running);  
-    void setAudioValue(stk::StkFloat value);
-    void connectMixer(stk::WaveSimpleMixer *synth);
     
-private:
-    void probeSampleRate();
-    
-    
+    void probeDevices();
+    void probeJack();
+    void probeChoosenDevice(RtAudio::Api api);
+    void connectSource(AudioSource* source){ _audioSource = source; }
+    void initStreamParameters();
+    void startStream();
+    void stopStream();
+    void setSamplerate(unsigned int r) { _samplerate = r; }
+    void setChannelsNumber(unsigned int n) { _nChannels = n; }
 
 protected:
-    RtAudio *output;
-    bool running;
-    stk::StkFloat audioValue;
-    stk::StkFloat buffer_[1024];
+    bool _running;
+    RtAudio* _audio;
+    RtAudio::StreamParameters* _streamParameters;
+    AudioSource* _audioSource = 0;
+    unsigned int _outputId;
+    unsigned int _nChannels;
+    unsigned int _samplerate;
+    unsigned int _buffer_size;
+    
 
 };
 
-
-
-#endif // SYNTH_H
+#endif // AUDIOENGINE_H
