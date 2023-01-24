@@ -78,6 +78,13 @@ void Synthesizer::addVoice()
 {
     _voices.push_back(new Voice);
 }
+
+void Synthesizer::setRate(unsigned int rate)
+{
+    for (auto v : _voices)
+        v->setRate(rate);
+}
     
     
 } // namespace Synth
+
