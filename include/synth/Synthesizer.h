@@ -1,11 +1,12 @@
 #ifndef SYNTHESIZER_H
 #define SYNTHESIZER_H
 #include <vector>
+#include "audio/AudioSource.h"
 #include "synth/Voice.h"
 #include "synth/common.h"
 
 namespace Synth {
-class Synthesizer
+class Synthesizer : public AudioSource
 {
 public:
     Synthesizer();
@@ -16,10 +17,11 @@ public:
     void sendFrequencyChange(int index, double frequency);
     void addVoice();
     void setPolyphony(int voices);
-    void printNotesOn();
+    void printNotesOn(); /* to remove */
     void loadWave(Samples s);
     float tick();
     void setNotesOn();
+    void setRate(unsigned int rate);
 protected:
     VoicesContainer _voices;
     std::vector<int> _notesOn;
