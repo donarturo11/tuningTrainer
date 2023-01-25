@@ -20,7 +20,7 @@ ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
     initSynth();
     initAudio();
     initWaveloader();
-    loadWave(":/resources/harpsichord.wav");
+    loadWave(":/resources/harpsichord.wav", 220);
     
     setFixedSize(FrequencyController::position_x+100, 400);
 }
