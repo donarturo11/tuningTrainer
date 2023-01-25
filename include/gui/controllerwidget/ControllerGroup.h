@@ -13,6 +13,9 @@ public:
     ControllerGroup(QWidget* parent=0);
     ~ControllerGroup();
     void createController(bool semitone = false);
+    float getFrequencyAt(int idx);
+    void setFrequencyAt(int idx, float freq);
+    int getSize() { return frequency_controllers.size(); }
 private:
     
 private slots:

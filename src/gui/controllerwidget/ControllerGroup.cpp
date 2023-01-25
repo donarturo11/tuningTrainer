@@ -26,6 +26,19 @@ void ControllerGroup::onFrequencyChanged(int nr, double frequency)
     emit frequencyChanged(nr, frequency);
 }
 
+float ControllerGroup::getFrequencyAt(int idx)
+{ 
+    if (idx < getSize())
+        return frequency_controllers[idx]->getFrequency(); 
+    else return -1;
+}
+
+void ControllerGroup::setFrequencyAt(int idx, float freq)
+{
+    if (idx < getSize())
+        frequency_controllers[idx]->setFrequency(freq);
+}
+
 /* --------------- */
 } // namespace GUI
 
