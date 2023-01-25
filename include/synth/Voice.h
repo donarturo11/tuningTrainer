@@ -19,7 +19,7 @@ public:
     /* Wave */
     void loadWave(Samples wave);
     void resetLoop(){ _wave_offset = 0; }
-    void setRate(unsigned int rate){ _wave_rate = rate; }
+    void setRate(unsigned int rate);
     int waveSize() { return _wave.size(); }
 protected:
     int _index;
