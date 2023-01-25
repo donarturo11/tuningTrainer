@@ -19,10 +19,11 @@ include(cmake-build-type)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(RtAudio REQUIRED)
+find_package(Stk REQUIRED)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Multimedia)
-find_package(Stk REQUIRED)
-find_package(RtAudio REQUIRED)
 
 if (${QT_VERSION_MAJOR} EQUAL 5)
 add_compile_definitions(QT5)
@@ -85,12 +86,14 @@ ENDIF(WIN32)
 #if (MSVC)
 #        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL /NODEFAULTLIB:msvcrt")
 #endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
+target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 #target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Gui)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
-target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
-target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
+
+
 
 
 install(TARGETS ${PROJECT_NAME}
