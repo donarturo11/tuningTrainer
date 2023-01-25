@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="resources/">
+        <file>harpsichord.wav</file>
+    </qresource>
+</RCC>

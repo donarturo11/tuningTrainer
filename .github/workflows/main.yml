@@ -1,10 +1,10 @@
 name: tuningTrainer
 
 on:
-#  pull_request:
-#    branches: [ main ]
-#  push:
-#    branches: [ main, ci-qt6 ]
+  pull_request:
+    branches: [ ]
+  push:
+    branches: [ ]
 #  create:
 #      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
 env:

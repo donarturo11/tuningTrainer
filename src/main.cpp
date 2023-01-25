@@ -1,12 +1,12 @@
 #include <vector>
 #include "globals.h"
-
+/*
 #include "AudioEngine.h"
 #include "WaveSimple.h"
 #include "WaveSimpleMixer.h"
+*/
 #include <QtGui>
 #include <QApplication>
-#include <QDebug>
 #include "MainWindow.h"
 #ifdef DEBUG
 #define qPrettyDebug() qDebug() << Q_FUNC_INFO
@@ -15,6 +15,7 @@
 
 int main(int argc,  char **argv)
 {
+/*
 #ifdef DEBUG
     fprintf(stderr, "tuningTrainer - Debug mode");
     qSetMessagePattern("%{function} | %{message}");
@@ -40,10 +41,10 @@ int main(int argc,  char **argv)
 
     audioengine.connectMixer(&mixer);
     audioengine.init();
-
+*/
     QApplication app(argc, argv);
     MainWindow mainwindow;
-    mainwindow.initKeyboard(&synth);
+    //mainwindow.initKeyboard(&synth);
 	mainwindow.show();
 	return app.exec();
 }
