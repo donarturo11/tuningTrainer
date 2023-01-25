@@ -44,6 +44,7 @@ void Voice::setFrequency(double frequency)
 
 float Voice::tick()
 {
+    if (_wave.empty() || !_noteOn) return 0;
     float value = _pitchShift.tick(_wave[_wave_offset]);
     if ( _wave_offset < waveSize())
         _wave_offset++;
