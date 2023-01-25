@@ -25,12 +25,13 @@ public:
     void initStreamParameters();
     void startStream();
     void stopStream();
-    void setSamplerate(unsigned int r) { _samplerate = r; }
+    void setSamplerate(unsigned int r) { if (!_jack) _samplerate = r; }
     void setChannelsNumber(unsigned int n) { _nChannels = n; }
 
 protected:
     bool _running;
-    RtAudio* _audio;
+    bool _jack;
+    RtAudio* _audio = 0;
     RtAudio::StreamParameters* _streamParameters;
     AudioSource* _audioSource = 0;
     unsigned int _outputId;
