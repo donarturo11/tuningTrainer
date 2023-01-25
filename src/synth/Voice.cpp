@@ -42,6 +42,12 @@ void Voice::setFrequency(double frequency)
     _pitchShift.setShift(_frequency/_base_frequency);
 }
 
+void Voice::setRate(unsigned int rate)
+{
+    _wave_rate = rate;
+    stk::Stk::setSampleRate(rate);
+}
+
 float Voice::tick()
 {
     if (_wave.empty() || !_noteOn) return 0;
