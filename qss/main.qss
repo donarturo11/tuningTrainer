@@ -1,0 +1,11 @@
+#quitButton {
+               color: red;
+
+            }
+    
+QGridLayout {
+    margin: 0px;
+    border: 0px;
+    spacing: 0px;
+    padding: 0px;
+}

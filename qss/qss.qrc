@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="qss/">
+        <file>main.qss</file>
+        <file>keyboard.qss</file>
+    </qresource>
+</RCC>
