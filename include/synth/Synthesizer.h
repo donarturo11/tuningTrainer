@@ -22,11 +22,13 @@ public:
     float tick();
     void setNotesOn();
     void setRate(unsigned int rate);
+    void setBaseFrequency(float freq);
 protected:
     VoicesContainer _voices;
     std::vector<int> _notesOn;
     Samples _wave;
     unsigned int _samplerate;
+    float _base_frequency;
 };
 }
 #endif
