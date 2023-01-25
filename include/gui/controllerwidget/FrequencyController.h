@@ -17,10 +17,11 @@ public:
     ~FrequencyController();
     void init();
     int getIndex() { return _index; };
+    float getFrequency() { return _frequency; }
+    void setFrequency(float freq);
 private slots:
     void onSpinValueChanged(double value);
     void onDialValueChanged(int value);
-    void changeFrequency(int index, double frequency);
 signals:
     void frequencyChanged(int index, double freq);
 protected:
@@ -32,8 +33,7 @@ protected:
     bool semitoneKey;
     const int freq_min=32.00;
     const int freq_max=2048.00;
-    
-
+    float _frequency;
 };
 
 } // namespace GUI

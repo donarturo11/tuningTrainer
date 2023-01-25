@@ -32,7 +32,7 @@ void FrequencyController::init()
     m_spin->setGeometry(0, 50, 60, 20);
     m_spin->show();
     m_dial->show();
-    
+
     connect(m_dial, 
             &QDial::valueChanged, 
             this, 
@@ -42,19 +42,13 @@ void FrequencyController::init()
             &QDoubleSpinBox::valueChanged, 
             this, 
             &FrequencyController::onSpinValueChanged);
-    
-    connect(this,
-            &FrequencyController::frequencyChanged,
-            this,
-            &FrequencyController::changeFrequency);
-            
+
     m_dial->setMaximum(freq_max);
     m_dial->setMinimum(freq_min);
     m_spin->setMaximum(freq_max);
     m_spin->setMinimum(freq_min);
     setGeometry(pos_x, pos_y, 70, 120);
     FrequencyController::position_x=pos_x;
-    
 }
 
 void FrequencyController::onSpinValueChanged(double value)
@@ -68,8 +62,11 @@ void FrequencyController::onDialValueChanged(int value)
 {
     m_spin->setValue((double) value);
 }
-void FrequencyController::changeFrequency(int index, double frequency)
+
+void FrequencyController::setFrequency(float freq)
 {
+    _frequency = freq;
+    m_spin->setValue((double) freq);
 }
 
 /* --------------- */
