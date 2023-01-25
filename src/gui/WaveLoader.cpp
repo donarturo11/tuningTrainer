@@ -30,13 +30,11 @@ void WaveLoader::init()
     _decoder->setAudioFormat (format);
     
     connect(_decoder, SIGNAL(bufferReady()), this, SLOT(readBuffer()));
-    connect(_decoder, SIGNAL(finished()), this, SLOT(finishedSlot()));
     connect(_decoder, SIGNAL(isDecodingChanged(bool)), this, SLOT(decodingChanged(bool)));
 }
 
 void WaveLoader::load(QString filename)
 {
-    if (!_decoder) return;
     _audioFile = new QFile(filename, this);
     _audioFile->open(QIODevice::ReadOnly);
     _decoder->setSourceDevice(_audioFile);
@@ -59,7 +57,7 @@ QAudioFormat WaveLoader::getAudioFormat()
 
 void WaveLoader::readBuffer()
 {
-    qDebug() << "Read buffer";
+    //qDebug() << "Read buffer";
     const QAudioBuffer &buffer = _decoder->read();
     const int nFrames = buffer.frameCount();
     const float* data = buffer.constData<float>();
@@ -76,15 +74,16 @@ void WaveLoader::finishedSlot()
 void WaveLoader::clear()
 {
     qDebug() << "clear";
+    _decoder->stop();
+    _audioFile->close();
 }
 
 void WaveLoader::decodingChanged(bool b)
 {
     if (!b) {
-        _decoder->stop();
         _finished = true;
-        emit finished();
         emit sendWave(_samples);
+        emit finished();
         qDebug() << "finished";
     }
     //_decoder->stop();
