@@ -1,30 +1,26 @@
 # About
-
 TuningTrainer is a small and simple program to training tuning systems, recommended for harpsichordists, organists and other who interest in early music.
 
 
 # Building
+* Install needed dependencies.
+* Go to source directory then type these commands:
 ```
-mkdir build;
-cmake ..
-make
+cmake -S . -B build/
+cmake --build build/
 ```
-
-# Run
-
-To run this program correctly be sure that harpsichord.wav is in same directory as file named tuningTrainer.
-To run on Linux run at first JACK Audio Connection Kit.
-
-This program was tested on Archlinux, Windows 7 and MacOS Sierra. This program is testing on MacOS Monterey. In artifacts of Actions you can find version for Catallina, but I can't at now give no guarrancy to correct run.
 
 # Requirements
 * STK Synthesis Toolkit [https://ccrma.stanford.edu/software/stk/](https://ccrma.stanford.edu/software/stk/)
-* Realtime Audio [https://www.music.mcgill.ca/~gary/rtaudio/](https://www.music.mcgill.ca/~gary/rtaudio/)
-* QT 5
+* Realtime Audio (git version) [https://www.music.mcgill.ca/~gary/rtaudio/](https://www.music.mcgill.ca/~gary/rtaudio/)
+* QT 5 or 6
+
+# Status
+Actually program was totally rewritten. To use compiled versions, please download [release versions](https://github.com/donarturo11/tuningTrainer/releases/tag/0.05a).
+
+# Contact
+To contact with me visit my [contact form](https://freeshell.de/arturwro/contact.php?lang=en)
 
 # Support
 If are you pleased with this program, you can support the Author by buying him a coffee for improve the performance of his brain.
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/donarturo11)
-
-# Contact
-To contact with me please write on arturwrona91(at)gmail(dot)com .
