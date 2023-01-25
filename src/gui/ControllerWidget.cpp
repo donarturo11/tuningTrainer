@@ -6,7 +6,7 @@
 #include "gui/controllerwidget/KeyButton.h"
 #include "gui/KeyEvents.h"
 #include "gui/controllerwidget/FrequencyController.h"
-#include "gui/WaveLoader.h"
+
 
 namespace GUI {
 
@@ -19,6 +19,8 @@ ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
     connectEvents();
     initSynth();
     initAudio();
+    initWaveloader();
+    loadWave(":/resources/harpsichord.wav");
     
     setFixedSize(FrequencyController::position_x+100, 400);
 }
@@ -31,6 +33,7 @@ ControllerWidget::~ControllerWidget()
 void ControllerWidget::init()
 {
     _samplerate = 44100;
+    _base_frequency = 220;
     _events = new KeyEvents(this);
     _controllerLayout = new QVBoxLayout(this);
     _keyboard = new Keyboard(this);
@@ -48,6 +51,7 @@ void ControllerWidget::setupWidgets()
         _keyboard->initKey(black);
         FrequencyController::position_x=_keyboard->getKeyLast()->getX();
         _controls->createController(black);
+        _controls->setFrequencyAt(voices, 220);
         voices++;
     }
     
@@ -74,6 +78,7 @@ void ControllerWidget::initAudio()
 {
     _audio = new AudioEngine();
     _audio->setSamplerate(_samplerate);
+    _audio->setChannelsNumber(2);
     _audio->connectSource(_synth);
     _audio->startStream();
 }
@@ -82,7 +87,14 @@ void ControllerWidget::initSynth()
 {
     int voices = getPolyphony();
     _synth = new Synth::Synthesizer(voices);
-    loadWave(":/resources/harpsichord.wav");
+    for (int i=0 ; i < _voices ; i++)
+        _synth->sendFrequencyChange(i, 220);
+}
+
+void ControllerWidget::initWaveloader()
+{
+    _waveloader = new WaveLoader();
+    connect(_waveloader, &WaveLoader::sendWave, this, &ControllerWidget::loadWaveToSynth);
 }
 
 void ControllerWidget::sendNoteOn(int number)
@@ -99,23 +111,25 @@ void ControllerWidget::sendNoteOff(int number)
 
 void ControllerWidget::sendFrequencyChange(int number, double frequency)
 {
-    //qDebug() << "Synth number " << number << " has frequency " << frequency << "Hz";
+    qDebug() << "Synth number " << number << " has frequency " << frequency << "Hz";
     _synth->sendFrequencyChange(number, frequency);
     setFocus();
 }
 
-void ControllerWidget::loadWave(QString filename)
+void ControllerWidget::loadWave(QString filename, float basefreq)
 {
     if (!_synth) return;
-    WaveLoader loader(this, _samplerate, _nChannels);
-    
-    connect(&loader, &WaveLoader::sendWave, this, &ControllerWidget::loadWaveToSynth);
-    loader.load(filename);
+    _waveloader->load(filename);
+    _base_frequency = basefreq;
 }
 
 void ControllerWidget::loadWaveToSynth(std::vector <float> wave)
 {
+    qDebug() << "loadWaveToSynth wave size: " << wave.size();
     _synth->loadWave(wave);
+    _synth->setBaseFrequency(_base_frequency);
+    for (int i=0; i < _voices; i++ )
+        _synth->sendFrequencyChange(i, _controls->getFrequencyAt(i));
 }
 
 /* ------------ */

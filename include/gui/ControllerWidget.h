@@ -8,6 +8,7 @@
 #include "gui/KeyEvents.h"
 #include "synth/Synthesizer.h"
 #include "audio/AudioEngine.h"
+#include "gui/WaveLoader.h"
 
 namespace Synth {
     class Synthesizer;
@@ -28,9 +29,10 @@ private:
     void setupWidgets();
     void initAudio();
     void initSynth();
+    void initWaveloader();
     void connectWidgets();
     void connectEvents();
-    void loadWave(QString filename);
+    void loadWave(QString filename, float basefreq = 440);
     void setPolyphony(int voices) { _voices = voices; }
     int getPolyphony() { return _voices; }
 public slots:
@@ -50,6 +52,9 @@ protected:
     KeyEvents *_events;
     Synth::Synthesizer* _synth;
     AudioEngine* _audio;
+    WaveLoader* _waveloader;
+    QString _waveFilename;
+    float _base_frequency;
     int _voices;
     int _samplerate;
     int _nChannels;
