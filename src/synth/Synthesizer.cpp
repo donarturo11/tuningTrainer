@@ -84,6 +84,13 @@ void Synthesizer::setRate(unsigned int rate)
     for (auto v : _voices)
         v->setRate(rate);
 }
+
+void Synthesizer::setBaseFrequency(float freq)
+{
+    _base_frequency = freq;
+    for (auto v : _voices)
+        v->setBaseFrequency(freq);
+}
     
     
 } // namespace Synth
