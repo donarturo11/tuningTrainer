@@ -41,7 +41,7 @@ void FrequencyController::init()
     connect(m_spin, 
             SIGNAL(valueChanged(double)),
             this,
-            SLOT(onSpinValueChanged()));
+            SLOT(onSpinValueChanged(double)));
 
     m_dial->setMaximum(freq_max);
     m_dial->setMinimum(freq_min);
