@@ -91,8 +91,11 @@ void AudioEngine::startStream()
     if (!_audio || !_audioSource)
         return;
     initStreamParameters();
-    auto err = _audio->openStream(_streamParameters, NULL, RTAUDIO_FLOAT32, _samplerate, &_buffer_size, &AudioEngine::audioCallback, (void*) _audioSource /* (void*) synth */);
-    if (err) return;
+    try {
+        _audio->openStream(_streamParameters, NULL, RTAUDIO_FLOAT32, _samplerate, &_buffer_size, &AudioEngine::audioCallback, (void*) _audioSource /* (void*) synth */);
+    } catch(...) {
+        return;
+    }
     _audio->startStream();
 }
 
