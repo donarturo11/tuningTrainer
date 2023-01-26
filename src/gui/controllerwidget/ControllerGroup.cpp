@@ -1,11 +1,11 @@
 #include "gui/controllerwidget/ControllerGroup.h"
-
+#include <iostream>
 namespace GUI {
 
 /* --------------- */
 ControllerGroup::ControllerGroup(QWidget* parent) : QWidget(parent)
 {
-    qDebug() << "Controller group c-tor";
+    std::cerr << "Controller group c-tor\n";
     
 }
 

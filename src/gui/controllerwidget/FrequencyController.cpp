@@ -34,14 +34,14 @@ void FrequencyController::init()
     m_dial->show();
 
     connect(m_dial, 
-            &QDial::valueChanged, 
-            this, 
-            &FrequencyController::onDialValueChanged);
+            SIGNAL(valueChanged(int)),
+            this,
+            SLOT(onDialValueChanged(int)));
             
     connect(m_spin, 
-            &QDoubleSpinBox::valueChanged, 
-            this, 
-            &FrequencyController::onSpinValueChanged);
+            SIGNAL(valueChanged(double)),
+            this,
+            SLOT(onSpinValueChanged()));
 
     m_dial->setMaximum(freq_max);
     m_dial->setMinimum(freq_min);
