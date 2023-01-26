@@ -4,7 +4,9 @@
 #include <QDoubleSpinBox>
 #include <QDial>
 #include <QVBoxLayout>
-
+class QWidget;
+class QDoubleSpinBox;
+class QDial;
 namespace GUI {
 
 class FrequencyController : public QWidget
