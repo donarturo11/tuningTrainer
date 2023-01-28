@@ -30,7 +30,12 @@ void WaveLoader::init()
     _decoder->setAudioFormat (format);
     
     connect(_decoder, SIGNAL(bufferReady()), this, SLOT(readBuffer()));
+#ifdef QT6
     connect(_decoder, SIGNAL(isDecodingChanged(bool)), this, SLOT(decodingChanged(bool)));
+#endif
+#ifdef QT5
+    connect(_decoder, SIGNAL(stateChanged(QAudioDecoder::State)), this, SLOT(decodingChanged(QAudioDecoder::State)));
+#endif
 }
 
 void WaveLoader::load(QString filename)
@@ -50,6 +55,7 @@ QAudioFormat WaveLoader::getAudioFormat()
 #endif
 #ifdef QT5
     format.setSampleType(QAudioFormat::Float);
+    format.setCodec("audio/x-wav");
 #endif
     format.setSampleRate(_samplerate);
     return format;    
@@ -57,7 +63,6 @@ QAudioFormat WaveLoader::getAudioFormat()
 
 void WaveLoader::readBuffer()
 {
-    //qDebug() << "Read buffer";
     const QAudioBuffer &buffer = _decoder->read();
     const int nFrames = buffer.frameCount();
     const float* data = buffer.constData<float>();
@@ -78,13 +83,19 @@ void WaveLoader::clear()
     _audioFile->close();
 }
 
+#ifdef QT6
 void WaveLoader::decodingChanged(bool b)
+#endif
+#ifdef QT5
+void WaveLoader::decodingChanged(QAudioDecoder::State b)
+#endif
 {
     if (!b) {
         _finished = true;
         emit sendWave(_samples);
         emit finished();
         qDebug() << "finished";
+        qDebug() << "_samples size" << _samples.size();
     }
     //_decoder->stop();
 }
