@@ -32,7 +32,12 @@ signals:
 public slots:
     void readBuffer();
     void finishedSlot();
+#ifdef QT6
     void decodingChanged(bool b);
+#endif
+#ifdef QT5
+    void decodingChanged(QAudioDecoder::State b);
+#endif
 protected:
     unsigned int _samplerate;
     unsigned int _nChannels;
