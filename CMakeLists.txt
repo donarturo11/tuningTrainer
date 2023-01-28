@@ -4,35 +4,31 @@ project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(FORCE_QT5 "Force qt5 install" OFF)
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 include(cmake-build-type)
 
-#if(MSVC)
-#    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /DNDEBUG")
-#    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Z7 /MDd /DEBUG:FULL /D_ITERATOR_DEBUG_LEVEL=2 /D_STK_DEBUG_ /D__RTAUDIO_DEBUG__ /D__RTMIDI_DEBUG__")
-#else()
-#    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
-#    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -D_STK_DEBUG_ -D__RTAUDIO_DEBUG__ -D__RTMIDI_DEBUG__")
-#endif()
-option(WITH_QT5 "With qt 5" OFF)
-option(WITH_QT6 "With qt 6" ON)
-if(${WITH_QT6})
-set(WITH_QT5 OFF)
-set(QT_VERSION_MAJOR 6)
-elseif((WITH_QT5))
-set(WITH_QT6 OFF)
-set(QT_VERSION_MAJOR 5)
+if(MSVC)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /DNDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Z7 /DEBUG:FULL /D_ITERATOR_DEBUG_LEVEL=2 /D_STK_DEBUG_ /D__RTAUDIO_DEBUG__ /D__RTMIDI_DEBUG__")
+else()
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -D_STK_DEBUG_ -D__RTAUDIO_DEBUG__ -D__RTMIDI_DEBUG__")
 endif()
-message ("Build with Qt${QT_VERSION_MAJOR}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(RtAudio REQUIRED)
 find_package(Stk REQUIRED)
 
-#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Multimedia)
+if(FORCE_QT5)
+    find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
+else()
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Multimedia)
+endif()
 
 if (${QT_VERSION_MAJOR} EQUAL 5)
 add_compile_definitions(QT5)
@@ -44,26 +40,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-#if(WIN32)
-#    # Prefix all shared libraries with 'lib'.
-#    set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
-#    # Prefix all static libraries with 'lib'.
-#    set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
-#endif()
-
 include_directories(
        ${PROJECT_SOURCE_DIR}/include
        )
-
-#FILE(GLOB HEADERS include/*.h
-#                  include/gui/*.h
-#                  include/keyboard/*.h
-#                  include/audio/*.h )
-#FILE(GLOB SOURCES src/*.cpp
-#                  src/gui/*.cpp
-#                  src/keyboard/*.cpp
-#                  src/audio/*.cpp
-#                           )
 
 FILE(GLOB_RECURSE HEADERS include/*.h)
 FILE(GLOB_RECURSE SOURCES src/*.cpp)
@@ -92,23 +71,39 @@ IF(WIN32)
     set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
 ENDIF(WIN32)
 
-if (MSVC)
-        #set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL /NODEFAULTLIB:msvcrt")
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/FORCE")
-endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
 target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
-#target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Gui)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
 
 
+if(MINGW)
+    message("Installing for Mingw")
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib/archive)
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_NAME})
+elseif(UNIX AND (NOT APPLE))
+    message("Installing for UNIX")
+    include(GNUInstallDirs)
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+endif()
 
-
+if (WIN32)
+install (TARGETS ${PROJECT_NAME}
+         BUNDLE DESTINATION ${PROJECT_NAME}
+         RUNTIME DESTINATION ${PROJECT_NAME})
+elseif()
 install(TARGETS ${PROJECT_NAME}
-BUNDLE DESTINATION .
-LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})    
+        BUNDLE DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        LIBRARY DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+endif()
+
+if (MINGW)
+include(MingwDeploy)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
