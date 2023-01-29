@@ -55,6 +55,7 @@ QAudioFormat WaveLoader::getAudioFormat()
 #endif
 #ifdef QT5
     format.setSampleType(QAudioFormat::Float);
+    format.setSampleSize(32);
     format.setCodec("audio/x-wav");
 #endif
     format.setSampleRate(_samplerate);
