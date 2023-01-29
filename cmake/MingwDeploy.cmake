@@ -22,16 +22,4 @@ file(GLOB MINGW_DEPS
     $ENV{MSYSTEM_PREFIX}/bin/libzstd.dll
     $ENV{MSYSTEM_PREFIX}/bin/zlib1.dll
     )
-
 install( FILES ${MINGW_DEPS} DESTINATION ${PROJECT_NAME})
-install( FILES
-    $ENV{MSYSTEM_PREFIX}/bin/Qt${QT_VERSION_MAJOR}Core.dll
-    $ENV{MSYSTEM_PREFIX}/bin/Qt${QT_VERSION_MAJOR}Gui.dll
-    $ENV{MSYSTEM_PREFIX}/bin/Qt${QT_VERSION_MAJOR}Widgets.dll
-    $ENV{MSYSTEM_PREFIX}/bin/Qt${QT_VERSION_MAJOR}Multimedia.dll
-    $ENV{MSYSTEM_PREFIX}/bin/Qt${QT_VERSION_MAJOR}Network.dll
-    DESTINATION ${PROJECT_NAME})
-install( DIRECTORY
-    $ENV{MSYSTEM_PREFIX}/share/qt${QT_VERSION_MAJOR}/plugins/platforms
-    $ENV{MSYSTEM_PREFIX}/share/qt${QT_VERSION_MAJOR}/plugins/styles
-    DESTINATION ${PROJECT_NAME})

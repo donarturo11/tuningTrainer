@@ -73,7 +73,7 @@ endif()
 # Solution from https://forum.qt.io/topic/121502/cmake-shows-console/3
 # It prevents of showing console
 IF(WIN32)
-    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
+#    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
 ENDIF(WIN32)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
@@ -108,6 +108,9 @@ endif()
 
 if (MINGW)
 include(MingwDeploy)
+find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
+find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
+install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
 endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
