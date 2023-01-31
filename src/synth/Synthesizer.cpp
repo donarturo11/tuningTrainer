@@ -31,8 +31,9 @@ void Synthesizer::setNotesOn()
 
 void Synthesizer::loadWave(Samples s) {
     if (s.empty()) return;
+    _wave = s;
     for (auto v : _voices)
-        v->loadWave(s);
+        v->loadWave(&_wave[0]);
 }
 
 float Synthesizer::tick()
@@ -76,7 +77,7 @@ void Synthesizer::sendFrequencyChange(int index, double frequency)
 
 void Synthesizer::addVoice()
 {
-    _voices.push_back(new Voice);
+    _voices.push_back(new Voice(this));
 }
 
 void Synthesizer::setRate(unsigned int rate)

@@ -23,6 +23,7 @@ public:
     void setNotesOn();
     void setRate(unsigned int rate);
     void setBaseFrequency(float freq);
+    unsigned int waveSize() { return _wave.size(); }
 protected:
     VoicesContainer _voices;
     std::vector<int> _notesOn;

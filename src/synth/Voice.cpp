@@ -1,9 +1,11 @@
 #include "synth/Voice.h"
 #include "stk/LentPitShift.h"
 #include <iostream>
+
 namespace Synth {
-Voice::Voice()
+Voice::Voice(Synthesizer* synth)
 {
+    _synth = synth;
     _index = Voice::index;
     _noteOn = false;
     fprintf(stderr, "Voice c-tor, index: %i\n", _index);
@@ -16,10 +18,11 @@ Voice::~Voice()
     
 }
 
-void Voice::loadWave(Samples wave)
+void Voice::loadWave(float* wave)
 {
-    _wave.clear();
-    _wave = wave; 
+    _wave_orig = &wave[0];
+    _wave_size = _synth->waveSize();
+    _wave.resize(_wave_size);
 }
 
 void Voice::setNoteOn()
@@ -42,6 +45,7 @@ void Voice::setFrequency(double frequency)
     _pitchShift.setShift(_frequency/_base_frequency);
 }
 
+
 void Voice::setRate(unsigned int rate)
 {
     _wave_rate = rate;
@@ -50,8 +54,8 @@ void Voice::setRate(unsigned int rate)
 
 float Voice::tick()
 {
-    if (_wave.empty() || !_noteOn) return 0;
-    float value = _pitchShift.tick(_wave[_wave_offset]);
+    if (waveEmpty() || !_noteOn) return 0;
+    float value = _pitchShift.tick(_wave_orig[_wave_offset]);
     if ( _wave_offset < waveSize())
         _wave_offset++;
     else resetLoop();
