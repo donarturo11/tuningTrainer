@@ -1,11 +1,10 @@
 #include "synth/WaveContainer.h"
 #include <iostream>
 namespace Synth {
-WaveContainer::WaveContainer() : _read_offset{ 0 }, _write_offset{ 0 }
+
+WaveContainer::WaveContainer() : _writable{true}, _read_offset{ 0 }, _write_offset{ 0 }
 {
-    std::cerr << "WaveContainer c-tor\n";
-    std::cerr << "Read offset: " << _read_offset << "\n";
-    std::cerr << "Write offset: " << _write_offset << "\n";
+
 }
 
 WaveContainer::~WaveContainer()
@@ -13,23 +12,39 @@ WaveContainer::~WaveContainer()
 
 }
 
-void WaveContainer::loadWave(std::vector<float> v)
+void WaveContainer::loadWave(float* wave)
 {
-    _wave = v;
-    std::cerr << "WaveContainer::loadWave\n";
-    std::cerr << "size:" << _wave.size() << "\n";
+    _size = 0;
+    _wave = 0;
+    if (!wave) return;
+    _wave = wave;
+    while (*wave++ != _termArray) {
+        _size++;
+    }
 }
 
 void WaveContainer::write(float value)
-{
-    if (_wave.empty()) return;
+{   
+    if (empty() || !_writable) return;
     _wave[_write_offset] = value;
     updateOffset(_write_offset);
 }
 
-float WaveContainer::read()
+float WaveContainer::readAt(unsigned int idx)
+{   
+    if (idx >= _size) return 0;
+    return _wave[idx];
+}
+
+void WaveContainer::writeAt(unsigned int idx, float value)
 {
-    if (_wave.empty()) return 0;
+    if ( (idx >= _size) || !_writable ) return;
+    _wave[idx]=value;
+}
+
+float WaveContainer::read()
+{   
+    if (empty()) return 0;
     float value = _wave[_read_offset];
     updateOffset(_read_offset);
     return value;
@@ -41,10 +56,5 @@ void WaveContainer::updateOffset(unsigned int &offset)
     else offset = 0;
 }
 
-void WaveContainer::resize(unsigned int i)
-{ 
-    _wave.resize(i);
-    _size = i;
-}
 
-} // namespace Synth
+}
