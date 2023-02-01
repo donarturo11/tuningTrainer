@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(FORCE_QT5 "Force qt5 install" OFF)
 option(FORCE_QT6 "Force qt6 install" OFF)
+option(MINGW_DEPLOY "Deploy MinGW runtime dependencies" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
@@ -85,6 +86,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
 
 if(MINGW)
     message("Installing for Mingw")
+    include(GNUInstallDirs)
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib/archive)
     set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_NAME})
@@ -107,7 +109,9 @@ install(TARGETS ${PROJECT_NAME}
 endif()
 
 if (MINGW)
-include(MingwDeploy)
+    if (MINGW_DEPLOY)
+        include(MingwDeploy)
+    endif()
 find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
 find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
 install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
