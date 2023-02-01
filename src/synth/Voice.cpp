@@ -5,11 +5,14 @@
 namespace Synth {
 Voice::Voice(Synthesizer* synth)
 {
+    _wave_size = 0;
     _synth = synth;
+    _wave_size = synth->wave()->size();
+    _wave = new WaveContainer();
     _index = Voice::index;
     _noteOn = false;
     fprintf(stderr, "Voice c-tor, index: %i\n", _index);
-    resetLoop();
+    update();
     Voice::index++;
 }
 
@@ -17,26 +20,33 @@ Voice::~Voice()
 {
     
 }
-
+/*
 void Voice::loadWave(float* wave)
 {
-    _wave_orig = &wave[0];
-    _wave_size = _synth->waveSize();
-    _wave.resize(_wave_size);
+    //_wave_orig = &wave[0];
+    //_wave_size = _synth->waveSize();
+    //_wave.resize(_wave_size);
+}
+*/
+
+void Voice::update()
+{
+    unsigned int newSize = _synth->wave()->size();
+    _wave->loadWave( _synth->wave()->getArray() );
+    _wave->resize(newSize);
+    resetLoop();
 }
 
 void Voice::setNoteOn()
 {
     _noteOn = true;
     resetLoop();
-    fprintf(stderr, "Voice %i noteon\n", _index);
 }
 
 void Voice::setNoteOff()
 {
     _noteOn = false;
     resetLoop();
-    fprintf(stderr, "Voice %i noteoff\n", _index);
 }
 
 void Voice::setFrequency(double frequency)
@@ -52,14 +62,16 @@ void Voice::setRate(unsigned int rate)
     stk::Stk::setSampleRate(rate);
 }
 
+void Voice::resetLoop() 
+{ 
+    _wave->setReadOffset(0);
+}
+
 float Voice::tick()
 {
-    if (waveEmpty() || !_noteOn) return 0;
-    float value = _pitchShift.tick(_wave_orig[_wave_offset]);
-    if ( _wave_offset < waveSize())
-        _wave_offset++;
-    else resetLoop();
-    return value;
+    if (_wave->empty()) return 0;
+    _lastvalue = _noteOn ? _pitchShift.tick(_wave->read()) : 0;
+    return _lastvalue;
 }
     
 } // namespace Synth
