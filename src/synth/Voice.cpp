@@ -5,13 +5,13 @@
 namespace Synth {
 Voice::Voice(Synthesizer* synth)
 {
+    _wave_size = 0;
     _synth = synth;
-    _wave_orig = synth->wave();
+    _wave_orig = new WaveContainer();
     _wave_size = synth->wave()->size();
     _index = Voice::index;
     _noteOn = false;
     fprintf(stderr, "Voice c-tor, index: %i\n", _index);
-    fprintf(stderr, "Voice wave index: %i\n", _wave_size);
     resetLoop();
     Voice::index++;
 }
@@ -31,7 +31,9 @@ void Voice::loadWave(float* wave)
 
 void Voice::update()
 {
-    _wave.resize(_synth->wave()->size());
+    unsigned int newSize = _synth->wave()->size();
+    _wave_orig->loadWave(_synth->wave()->getArray());
+    _wave.resize(newSize);
     resetLoop();
 }
 

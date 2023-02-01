@@ -1,12 +1,12 @@
 #include "synth/Synthesizer.h"
 #include <iostream>
 namespace Synth {
-Synthesizer::Synthesizer() : _wave{ new WaveContainer() }
+Synthesizer::Synthesizer() : _wave{ new WaveVector() }
 {
     fprintf(stderr, "Synthesizer c-tor\n");
 }
 
-Synthesizer::Synthesizer(int voices) : _wave{ new WaveContainer() }
+Synthesizer::Synthesizer(int voices) : _wave{ new WaveVector() }
 {
     fprintf(stderr, "Synthesizer c-tor\n");
     setPolyphony(voices);

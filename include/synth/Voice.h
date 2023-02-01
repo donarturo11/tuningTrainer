@@ -2,7 +2,7 @@
 #define VOICE_H
 #include "synth/common.h"
 #include "synth/Synthesizer.h"
-#include "synth/WaveContainer.h"
+#include "synth/WaveVector.h"
 #include "stk/LentPitShift.h"
 namespace Synth {
 class Synthesizer;
@@ -39,7 +39,7 @@ protected:
     double _base_frequency;
     stk::LentPitShift _pitchShift;
     WaveContainer* _wave_orig;
-    WaveContainer _wave;
+    WaveVector _wave;
 };
 }
 
