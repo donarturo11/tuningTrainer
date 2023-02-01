@@ -3,6 +3,7 @@
 #include <vector>
 #include "audio/AudioSource.h"
 #include "synth/Voice.h"
+#include "synth/WaveContainer.h"
 #include "synth/common.h"
 
 namespace Synth {
@@ -18,16 +19,17 @@ public:
     void addVoice();
     void setPolyphony(int voices);
     void printNotesOn(); /* to remove */
-    void loadWave(Samples s);
+    void loadWave(std::vector<float> s);
     float tick();
     void setNotesOn();
     void setRate(unsigned int rate);
     void setBaseFrequency(float freq);
-    unsigned int waveSize() { return _wave.size(); }
+    unsigned int waveSize() { return _wave->size(); }
+    WaveContainer* wave() { return _wave; }
 protected:
     VoicesContainer _voices;
     std::vector<int> _notesOn;
-    Samples _wave;
+    WaveContainer* _wave;
     unsigned int _samplerate;
     float _base_frequency;
 };
