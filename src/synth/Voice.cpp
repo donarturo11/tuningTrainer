@@ -74,7 +74,7 @@ void Voice::resetLoop()
 float Voice::tick()
 {
     if (_wave_orig->empty()) return 0;
-    float value = _noteOn ? _wave_orig->read() : 0;
+    float value = _noteOn ? _pitchShift.tick(_wave_orig->read()) : 0;
     _wave.write(value);
     return _wave.read();
 }
