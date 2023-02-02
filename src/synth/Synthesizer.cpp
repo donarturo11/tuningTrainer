@@ -17,18 +17,6 @@ Synthesizer::~Synthesizer()
     
 }
 
-void Synthesizer::setNotesOn()
-{
-    std::vector<int> notesOn;
-    for (auto voice : _voices) {
-        if (voice->noteOn()) {
-            notesOn.push_back(voice->getIndex());
-        }
-    }
-    _notesOn.clear();
-    _notesOn = notesOn;
-}
-
 void Synthesizer::loadWave(std::vector<float> s) {
     if (s.empty()) return;
     _wave_vec->loadWave(s);
@@ -39,9 +27,9 @@ void Synthesizer::loadWave(std::vector<float> s) {
 float Synthesizer::tick()
 {
     float value = 0;
-    if (_notesOn.empty()) return 0;
-    for (int idx : _notesOn )
-        value += _voices[idx]->tick();
+    for (Voice* v : _voices )
+        if (v->noteOn())
+            value += v->tick();
     return value;
 }
 
@@ -60,7 +48,6 @@ void Synthesizer::sendNoteOn(int index)
 {
     if (index < _voices.size())
         _voices[index]->setNoteOn();
-    setNotesOn();
 }
 
 void Synthesizer::sendNoteOff(int index)

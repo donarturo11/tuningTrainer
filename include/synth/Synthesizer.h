@@ -21,7 +21,6 @@ public:
     void printNotesOn(); /* to remove */
     void loadWave(std::vector<float> s);
     float tick();
-    void setNotesOn();
     void setRate(unsigned int rate);
     void setBaseFrequency(float freq);
     unsigned int waveSize() { return _wave_vec->size(); }
