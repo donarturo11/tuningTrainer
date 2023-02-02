@@ -24,12 +24,16 @@ public:
     void setNotesOn();
     void setRate(unsigned int rate);
     void setBaseFrequency(float freq);
-    unsigned int waveSize() { return _wave->size(); }
-    WaveVector* wave() { return _wave; }
+    unsigned int waveSize() { return _wave_vec->size(); }
+    WaveVector* waveVec() { return _wave_vec; }
+    float* values() { return _wave; };
+    bool running() { return _running; }
 protected:
+    bool _running;
     VoicesContainer _voices;
     std::vector<int> _notesOn;
-    WaveVector* _wave;
+    WaveVector* _wave_vec;
+    float* _wave = 0;
     unsigned int _samplerate;
     float _base_frequency;
 };

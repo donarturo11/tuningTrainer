@@ -7,7 +7,7 @@ Voice::Voice(Synthesizer* synth)
 {
     _wave_size = 0;
     _synth = synth;
-    _wave_size = synth->wave()->size();
+    _wave_size = synth->waveVec()->size();
     _wave = new WaveContainer();
     _index = Voice::index;
     _noteOn = false;
@@ -31,8 +31,8 @@ void Voice::loadWave(float* wave)
 
 void Voice::update()
 {
-    unsigned int newSize = _synth->wave()->size();
-    _wave->loadWave( _synth->wave()->getArray() );
+    unsigned int newSize = _synth->waveVec()->size();
+    _wave->loadWave( _synth->waveVec()->getArray() );
     _wave->resize(newSize);
     resetLoop();
 }
