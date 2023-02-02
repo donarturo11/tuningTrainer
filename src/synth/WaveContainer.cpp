@@ -2,7 +2,7 @@
 #include <iostream>
 namespace Synth {
 
-WaveContainer::WaveContainer() : _writable{true}, _read_offset{ 0 }, _write_offset{ 0 }
+WaveContainer::WaveContainer() : _writable{true}, _read_offset{ 0 }, _write_offset{ 0 }, _size{ 0 }
 {
 
 }

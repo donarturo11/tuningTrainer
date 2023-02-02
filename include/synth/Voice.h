@@ -20,8 +20,6 @@ public:
     float tick();
     bool noteOn() { return _noteOn; }
     int getIndex() { return _index; }
-    /* Wave */
-    //void loadWave(float* wave);
     void update();
     void resetLoop();
     void setRate(unsigned int rate);
@@ -38,8 +36,8 @@ protected:
     double _frequency;
     double _base_frequency;
     stk::LentPitShift _pitchShift;
-    WaveContainer* _wave_orig;
-    WaveVector _wave;
+    WaveContainer* _wave;
+    float _lastvalue;
 };
 }
 

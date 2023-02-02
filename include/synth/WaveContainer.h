@@ -6,7 +6,7 @@ class WaveContainer
 public:
     WaveContainer(); 
     ~WaveContainer();
-    void setReadOnly(){ _writable = false; }
+    void setReadonly(){ _writable = false; }
     void setWritable(){ _writable = true; }
     void loadWave(float* wave);
     float read();
@@ -17,6 +17,10 @@ public:
     void setReadOffset(unsigned int i) { _read_offset = i; }
     virtual bool empty() { return _size == 0; }
     unsigned int size() { return _size; }
+    void resize(unsigned int size) { _size = size; }
+    bool writeFinished() { return _write_offset == _size; }
+    unsigned int writeOffset() { return _write_offset; }
+    unsigned int readOffset() { return _read_offset; }
 private:
     void updateOffset(unsigned int &offset);    
 protected:
