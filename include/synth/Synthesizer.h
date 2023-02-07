@@ -23,6 +23,7 @@ public:
     float tick();
     void setRate(unsigned int rate);
     void setBaseFrequency(float freq);
+    void setBufferSize(unsigned int buffersize);
     unsigned int waveSize() { return _wave_vec->size(); }
     WaveVector* waveVec() { return _wave_vec; }
     float* values() { return _wave; };

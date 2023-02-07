@@ -73,6 +73,11 @@ void Synthesizer::setRate(unsigned int rate)
         v->setRate(rate);
 }
 
+void Synthesizer::setBufferSize(unsigned int buffersize)
+{
+
+}
+
 void Synthesizer::setBaseFrequency(float freq)
 {
     _base_frequency = freq;
