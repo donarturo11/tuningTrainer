@@ -11,7 +11,8 @@ class WaveVector : public WaveContainer
 public:
     WaveVector();
     ~WaveVector();
-    float* getArray() {return &_wave_vec[0]; }
+    float* getArray() override { return !_wave_vec.empty() ? &_wave_vec[0] : 0; }
+    unsigned int size() { return _wave_vec.size(); }
     void resize(unsigned int i);
     bool empty() override { return _wave_vec.empty(); }
     void operator=(std::vector<float> v) { _wave_vec = v; }

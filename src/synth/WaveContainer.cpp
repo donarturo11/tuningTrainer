@@ -12,15 +12,13 @@ WaveContainer::~WaveContainer()
 
 }
 
-void WaveContainer::loadWave(float* wave)
+void WaveContainer::loadWave(float* wave, unsigned int size)
 {
     _size = 0;
     _wave = 0;
-    if (!wave) return;
+    if (!wave || size==0) return;
+    _size = size;
     _wave = wave;
-    while (*wave++ != _termArray) {
-        _size++;
-    }
 }
 
 void WaveContainer::write(float value)

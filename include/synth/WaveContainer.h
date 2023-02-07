@@ -8,7 +8,7 @@ public:
     ~WaveContainer();
     void setReadonly(){ _writable = false; }
     void setWritable(){ _writable = true; }
-    void loadWave(float* wave);
+    void loadWave(float* waveBegin, unsigned int size);
     float read();
     float readAt(unsigned int idx);
     void write(float value);
@@ -17,6 +17,7 @@ public:
     void setReadOffset(unsigned int i) { _read_offset = i; }
     virtual bool empty() { return _size == 0; }
     unsigned int size() { return _size; }
+    virtual float* getArray() { return !empty() ? _wave : 0; }
     void resize(unsigned int size) { _size = size; }
     bool writeFinished() { return _write_offset == _size; }
     unsigned int writeOffset() { return _write_offset; }
@@ -29,7 +30,6 @@ protected:
     unsigned int _read_offset;
     unsigned int _write_offset;
     bool _writable;
-    const float _termArray = -1000000;
 };
 
 }

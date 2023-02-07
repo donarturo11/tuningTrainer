@@ -16,7 +16,6 @@ WaveVector::~WaveVector()
 void WaveVector::loadWave(std::vector<float> v)
 {
     _wave_vec = v;
-    _wave_vec.push_back(_termArray);
     _wave = getArray();
     _size = _wave_vec.size();
 }
