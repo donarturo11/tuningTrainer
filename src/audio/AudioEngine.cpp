@@ -84,6 +84,7 @@ void AudioEngine::initStreamParameters()
     _streamParameters->nChannels = _nChannels;
     std::cerr << "Sample rate: " << _samplerate << std::endl;
     std::cerr << "Device ID: " << _outputId << std::endl;
+    _audioSource->setRate(_samplerate);
 }
 
 void AudioEngine::startStream()
