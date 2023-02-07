@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
+project(tuningTrainer VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -56,6 +56,18 @@ FILE(GLOB_RECURSE SOURCES src/*.cpp)
 set(RESOURCES resources/resources.qrc
               qss/qss.qrc )
 
+# set icon
+if(APPLE)
+    set(APP_ICON_MACOSX "${CMAKE_CURRENT_SOURCE_DIR}/desktop/AppIcon.icns")
+    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
+           MACOSX_PACKAGE_LOCATION "Resources")
+    set(RESOURCES ${RESOURCES} ${APP_ICON_MACOSX})
+elseif(WIN32)
+    enable_language("RC")
+    set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/desktop/AppIcon.rc")
+    set(RESOURCES ${RESOURCES} ${APP_ICON_RESOURCE_WINDOWS})
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
@@ -64,18 +76,29 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${SOURCES} 
     )
 else()
-        add_executable(${PROJECT_NAME}
-            ${RESOURCES}
-            ${HEADERS}
-            ${SOURCES} 
-        )
+    add_executable(${PROJECT_NAME}
+        ${RESOURCES}
+        ${HEADERS}
+        ${SOURCES} 
+    )
 endif()
 
 # Solution from https://forum.qt.io/topic/121502/cmake-shows-console/3
 # It prevents of showing console
 IF(WIN32)
-#    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
-ENDIF(WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
+ELSEIF(APPLE)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MACOSX_BUNDLE true)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+    BUNDLE True
+    MACOSX_BUNDLE_GUI_IDENTIFIER org.donarturo11.${PROJECT_NAME}.com
+    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+    MACOSX_BUNDLE_ICON_FILE AppIcon.icns
+    INSTALL_RPATH @executable_path/../Frameworks
+    )
+ENDIF()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
 target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
@@ -90,32 +113,34 @@ if(MINGW)
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib/archive)
     set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_NAME}/lib)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_NAME})
+    install(FILES desktop/AppIcon.ico DESTINATION ${PROJECT_NAME})
 elseif(UNIX AND (NOT APPLE))
     message("Installing for UNIX")
     include(GNUInstallDirs)
-    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib)
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+    install(FILES desktop/AppIcon.png RENAME ${PROJECT_NAME}.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128/apps)
+    install(FILES desktop/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+elseif(APPLE)
+    message("Installing for macOS")
+    install(FILES desktop/AppIcon.icns DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/Resources)
 endif()
 
-if (WIN32)
 install (TARGETS ${PROJECT_NAME}
-         BUNDLE DESTINATION ${PROJECT_NAME}
-         RUNTIME DESTINATION ${PROJECT_NAME})
-elseif()
-install(TARGETS ${PROJECT_NAME}
-        BUNDLE DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        LIBRARY DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-endif()
+         BUNDLE DESTINATION .
+         RUNTIME DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-if (MINGW)
-    if (MINGW_DEPLOY)
-        include(MingwDeploy)
-    endif()
-find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
-find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
-install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
-endif()
+include(CPackConfig)
+
+#if (MINGW)
+#    if (MINGW_DEPLOY)
+#        include(MingwDeploy)
+#    endif()
+#find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
+#find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
+#install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
+#endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
