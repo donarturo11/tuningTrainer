@@ -1,3 +1,4 @@
+# Workflow tuningTrainer
 name: tuningTrainer
 
 on:
@@ -16,80 +17,200 @@ jobs:
     strategy:
       matrix:
        include:
-        - { os: windows-latest, shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw_64", aqt-prefix: "/opt/Qt", aqt-module: "mingw64_64" }
-        - { os: ubuntu-latest, shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        - { os: macos-latest, shell 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
+        #- { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
       run:
         shell: ${{matrix.shell}}
 
     steps:
+    - if: ${{runner.os == 'Windows'}}
+      name: Install MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        
+    - if: ${{runner.os == 'Windows'}}
+      name: Prepare MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        install: |
+            base base-devel mingw-w64-ucrt-x86_64-toolchain p7zip zip git
+            mingw-w64-ucrt-x86_64-python-pip
+            mingw-w64-ucrt-x86_64-python-distutils-extra
+            mingw-w64-ucrt-x86_64-python-psutil
+            mingw-w64-ucrt-x86_64-cmake
+    
+    - name: Setup windows env
+      if: ${{runner.os == 'Windows'}}
+      run: |
+           echo "::notify:: Upgrading pip"
+           python3 -m pip install -U pip
+           echo "SETUPTOOLS_USE_DISTUTILS=stdlib" >> $GITHUB_ENV
+    
     - name: Print Info
       run: |
-           echo "::notify:: ${{runner.os}}"
-    - name: Install Qt6
-      run: |
-           pip3 install aqtinstall
-           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
-
+           echo "::notice:: ${{runner.os}}"
+    
     - name: Install Linux Dependencies
       if: ${{runner.os == 'Linux'}}
       run: |
            sudo apt-get update
            sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2
     
-    - if: ${{runner.os == 'Windows'}}
-      name: Install Windows Dependencies 
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ucrt64
-        install: mingw-w64-ucrt64-toolchain
+    - name: Install AQT
+      run: |    
+           python3 -m pip install aqtinstall
+           
+    - name: Install Qt6
+      run: |
+           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
+           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtmultimedia
 
     - name: Install RtAudio
       run: |
            git clone https://github.com/thestk/rtaudio ../rtaudio
-           cmake -S ../rtaudio -B ../rtaudio/build
+           cmake -S ../rtaudio -B ../rtaudio/build ${{matrix.flags}}
            cmake --build ../rtaudio/build
            cmake --install ../rtaudio/build --prefix ${{matrix.deps-prefix}}
            
     - name: Install STK
       run: |
            git clone https://github.com/thestk/stk ../stk
-           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0
+           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}}
            cmake --build ../stk/build
            cmake --install ../stk/build --prefix ${{matrix.deps-prefix}}
     
+    - name: Prepare FindCoreAudio
+      if: ${{runner.os == 'macOS'}}
+      run: |
+           [[ ! -x ${{matrix.deps-prefix}}/share/cmake ]] && mkdir ${{matrix.deps-prefix}}/share/cmake
+           cp -v ../stk/cmake/FindCoreAudio.cmake $(brew --prefix cmake)/share/cmake/Modules/
+
     - name: Checkout Repo
       uses: actions/checkout@v2
-
+    
+    - name: Prepare workdir (UNIX)
+      if: ${{runner.os != 'Windows'}}
+      run: |
+           export WORKDIR="${{github.workspace}}"
+           export AQTPATH="${{matrix.aqt-prefix}}"
+           export DEPSPATH="${{matrix.deps-prefix}}"
+           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
+           echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
+           echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
+           
+           
+    - name: Prepare workdir (MINGW)
+      if: ${{runner.os == 'Windows'}}
+      run: |
+           export WORKDIR="$(cygpath -m "${{github.workspace}}")"
+           export AQTPATH="$(cygpath -m "${{matrix.aqt-prefix}}")"
+           export DEPSPATH="$(cygpath -m "${{matrix.deps-prefix}}")"
+           echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
+           echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
+           echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
+    
     - name: Run Configure
       run: |
-           cmake -S ${{github.workspace}} \
-                 -B ${{github.workspace}}/build \
-                 -DCMAKE_PREFIX_PATH="${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}};${{matrix.deps-prefix}}"
+           export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}
+           echo "INSTALL_PREFIX=$INSTALL_PREFIX" >> $GITHUB_ENV
+           cmake -S "${{env.WORKDIR}}" \
+                 -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
+                 -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+                 -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}};${{env.DEPSPATH}}" 
+                 
 
     - name: Compile Code
-      run: cmake --build ${{github.workspace}}/build
-
+      run: cmake --build ${{env.WORKDIR}}/build
+      
+    - name: Prepare appdir
+      run: |
+           if [ ${{ runner.os }} == "Windows" ]; then export SUFFIX="${{env.pkgname}}"
+           elif [ ${{ runner.os }} == "macOS" ]; then export SUFFIX="${{env.pkgname}}.app"
+           else export SUFFIX=""
+           fi
+           export APPDIR="${{env.INSTALL_PREFIX}}/${SUFFIX}"
+           echo "APPDIR=${APPDIR}" >> $GITHUB_ENV
+           echo "::notice:: appdir=${APPDIR}"
+    
     - name: Install
-      run: cmake --install ${{github.workspace}}/build --prefix ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
-
+      run: |
+           cmake --install ${{env.WORKDIR}}/build --prefix ${{ env.INSTALL_PREFIX }}
+## to implement in CMakeLists.txt    
+    - name: Prepare iconset (macOS)
+      if: ${{runner.os == 'macOS'}}
+      run: |
+           export ICONSET=${{env.WORKDIR}}/build/${{env.pkgname}}.iconset
+           mkdir $ICONSET
+           for size in 16 24 48 64 128 256
+           do
+               convert ${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg -resize ${size} ${ICONSET}/icon_${size}x${size}.png
+           done
+           iconutil -c icns ${ICONSET}
+           cp ${{env.WORKDIR}}/build/${{env.pkgname}}.icns ${{env.APPDIR}}/Contents/Resources/AppIcon.icns
+    
+    - name: Prepare icon (Windows)
+      if: ${{runner.os == 'Windows'}}
+      run: |
+           export ICONSET="${{env.WORKDIR}}/build/${{env.pkgname}}-icons"
+           mkdir -v "${ICONSET}" || echo "::warning:: create ${ICONSET} failed" 
+           for size in 16 24 48 64 128 256
+           do
+               convert "$(cygpath -u "${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg")" \
+                       -resize ${size} \
+                       "$(cygpath -u "${ICONSET}/icon_${size}x${size}.ico")" || echo "::warning:: create ${ICONSET} ${size} failed" 
+           done
+    
+    - name: Prepare icons (Linux)
+      if: ${{runner.os == 'Linux'}}
+      run: |
+           mkdir -p ${{env.APPDIR}}/share/icons/hicolor/
+           for size in 16 24 48 64 128 256
+           do
+               export ICONPATH=${{env.APPDIR}}/share/icons/hicolor/${size}x${size}/apps/
+               mkdir -p ${ICONPATH} 
+               convert ${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg -resize ${size} ${ICONPATH}/${{env.pkgname}}.png
+           done
+##
     - name: macdeployqt
       if: ${{runner.os == 'macOS'}}
       run: |
-           {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}/bin/macdeployqt ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+           echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
+           ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt ${{env.APPDIR}}
 
     - name: windeployqt
       if: ${{runner.os == 'Windows'}}
       run: |
-           {{matrix.aqt-prefix}}/${{env.qt-version}}/{{matrix.aqt-module}}/bin/windeploy ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}           
+           cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
+           ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
+
+    - name: CPack
+      run: |
+           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() }}
+      with:
+          limit-access-to-actor: true
+          #install-dependencies: false
+      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
       with:
         name: build-${{runner.os}}
-        path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+        path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+    
+    - name: Print variables
+      run: |
+          echo "::notice:: github.event_name = ${{ github.event_name }}"
+          echo "::notice:: github.ref = ${{ github.ref }}"
 
   publish:
     needs: build
@@ -103,20 +224,20 @@ jobs:
       - name: Get macOS Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
 
       - name: Get Linux Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
           
       - name: Get Windows Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -127,9 +248,9 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -148,7 +269,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
           asset_name: ${{env.pkgname}}-macOS
           asset_content_type: application/octet-stream
 
@@ -159,7 +280,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
           asset_name: ${{env.pkgname}}-linux-x86_64
           asset_content_type: application/octet-stream
 
@@ -170,7 +291,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
           asset_name: ${{env.pkgname}}-win-x86_64
           asset_content_type: application/octet-stream
 
@@ -183,6 +304,6 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-{{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(tuningTrainer VERSION 1.0.0 LANGUAGES CXX)
+project(tuningTrainer VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -74,8 +74,19 @@ endif()
 # Solution from https://forum.qt.io/topic/121502/cmake-shows-console/3
 # It prevents of showing console
 IF(WIN32)
-#    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
-ENDIF(WIN32)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY WIN32_EXECUTABLE true)
+ELSEIF(APPLE)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY MACOSX_BUNDLE true)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+    BUNDLE True
+    MACOSX_BUNDLE_GUI_IDENTIFIER org.donarturo11.${PROJECT_NAME}.com
+    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/desktop/Info.plist.in
+    INSTALL_RPATH @executable_path/../Frameworks
+    )
+ENDIF()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
 target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
@@ -96,26 +107,27 @@ elseif(UNIX AND (NOT APPLE))
     set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
     set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+elseif(APPLE)
+    message("Installing for macOS")
+#    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/Frameworks)
+#    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/Frameworks)
+#    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/MacOS)
 endif()
 
-if (WIN32)
 install (TARGETS ${PROJECT_NAME}
-         BUNDLE DESTINATION ${PROJECT_NAME}
-         RUNTIME DESTINATION ${PROJECT_NAME})
-elseif()
-install(TARGETS ${PROJECT_NAME}
-        BUNDLE DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        LIBRARY DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-endif()
+         BUNDLE DESTINATION .
+         RUNTIME DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-if (MINGW)
-    if (MINGW_DEPLOY)
-        include(MingwDeploy)
-    endif()
-find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
-find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
-install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
-endif()
+include(CPackConfig)
+
+#if (MINGW)
+#    if (MINGW_DEPLOY)
+#        include(MingwDeploy)
+#    endif()
+#find_file(RTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES rtaudio.dll librtaudio.dll)
+#find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
+#install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
+#endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
