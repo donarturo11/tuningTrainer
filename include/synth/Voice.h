@@ -37,7 +37,6 @@ protected:
     double _base_frequency;
     stk::LentPitShift _pitchShift;
     WaveContainer* _wave;
-    float _lastvalue;
 };
 }
 

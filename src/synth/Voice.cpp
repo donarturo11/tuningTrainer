@@ -31,9 +31,9 @@ void Voice::loadWave(float* wave)
 
 void Voice::update()
 {
+    if (_synth->waveVec()->empty()) return;
     unsigned int newSize = _synth->waveVec()->size();
-    _wave->loadWave( _synth->waveVec()->getArray() );
-    _wave->resize(newSize);
+    _wave->loadWave( _synth->waveVec()->getArray(), _synth->waveVec()->size() );
     resetLoop();
 }
 
@@ -70,8 +70,7 @@ void Voice::resetLoop()
 float Voice::tick()
 {
     if (_wave->empty()) return 0;
-    _lastvalue = _noteOn ? _pitchShift.tick(_wave->read()) : 0;
-    return _lastvalue;
+    return _noteOn ? _pitchShift.tick(_wave->read()) : 0;
 }
     
 } // namespace Synth
