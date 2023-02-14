@@ -141,42 +141,7 @@ jobs:
     - name: Install
       run: |
            cmake --install ${{env.WORKDIR}}/build --prefix ${{ env.INSTALL_PREFIX }}
-## to implement in CMakeLists.txt    
-    - name: Prepare iconset (macOS)
-      if: ${{runner.os == 'macOS'}}
-      run: |
-           export ICONSET=${{env.WORKDIR}}/build/${{env.pkgname}}.iconset
-           mkdir $ICONSET
-           for size in 16 24 48 64 128 256
-           do
-               convert ${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg -resize ${size} ${ICONSET}/icon_${size}x${size}.png
-           done
-           iconutil -c icns ${ICONSET}
-           cp ${{env.WORKDIR}}/build/${{env.pkgname}}.icns ${{env.APPDIR}}/Contents/Resources/AppIcon.icns
-    
-    - name: Prepare icon (Windows)
-      if: ${{runner.os == 'Windows'}}
-      run: |
-           export ICONSET="${{env.WORKDIR}}/build/${{env.pkgname}}-icons"
-           mkdir -v "${ICONSET}" || echo "::warning:: create ${ICONSET} failed" 
-           for size in 16 24 48 64 128 256
-           do
-               convert "$(cygpath -u "${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg")" \
-                       -resize ${size} \
-                       "$(cygpath -u "${ICONSET}/icon_${size}x${size}.ico")" || echo "::warning:: create ${ICONSET} ${size} failed" 
-           done
-    
-    - name: Prepare icons (Linux)
-      if: ${{runner.os == 'Linux'}}
-      run: |
-           mkdir -p ${{env.APPDIR}}/share/icons/hicolor/
-           for size in 16 24 48 64 128 256
-           do
-               export ICONPATH=${{env.APPDIR}}/share/icons/hicolor/${size}x${size}/apps/
-               mkdir -p ${ICONPATH} 
-               convert ${{env.WORKDIR}}/desktop/${{env.pkgname}}-icon.svg -resize ${size} ${ICONPATH}/${{env.pkgname}}.png
-           done
-##
+
     - name: macdeployqt
       if: ${{runner.os == 'macOS'}}
       run: |
