@@ -56,6 +56,18 @@ FILE(GLOB_RECURSE SOURCES src/*.cpp)
 set(RESOURCES resources/resources.qrc
               qss/qss.qrc )
 
+# set icon
+if(APPLE)
+    set(APP_ICON_MACOSX "${CMAKE_CURRENT_SOURCE_DIR}/desktop/AppIcon.icns")
+    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
+           MACOSX_PACKAGE_LOCATION "Resources")
+    set(RESOURCES ${RESOURCES} ${APP_ICON_MACOSX})
+elseif(WIN32)
+    enable_language("RC")
+    set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/desktop/AppIcon.rc")
+    set(RESOURCES ${RESOURCES} ${APP_ICON_RESOURCE_WINDOWS})
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
@@ -64,11 +76,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${SOURCES} 
     )
 else()
-        add_executable(${PROJECT_NAME}
-            ${RESOURCES}
-            ${HEADERS}
-            ${SOURCES} 
-        )
+    add_executable(${PROJECT_NAME}
+        ${RESOURCES}
+        ${HEADERS}
+        ${SOURCES} 
+    )
 endif()
 
 # Solution from https://forum.qt.io/topic/121502/cmake-shows-console/3
@@ -83,7 +95,7 @@ ELSEIF(APPLE)
     MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
     MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
-    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/desktop/Info.plist.in
+    MACOSX_BUNDLE_ICON_FILE AppIcon.icns
     INSTALL_RPATH @executable_path/../Frameworks
     )
 ENDIF()
@@ -111,8 +123,8 @@ elseif(UNIX AND (NOT APPLE))
     install(FILES desktop/${PROJECT_NAME}-icon.png DESTINATION share/icons/hicolor/128/apps)
 elseif(APPLE)
     message("Installing for macOS")
-    install(FILES desktop/${PROJECT_NAME}-icon.icns RENAME AppIcon.icns DESTINATION ${CMAKE_INSTALL_PREFIX}/Resources)
-    install(FILES desktop/Info.plist DESTINATION ${CMAKE_INSTALL_PREFIX}.app)
+    install(FILES desktop/AppIcon.icns DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/Resources)
+    #install(FILES desktop/Info.plist DESTINATION ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents)
 #    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/Frameworks)
 #    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/Frameworks)
 #    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_NAME}.app/Contents/MacOS)
