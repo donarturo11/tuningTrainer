@@ -94,26 +94,12 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v2
 
-# see: https://docs.github.com/en/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development    
-#    - name: Install the Apple certificate and provisioning profile
-#      if: ${{runner.os == 'macOS'}}
-#      run: |
-#          PEM_CERT=$RUNNER_TEMP/donarturo11.pem
-#          PEM_KEY=$RUNNER_TEMP/donarturo11.key
-#          P12_CERT=$RUNNER_TEMP/donarturo11.p12
-#          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-#          PASSWORD=passwd
-#          NAME="Developer ID Application: org.donarturo11.${{env.pkgname}}.com"
-#          openssl genrsa -des3 -passout pass:$PASSWORD -out $PEM_KEY 2048 || echo "Fail genrsa"
-#          openssl req -subj '/C=PL/CN=org.donarturo11.tuningtrainer.com/O=donarturo11' \
-#                      -key $PEM_KEY -nodes -days 365 -x509 \
-#                      -out $PEM_CERT \
-#                      -passin "pass:${PASSWORD}" -passout "pass:${PASSWORD}" || echo "Fail req"
-#          #openssl pkcs12 -inkey $PEM_KEY -in $PEM_CERT -export -out $P12_CERT -password "pass:${PASSWORD}" -caname "${NAME}" -name "${NAME}"
-#          security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" $PEM_CERT || echo "Fail add trusted cert"
-#          
-##
-    
+
+    - name: Install the Apple certificate and provisioning profile
+      if: ${{runner.os == 'macOS'}}
+      run: |
+          bash .github/scripts/macos-key.sh
+          
     - name: Prepare workdir (UNIX)
       if: ${{runner.os != 'Windows'}}
       run: |
