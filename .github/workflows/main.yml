@@ -170,9 +170,9 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            CODE_SIGN_IDENTITY="donarturo11.github.io"
-           find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
-           find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
-           find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
            codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" "${{env.APPDIR}}"
 ##
            
