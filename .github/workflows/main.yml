@@ -165,6 +165,17 @@ jobs:
       run: |
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
 
+## https://cmake.org/Bug/view.php?id=15507
+    - name: Sign bundle
+      if: ${{runner.os == 'macOS'}}
+      run: |
+           CODE_SIGN_IDENTITY="donarturo11.github.io"
+           find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
+           codesign --force --verbose --sign "$CODE_SIGN_IDENTITY" "${{env.APPDIR}}"
+##
+           
     - name: CPack
       run: |
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
