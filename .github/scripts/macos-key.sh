@@ -56,4 +56,4 @@ openssl pkcs12 -export -passin pass:$PASSWORD -passout pass:$PASSWORD \
 echo ""
 echo "importing the certificate ..."
 sudo security import server.pfx -k /Library/Keychains/System.keychain -P $PASSWORD
-sudo security unlock -k /Library/Keychains/System.keychain
+sudo security unlock -u /Library/Keychains/System.keychain
