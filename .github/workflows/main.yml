@@ -104,6 +104,7 @@ jobs:
       run: |
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "IDENTITY_NAME="donarturo11.github.io" >> $GITHUB_ENV
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
@@ -166,7 +167,7 @@ jobs:
            echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
                               ${{env.APPDIR}} \
-                              -sign-for-notarization=donarturo11.github.io
+                              -sign-for-notarization=${{ env.IDENTITY_NAME }}
 
 
     - name: windeployqt
@@ -184,11 +185,10 @@ jobs:
     - name: Sign bundle
       if: ${{runner.os == 'macOS'}}
       run: |
-           CODE_SIGN_IDENTITY="donarturo11.github.io"
-           #find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
-           #find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
-           #find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --verbose --sign "$CODE_SIGN_IDENTITY" {} \;
-           codesign --force --verbose --entitlements desktop/entitlements.plist --sign "$CODE_SIGN_IDENTITY" "${{env.APPDIR}}"
+           #find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
+           #find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
+           #find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
+           codesign --force --verbose --entitlements desktop/entitlements.plist --sign "${{ env.IDENTITY_NAME }}" "${{env.APPDIR}}"
 ##
            
     - name: CPack
@@ -204,13 +204,13 @@ jobs:
           echo "DMGDIR=${DMGDIR}" >> $GITHUB_ENV
           
 
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() }}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      if: ${{ failure() }}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
