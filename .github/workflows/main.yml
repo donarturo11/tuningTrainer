@@ -40,9 +40,11 @@ jobs:
           echo "::notice:: decode certificate succeed"
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security default-keychain -s $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH || echo "::warning:: Import certificate failed"
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign || echo "::warning:: Import certificate failed"
           security list-keychain -d user -s $KEYCHAIN_PATH || echo "::warning:: List keychain failed"
+          security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
           security find-identity || echo "::warning:: List keychain failed"
           
     - if: ${{runner.os == 'Windows'}}
