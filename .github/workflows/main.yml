@@ -26,6 +26,25 @@ jobs:
         shell: ${{matrix.shell}}
 
     steps:
+    - name: Install the Apple certificate and provisioning profile
+      if: ${{runner.os == 'macOS'}}
+      env:
+          P12_CERTIFICATE_BASE64: ${{ secrets.P12_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "IDENTITY_NAME=donarturo11.github.io" >> $GITHUB_ENV
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+          echo "::notice:: decode certificate succeed"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH || echo "::warning:: Import certificate failed"
+          security list-keychain -d user -s $KEYCHAIN_PATH || echo "::warning:: List keychain failed"
+          security find-identity || echo "::warning:: List keychain failed"
+          
     - if: ${{runner.os == 'Windows'}}
       name: Install MinGW
       uses: msys2/setup-msys2@v2
@@ -93,25 +112,6 @@ jobs:
 
     - name: Checkout Repo
       uses: actions/checkout@v2
-
-
-    - name: Install the Apple certificate and provisioning profile
-      if: ${{runner.os == 'macOS'}}
-      env:
-          P12_CERTIFICATE_BASE64: ${{ secrets.P12_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      run: |
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          echo "IDENTITY_NAME=donarturo11.github.io" >> $GITHUB_ENV
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-          security find-identity
           
     - name: Prepare workdir (UNIX)
       if: ${{runner.os != 'Windows'}}
