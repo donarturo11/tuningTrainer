@@ -153,8 +153,8 @@ jobs:
       run: |
            echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
-                              -sign-for-notarization=donarturo11.github.io \
-                              ${{env.APPDIR}}
+                              ${{env.APPDIR}} \
+                              -sign-for-notarization=donarturo11.github.io
 
 
     - name: windeployqt
