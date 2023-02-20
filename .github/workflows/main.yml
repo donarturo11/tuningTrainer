@@ -194,10 +194,10 @@ jobs:
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            ./${LINUXDEPLOY} \
-               --appdir=${{env.APPDIR}} -v \
-               -e ${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
-               -i ${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
-               -d ${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
+               --appdir=${{env.APPDIR}} -v2 \
+               --executable=${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
+               --icon-file=${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
+               --desktop-file=${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
                --output appimage
 
     - name: Add missing audio libraries
@@ -217,14 +217,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
