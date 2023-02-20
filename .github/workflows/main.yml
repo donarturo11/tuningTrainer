@@ -18,7 +18,7 @@ jobs:
       matrix:
        include:
         #- { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
-        - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: ubuntu-20.04, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
         #- { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
@@ -153,7 +153,6 @@ jobs:
                  -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
                  -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}};${{env.DEPSPATH}}" 
                  
-
     - name: Compile Code
       run: cmake --build ${{env.WORKDIR}}/build
       
@@ -187,8 +186,10 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
-           sudo cp -Rp ${{matrix.deps-prefix}}/* /usr/
-           sudo cp -Rp ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr/
+           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
+           sudo rm ld.so.cache
+           sudo ldconfig
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
@@ -198,9 +199,9 @@ jobs:
            ICONFILE=$(find ${{ env.APPDIR }} -name *.png)
            DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
            EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
-           #export QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake 
+           export QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake 
            ./${LINUXDEPLOY} \
-               --appdir=${APPDIR} \
+               --appdir=${APPDIR} -v3 \
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
