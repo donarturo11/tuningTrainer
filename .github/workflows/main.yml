@@ -194,7 +194,6 @@ jobs:
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
-           QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            APPDIR=${{env.pkgname}}.AppDir
@@ -202,6 +201,7 @@ jobs:
            DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
            EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
            ./${LINUXDEPLOY} \
+               QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake \
                --appdir=${APPDIR} -v1 \
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
