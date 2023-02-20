@@ -215,7 +215,8 @@ jobs:
           
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() }}
+      #if: ${{ failure() }}
+      if: ${{runner.os == 'macOS'}}
       with:
           limit-access-to-actor: true
           #install-dependencies: false
