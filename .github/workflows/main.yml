@@ -114,6 +114,10 @@ jobs:
 
     - name: Checkout Repo
       uses: actions/checkout@v2
+    
+    - name: Prepare version
+      run: |
+          echo GITREV=$(git rev-parse --short HEAD) >> $GITHUB_ENV
           
     - name: Prepare workdir (UNIX)
       if: ${{runner.os != 'Windows'}}
@@ -183,13 +187,11 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
-           #sudo cmake --install ../rtaudio/build --prefix /usr
-           #sudo cmake --install ../stk/build --prefix /usr
-           #sudo cp -Rf ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
-           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
+           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
            sudo ldconfig
+           export QMAKE=$(find ${{matrix.aqt-prefix}} -name qmake*)
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
@@ -204,8 +206,12 @@ jobs:
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
+               --plugin qt \
                --output appimage
-           find . -name "*.AppImage" -exec cp -v {} ${{github.workspace}}/${{env.pkgname}}-${{runner.os}} \;
+           export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}-AppImage
+           mkdir $APPIMAGEDIR
+           find . -name "${{env.pkgname}}*.AppImage" -exec cp -v {} $APPIMAGEDIR \;
+           echo "APPIMAGEDIR=${APPIMAGEDIR}" >> $GITHUB_ENV
 
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
@@ -224,14 +230,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-#    - name: Setup tmate session
-#      uses: mxschmitt/action-tmate@v3
-#      if: ${{ failure() }}
-#      #if: ${{runner.os == 'macOS'}}
-#      with:
-#          limit-access-to-actor: true
-#          #install-dependencies: false
-#      timeout-minutes: 60
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() }}
+      #if: ${{runner.os == 'macOS'}}
+      with:
+          limit-access-to-actor: true
+          #install-dependencies: false
+      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
@@ -239,12 +245,19 @@ jobs:
         name: ${{env.pkgname}}-${{runner.os}}
         path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
         
-    - name: Upload DMG
-      if: ${{runner.os == 'macOS'}}
+#    - name: Upload DMG
+#      if: ${{runner.os == 'macOS'}}
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: ${{env.pkgname}}-${{runner.os}}-DMG
+#        path: ${{github.workspace}}/${{env.DMGDIR}}
+        
+    - name: Upload AppImage
+      if: ${{runner.os == 'Linux'}}
       uses: actions/upload-artifact@v2
       with:
-        name: ${{env.pkgname}}-${{runner.os}}-DMG
-        path: ${{github.workspace}}/${{env.DMGDIR}}
+        name: ${{env.pkgname}}-${{runner.os}}-AppImage
+        path: ${{ env.APPIMAGEDIR }}
         
     - name: Print variables
       run: |
