@@ -187,17 +187,20 @@ jobs:
            sudo cmake --install ../stk/build --prefix /usr
            sudo cp -Rf ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
            
-           find ${{env.APPDIR}}
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
+           APPDIR=find ${{env.pkgname}.AppDir
+           ICONFILE=$(find ${{env.APPDIR}} -name *.png)
+           DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
+           EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
            ./${LINUXDEPLOY} \
-               --appdir=${{env.APPDIR}} -v2 \
-               --executable=${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
-               --icon-file=${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
-               --desktop-file=${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
+               --appdir=${APPDIR} -v2 \
+               --executable=${EXECFILE} \
+               --icon-file=${ICONFILE} \
+               --desktop-file=${DESKTOPFILE} \
                --output appimage
 
     - name: Add missing audio libraries
