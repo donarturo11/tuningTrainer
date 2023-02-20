@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
        include:
-        - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
+        #- { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
         - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        #- { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
       run:
@@ -82,6 +82,9 @@ jobs:
       run: |
            sudo apt-get update
            sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2 libpulse-dev
+           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
+           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo ldconfig
     
     - name: Install AQT
       run: |    
@@ -183,9 +186,9 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
-           sudo cmake --install ../rtaudio/build --prefix /usr
-           sudo cmake --install ../stk/build --prefix /usr
-           sudo cp -Rf ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
+           #sudo cmake --install ../rtaudio/build --prefix /usr
+           #sudo cmake --install ../stk/build --prefix /usr
+           #sudo cp -Rf ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
@@ -201,6 +204,7 @@ jobs:
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
                --output appimage
+           find . -name "*.AppImage" -exec cp -v {} ${{github.workspace}}/${{env.pkgname}}-${{runner.os}} \;
 
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
