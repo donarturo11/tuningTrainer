@@ -193,7 +193,7 @@ jobs:
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
-           ./${LINUXDEPLOY}
+           ./${LINUXDEPLOY} \
                --appdir=${{env.APPDIR}} -v \
                -e ${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
                -i ${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
