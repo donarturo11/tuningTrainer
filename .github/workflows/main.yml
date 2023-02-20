@@ -188,13 +188,13 @@ jobs:
       if: ${{runner.os == 'Linux'}}
       run: | 
            sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
-           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           #sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
            sudo ldconfig
-           export QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+           QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            APPDIR=${{env.pkgname}}.AppDir
