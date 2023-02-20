@@ -187,7 +187,7 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
-           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
            sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
            sudo ldconfig
