@@ -42,7 +42,7 @@ jobs:
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security default-keychain -s $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign || echo "::warning:: Import certificate failed"
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign -T /usr/bin/productsign || echo "::warning:: Import certificate failed"
           security list-keychain -d user -s $KEYCHAIN_PATH || echo "::warning:: List keychain failed"
           security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
           security find-identity || echo "::warning:: List keychain failed"
@@ -168,8 +168,7 @@ jobs:
       run: |
            echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
-                              ${{env.APPDIR}} \
-                              -sign-for-notarization=${{ env.IDENTITY_NAME }}
+                              ${{env.APPDIR}} 
 
 
     - name: windeployqt
@@ -182,16 +181,6 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
-
-## https://cmake.org/Bug/view.php?id=15507
-    - name: Sign bundle
-      if: ${{runner.os == 'macOS'}}
-      run: |
-           #find ${{env.APPDIR}}/Contents/Frameworks -type f -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
-           #find ${{env.APPDIR}}/Contents/MacOS -type f -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
-           #find ${{env.APPDIR}}/Contents/PlugIns -name "*.dylib" -exec codesign --verbose --sign "${{ env.IDENTITY_NAME }}" {} \;
-           codesign --force --verbose --entitlements desktop/entitlements.plist --sign "${{ env.IDENTITY_NAME }}" "${{env.APPDIR}}"
-##
            
     - name: CPack
       run: |
@@ -205,7 +194,12 @@ jobs:
           cp *.dmg $DMGDIR
           echo "DMGDIR=${DMGDIR}" >> $GITHUB_ENV
           
-
+    - name: Staple packages (macOS)
+      if: ${{runner.os == 'macOS'}}
+      run: |
+          find . -name "*.dmg" -exec xcrun stapler staple {} \;
+          find . -name "*.app" -exec xcrun stapler staple {} \;
+          
 #    - name: Setup tmate session
 #      uses: mxschmitt/action-tmate@v3
 #      if: ${{ failure() }}
@@ -244,20 +238,20 @@ jobs:
       - name: Get macOS Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-macOS
+          path: ${{github.workspace}}/${{env.pkgname}}-macOS
 
       - name: Get Linux Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-Linux
+          path: ${{github.workspace}}/${{env.pkgname}}-Linux
           
       - name: Get Windows Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
-          path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          name: ${{github.workspace}}/${{env.pkgname}}-Windows
+          path: ${{github.workspace}}/${{env.pkgname}}-Windows
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -268,9 +262,9 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-Windows/*
+            ${{github.workspace}}/${{env.pkgname}}-Linux/*
+            ${{github.workspace}}/${{env.pkgname}}-macOS/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -300,7 +294,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-Linux
           asset_name: ${{env.pkgname}}-linux-x86_64
           asset_content_type: application/octet-stream
 
@@ -311,7 +305,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-Windows
           asset_name: ${{env.pkgname}}-win-x86_64
           asset_content_type: application/octet-stream
 
@@ -324,6 +318,6 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
-            ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}/*
+            ${{github.workspace}}/${{env.pkgname}}-macOS*
+            ${{github.workspace}}/${{env.pkgname}}-Windows*
+            ${{github.workspace}}/${{env.pkgname}}-Linux*
