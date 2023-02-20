@@ -81,7 +81,7 @@ jobs:
       if: ${{runner.os == 'Linux'}}
       run: |
            sudo apt-get update
-           sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2
+           sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2 libpulse-dev
     
     - name: Install AQT
       run: |    
@@ -138,7 +138,11 @@ jobs:
     
     - name: Run Configure
       run: |
-           export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}
+           if [ ${{ runner.os }} == "Linux" ]; then
+               export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/usr
+           else
+               export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}
+           fi
            echo "INSTALL_PREFIX=$INSTALL_PREFIX" >> $GITHUB_ENV
            cmake -S "${{env.WORKDIR}}" \
                  -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
@@ -175,14 +179,25 @@ jobs:
       run: |
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
-           
+           # ./linuxdeploy-x86_64.AppImage --appdir=tuningTrainer-Linux/ -e tuningTrai
+ner-Linux/bin/tuningTrainer -i tuningTrainer-Linux/share/icons/hicolor/128/apps/tuningTrainer.png -d tuningTrainer-Linux/share/ap
+plications/tuningTrainer.desktop --output appimage --library=${HOME}/deps/lib/ --library=${HOME}/Qt/6.4.2/gcc_64/lib/
+
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
            find ${{env.APPDIR}}
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-           chmod +x linuxdeploy*.AppImage
-           ./linuxdeploy-x86_64.AppImage ${{env.APPDIR}}
+           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+           LINUXDEPLOY=linuxdeploy-x86_64.AppImage
+           chmod +x *.AppImage
+           ./${LINUXDEPLOY}
+               -e ${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
+               -i ${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
+               -d ${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
+               --output appimage \
+               --appdir ${{env.APPDIR}}
 
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
