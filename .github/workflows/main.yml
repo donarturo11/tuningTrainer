@@ -10,7 +10,7 @@ on:
 #      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
 env:
   pkgname: tuningTrainer
-  qt-version: 6.4.2
+  qt-version: 6.2.0
 
 jobs:
   build:
@@ -230,14 +230,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
