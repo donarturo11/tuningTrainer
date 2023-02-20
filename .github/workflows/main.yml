@@ -185,12 +185,14 @@ jobs:
     - name: Codesign (macOS)
       if: ${{runner.os == 'macOS'}}
       run: |
-           codesign --verbose --continue --force --deep -s donarturo11.github.io ${{env.APPDIR}}
+           codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io ${{env.APPDIR}}
 
     - name: Test (macOS)
       if: ${{runner.os == 'macOS'}}
       run: |
-          spctl --assess ${{env.APPDIR}}
+           find ${{env.APPDIR}}
+           codesign -dv -r- ${{env.APPDIR}}
+           codesign -vv ${{env.APPDIR}}
            
            
 #    - name: CPack
