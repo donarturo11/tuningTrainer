@@ -187,8 +187,8 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
-           sudo cp ${{matrix.deps-prefix}}/* /usr/
-           sudo cp ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr/
+           sudo cp -Rp ${{matrix.deps-prefix}}/* /usr/
+           sudo cp -Rp ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr/
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
