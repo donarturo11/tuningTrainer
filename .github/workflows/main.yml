@@ -191,7 +191,7 @@ jobs:
            sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
            sudo ldconfig
-           export QMAKE=$(find ${{matrix.aqt-prefix}} -name qmake*)
+           export QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
@@ -206,8 +206,8 @@ jobs:
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
-               --plugin qt \
-               --output appimage
+               --output appimage \
+               --plugin qt
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}-AppImage
            mkdir $APPIMAGEDIR
            find . -name "${{env.pkgname}}*.AppImage" -exec cp -v {} $APPIMAGEDIR \;
