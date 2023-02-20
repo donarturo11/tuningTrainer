@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
        include:
-        #- { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
-        #- { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
+        - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
         - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
@@ -170,12 +170,19 @@ jobs:
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
                               ${{env.APPDIR}} 
 
-
     - name: windeployqt
       if: ${{runner.os == 'Windows'}}
       run: |
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
+           
+    - name: linuxdeploy
+      if: ${{runner.os == 'Linux'}}
+      run: | 
+           find ${{env.APPDIR}}
+           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+           chmod +x linuxdeploy*.AppImage
+           ./linuxdeploy-x86_64.AppImage ${{env.APPDIR}}
 
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
@@ -193,30 +200,11 @@ jobs:
            find ${{env.APPDIR}}
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
-           
-           
-#    - name: CPack
-#      run: |
-#           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
-#    
-#    - name: Upload DMG
-#      if: ${{runner.os == 'macOS'}}
-#      run: |
-#          export DMGDIR=${{env.pkgname}}-DMG
-#          mkdir $DMGDIR
-#          cp *.dmg $DMGDIR
-#          echo "DMGDIR=${DMGDIR}" >> $GITHUB_ENV
-          
-#    - name: Verify (macOS)
-#      if: ${{runner.os == 'macOS'}}
-#      run: |
-          
-          
-          
+                     
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      #if: ${{ failure() }}
-      if: ${{runner.os == 'macOS'}}
+      if: ${{ failure() }}
+      #if: ${{runner.os == 'macOS'}}
       with:
           limit-access-to-actor: true
           #install-dependencies: false
