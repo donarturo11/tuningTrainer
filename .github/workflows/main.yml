@@ -197,9 +197,8 @@ jobs:
     - name: Verify (macOS)
       if: ${{runner.os == 'macOS'}}
       run: |
-          find . -name "*.app" -exec codesign -s "donarturo11.github.io" -f --timestamp --preserve-metadata --generate-entitlement-der {} || echo "Fail" \;
-          find . -name "*.dmg" -exec xcrun stapler staple {} \;
-          find . -name "*.app" -exec xcrun stapler staple {} \;
+          find *.app;
+          
           
 #    - name: Setup tmate session
 #      uses: mxschmitt/action-tmate@v3
