@@ -194,7 +194,7 @@ jobs:
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            ./${LINUXDEPLOY}
-               --appdir=${{env.pkgname}}.appdir \
+               --appdir=${{env.APPDIR}} -v \
                -e ${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
                -i ${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
                -d ${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
