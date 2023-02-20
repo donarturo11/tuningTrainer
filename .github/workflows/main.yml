@@ -181,32 +181,43 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
+
+    - name: Codesign (macOS)
+      if: ${{runner.os == 'macOS'}}
+      run: |
+           codesign --verbose --continue --force --deep -s donarturo11.github.io ${{env.APPDIR}}
+
+    - name: Test (macOS)
+      if: ${{runner.os == 'macOS'}}
+      run: |
+          spctl --assess ${{env.APPDIR}}
            
-    - name: CPack
-      run: |
-           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
-    
-    - name: Upload DMG
-      if: ${{runner.os == 'macOS'}}
-      run: |
-          export DMGDIR=${{env.pkgname}}-DMG
-          mkdir $DMGDIR
-          cp *.dmg $DMGDIR
-          echo "DMGDIR=${DMGDIR}" >> $GITHUB_ENV
+           
+#    - name: CPack
+#      run: |
+#           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
+#    
+#    - name: Upload DMG
+#      if: ${{runner.os == 'macOS'}}
+#      run: |
+#          export DMGDIR=${{env.pkgname}}-DMG
+#          mkdir $DMGDIR
+#          cp *.dmg $DMGDIR
+#          echo "DMGDIR=${DMGDIR}" >> $GITHUB_ENV
           
-    - name: Verify (macOS)
-      if: ${{runner.os == 'macOS'}}
-      run: |
-          find *.app;
+#    - name: Verify (macOS)
+#      if: ${{runner.os == 'macOS'}}
+#      run: |
           
           
-#    - name: Setup tmate session
-#      uses: mxschmitt/action-tmate@v3
-#      if: ${{ failure() }}
-#      with:
-#          limit-access-to-actor: true
-#          #install-dependencies: false
-#      timeout-minutes: 60
+          
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() }}
+      with:
+          limit-access-to-actor: true
+          #install-dependencies: false
+      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
