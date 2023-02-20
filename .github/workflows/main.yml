@@ -188,7 +188,7 @@ jobs:
       if: ${{runner.os == 'Linux'}}
       run: | 
            sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
-           #sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
            sudo ldconfig
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
@@ -202,7 +202,7 @@ jobs:
            DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
            EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
            ./${LINUXDEPLOY} \
-               --appdir=${APPDIR} -v2 \
+               --appdir=${APPDIR} -v1 \
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
