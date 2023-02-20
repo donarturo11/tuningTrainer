@@ -4,5 +4,5 @@ Type=Application
 Name=tuningTrainer
 Comment=Tool to training tuning
 Exec=tuningTrainer
-Icon=tuningTrainer-icon
-Categories=Audio;AudioVideo;X-Jack;Qt;
+Icon=tuningTrainer
+Categories=Audio;AudioVideo;Qt;

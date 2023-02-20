@@ -183,6 +183,10 @@ jobs:
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
       run: | 
+           sudo cmake --install ../rtaudio/build --prefix /usr
+           sudo cmake --install ../stk/build --prefix /usr
+           sudo cp -Rv ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
+           
            find ${{env.APPDIR}}
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
@@ -190,11 +194,11 @@ jobs:
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            ./${LINUXDEPLOY}
+               --appdir ${{env.APPDIR}} \
                -e ${{env.APPDIR}}/usr/bin/${{env.pkgname}} \
                -i ${{env.APPDIR}}/usr/share/icons/hicolor/128/apps/${{env.pkgname}}.png \
                -d ${{env.APPDIR}}/usr/share/applications/${{env.pkgname}}.desktop \
-               --output appimage \
-               --appdir ${{env.APPDIR}}
+               --output appimage 
 
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
