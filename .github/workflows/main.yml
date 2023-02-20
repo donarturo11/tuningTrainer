@@ -179,9 +179,6 @@ jobs:
       run: |
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
-           # ./linuxdeploy-x86_64.AppImage --appdir=tuningTrainer-Linux/ -e tuningTrai
-ner-Linux/bin/tuningTrainer -i tuningTrainer-Linux/share/icons/hicolor/128/apps/tuningTrainer.png -d tuningTrainer-Linux/share/ap
-plications/tuningTrainer.desktop --output appimage --library=${HOME}/deps/lib/ --library=${HOME}/Qt/6.4.2/gcc_64/lib/
 
     - name: linuxdeploy
       if: ${{runner.os == 'Linux'}}
