@@ -200,8 +200,8 @@ jobs:
            ICONFILE=$(find ${{ env.APPDIR }} -name *.png)
            DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
            EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
+           export QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake 
            ./${LINUXDEPLOY} \
-               QMAKE=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/qmake \
                --appdir=${APPDIR} -v1 \
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
