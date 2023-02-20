@@ -82,9 +82,6 @@ jobs:
       run: |
            sudo apt-get update
            sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2 libpulse-dev
-           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
-           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
-           sudo ldconfig
     
     - name: Install AQT
       run: |    
@@ -189,6 +186,10 @@ jobs:
            #sudo cmake --install ../rtaudio/build --prefix /usr
            #sudo cmake --install ../stk/build --prefix /usr
            #sudo cp -Rf ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/* /usr
+           sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
+           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo rm /etc/ld.so.cache || echo "::warning:: ld.so.cache does not exist"
+           sudo ldconfig
            wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
            wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
