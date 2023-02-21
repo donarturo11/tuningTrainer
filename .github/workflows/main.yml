@@ -84,12 +84,12 @@ jobs:
            sudo apt-get install -y cmake-extras libasound2-dev \
                                    libegl1-mesa-dev libfuse2 libpulse-dev 
            sudo apt-get install -y libunwind-dev \
-                                   libavcodec-dev \
-                                   libavcodec-extra \
-                                   libavutil-dev \
-                                   libavutil56 \
-                                   libswresample-dev \
-                                   ffmpeg
+                                   libgstreamer1.0-dev \
+                                   libgstreamer-plugins-base1.0-0 \
+                                   libgstreamer-plugins-base1.0-dev \
+                                   gstreamer1.0-libav \
+                                   gstreamer1.0-plugins-good \
+                                   gstreamer1.0-plugins-bad 
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
                                    libxcb-render-util0 libxcb-shape0
@@ -102,25 +102,7 @@ jobs:
       run: |
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtmultimedia
-           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtshadertools
 
-    - name: Build and install ffmpeg plugin
-      if: ${{runner.os == 'Linux'}} && ${{env.qt-version == '6.4.2'}}
-      run: |
-           export SOURCE_FFMPEG=../qtmultimedia-everywhere-src-${{env.qt-version}}
-           export BUILD=../qtmultimedia-everywhere-src-${{env.qt-version}}/build/
-           export BUILD_FFMPEG=$BUILD/src/plugins/multimedia/ffmpeg/
-           export QT_DIR=${{matrix.aqt-prefix}}/${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}}/
-           echo "::notice::QT_DIR=${QT_DIR}"
-           wget -q https://download.qt.io/official_releases/qt/6.4/${{env.qt-version}}/submodules/qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz
-           tar -xJf qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz -C ..
-           cmake -S ${SOURCE_FFMPEG} \
-                 -B ${BUILD} \
-                 -DCMAKE_PREFIX_PATH="${QT_DIR};/usr/" \
-                 -DCMAKE_INSTALL_PREFIX="${QT_DIR}"
-           cmake --build $BUILD_FFMPEG
-           cmake --install $BUILD_FFMPEG
-    
     - name: Install RtAudio
       run: |
            git clone https://github.com/thestk/rtaudio ../rtaudio
@@ -231,8 +213,7 @@ jobs:
            export QTDIR=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}
            export QMAKE=${QTDIR}/bin/qmake 
            export QT_INSTALL_PLUGINS=${QTDIR}/plugins/
-           export EXTRA_QT_PLUGINS=multimedia
-           export QT_MEDIA_BACKEND=ffmpeg
+           export EXTRA_QT_PLUGINS=gui;qtmultimedia
            ./${LINUXDEPLOY} \
                --appdir=${APPDIR} -v3 \
                --executable=${EXECFILE} \
@@ -262,14 +243,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
