@@ -89,7 +89,6 @@ jobs:
                                    libavutil-dev \
                                    libavutil56 \
                                    libswresample-dev \
-                                   libavresample-dev \
                                    ffmpeg
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
