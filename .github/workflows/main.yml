@@ -10,7 +10,7 @@ on:
 #      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
 env:
   pkgname: tuningTrainer
-  qt-version: 6.5.0
+  qt-version: 6.2.0
 
 jobs:
   build:
@@ -207,7 +207,7 @@ jobs:
            export QMAKE=${QTDIR}/bin/qmake 
            export QT_INSTALL_PLUGINS=${QTDIR}/plugins/
            export EXTRA_QT_PLUGINS=multimedia
-           export QT_MEDIA_BACKEND=ffmpeg
+           export QT_MEDIA_BACKEND=gstreamer
            ./${LINUXDEPLOY} \
                --appdir=${APPDIR} -v3 \
                --executable=${EXECFILE} \
