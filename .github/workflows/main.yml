@@ -104,7 +104,7 @@ jobs:
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtshadertools
 
     - name: Build and install ffmpeg plugin
-      if: ${{runner.os == 'Linux'}} && ${{env.qt-version == "6.4.2"}}
+      if: ${{runner.os == 'Linux'}} && ${{env.qt-version == '6.4.2'}}
       run: |
            SOURCE_FFMPEG=../qtmultimedia-everywhere-src-${{env.qt-version}}
            BUILD=../qtmultimedia-everywhere-src-${{env.qt-version}}/build/
