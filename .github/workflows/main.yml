@@ -85,6 +85,7 @@ jobs:
                                    libegl1-mesa-dev libfuse2 libpulse-dev 
            sudo apt-get install -y libunwind-dev \
                                    libavcodec-dev \
+                                   libavcodec-extra \
                                    ffmpeg
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
@@ -106,13 +107,13 @@ jobs:
            export SOURCE_FFMPEG=../qtmultimedia-everywhere-src-${{env.qt-version}}
            export BUILD=../qtmultimedia-everywhere-src-${{env.qt-version}}/build/
            export BUILD_FFMPEG=$BUILD/src/plugins/multimedia/ffmpeg/
-           export QT_DIR=${{matrix.aqt-prefix}}/${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}}
+           export QT_DIR=${{matrix.aqt-prefix}}/${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}}/
            echo "::notice::QT_DIR=${QT_DIR}"
-           wget https://download.qt.io/official_releases/qt/6.4/${{env.qt-version}}/submodules/qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz
+           wget -q https://download.qt.io/official_releases/qt/6.4/${{env.qt-version}}/submodules/qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz
            tar -xJf qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz -C ..
            cmake -S ${SOURCE_FFMPEG} \
                  -B ${BUILD} \
-                 -DCMAKE_PREFIX_PATH="${QT_DIR}" \
+                 -DCMAKE_PREFIX_PATH="${QT_DIR};/usr/" \
                  -DCMAKE_INSTALL_PREFIX="${QT_DIR}"
            cmake --build $BUILD_FFMPEG
            cmake --install $BUILD_FFMPEG
