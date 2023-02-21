@@ -213,7 +213,7 @@ jobs:
            export QTDIR=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}
            export QMAKE=${QTDIR}/bin/qmake 
            export QT_INSTALL_PLUGINS=${QTDIR}/plugins/
-           export EXTRA_QT_PLUGINS=gui;qtmultimedia
+           export EXTRA_QT_PLUGINS="gui;qtmultimedia"
            ./${LINUXDEPLOY} \
                --appdir=${APPDIR} -v3 \
                --executable=${EXECFILE} \
