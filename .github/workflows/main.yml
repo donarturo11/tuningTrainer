@@ -81,7 +81,7 @@ jobs:
       if: ${{runner.os == 'Linux'}}
       run: |
            sudo apt-get update
-           sudo apt-get install -y cmake-extras libasound2-dev libegl1-mesa-dev libfuse2 libpulse-dev
+           sudo apt-get install -y cmake-extras libasound2-dev libxkbcommon-x11-0 libegl1-mesa-dev libfuse2 libpulse-dev 
     
     - name: Install AQT
       run: |    
