@@ -213,7 +213,7 @@ jobs:
            export QTDIR=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}
            export QMAKE=${QTDIR}/bin/qmake 
            export QT_INSTALL_PLUGINS=${QTDIR}/plugins/
-           export EXTRA_QT_PLUGINS="gui;qtmultimedia"
+           export EXTRA_QT_PLUGINS="multimediagsttools"
            ./${LINUXDEPLOY} \
                --appdir=${APPDIR} -v3 \
                --executable=${EXECFILE} \
@@ -226,6 +226,12 @@ jobs:
            find . -name "${{env.pkgname}}*.AppImage" -exec cp -v {} $APPIMAGEDIR \;
            echo "APPIMAGEDIR=${APPIMAGEDIR}" >> $GITHUB_ENV
 
+    - name: check linux deploy
+      if: ${{runner.os == 'Linux'}}
+      run: |
+           find ${{env.pkgname}}.AppDir >> ${{ env.APPIMAGEDIR }}/appimage-contents.txt
+           tar -czf ${{ env.APPIMAGEDIR }}/appimage.tar.gz ${{env.pkgname}}.AppDir 
+      
     - name: Add missing audio libraries
       if: ${{runner.os == 'macOS'}}
       run: |
@@ -243,14 +249,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      #if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      #if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
