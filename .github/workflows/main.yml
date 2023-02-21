@@ -219,8 +219,10 @@ jobs:
                --executable=${EXECFILE} \
                --icon-file=${ICONFILE} \
                --desktop-file=${DESKTOPFILE} \
-               --output=appimage \
                --plugin qt
+           cp -Rv $QT_INSTALL_PLUGINS/multimedia ${APPDIR}/usr/plugins/
+           cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
+           ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}-AppImage
            mkdir $APPIMAGEDIR
            find . -name "${{env.pkgname}}*.AppImage" -exec cp -v {} $APPIMAGEDIR \;
