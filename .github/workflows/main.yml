@@ -87,6 +87,9 @@ jobs:
                                    libavcodec-dev \
                                    libavcodec-extra \
                                    libavutil-dev \
+                                   libavutil56 \
+                                   libswresample-dev \
+                                   libavresample-dev \
                                    ffmpeg
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
@@ -260,14 +263,14 @@ jobs:
            codesign -dv -r- ${{env.APPDIR}}
            codesign -vv ${{env.APPDIR}}
                      
-#    - name: Setup tmate session
-#      uses: mxschmitt/action-tmate@v3
-#      if: ${{ failure() }}
-#      #if: ${{runner.os == 'macOS'}}
-#      with:
-#          limit-access-to-actor: true
-#          #install-dependencies: false
-#      timeout-minutes: 60
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() }}
+      #if: ${{runner.os == 'macOS'}}
+      with:
+          limit-access-to-actor: true
+          #install-dependencies: false
+      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
