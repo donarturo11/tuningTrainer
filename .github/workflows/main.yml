@@ -110,7 +110,8 @@ jobs:
            BUILD=../qtmultimedia-everywhere-src-${{env.qt-version}}/build/
            BUILD_FFMPEG=$BUILD/src/plugins/multimedia/ffmpeg/
            QT_DIR=${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}}
-           curl https://download.qt.io/official_releases/qt/6.4/${{env.qt-version}}/submodules/qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz | tar -xJ -C ..
+           wget https://download.qt.io/official_releases/qt/6.4/${{env.qt-version}}/submodules/qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz
+           tar -xJf qtmultimedia-everywhere-src-${{env.qt-version}}.tar.xz -C ..
            cmake -S $SOURCE_FFMPEG \
                  -B $BUILD \
                  -DCMAKE_PREFIX_PATH=$QT_DIR \
