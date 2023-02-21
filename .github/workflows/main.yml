@@ -83,7 +83,11 @@ jobs:
            sudo apt-get update
            sudo apt-get install -y cmake-extras libasound2-dev \
                                    libegl1-mesa-dev libfuse2 libpulse-dev 
-           sudo apt-get install -y libgstreamer-plugins-base1.0-0
+           sudo apt-get install -y libgstreamer-plugins-base1.0-0 \
+                                   libgstreamer-plugins-base1.0-dev \
+                                   gstreamer1.0-libav \
+                                   gstreamer1.0-plugins-good \
+                                   gstreamer1.0-plugins-bad 
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
                                    libxcb-render-util0 libxcb-shape0
