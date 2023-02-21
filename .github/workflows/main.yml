@@ -100,7 +100,6 @@ jobs:
       run: |
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtmultimedia
-           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qttools
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtshadertools
 
     - name: Build and install ffmpeg plugin
