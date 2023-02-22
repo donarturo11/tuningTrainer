@@ -152,9 +152,9 @@ jobs:
            echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
            echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
     
-    -name: Prepare macOS temp disk
-     if: ${{runner.os == 'Windows'}}
-     run: |
+    - name: Prepare macOS temp disk
+      if: ${{runner.os == 'Windows'}}
+      run: |
           export TEMP_DMGNAME=build-dmg
           hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGNAME}.dmg
           hdiutil attach ${TEMP_DMGNAME}
@@ -165,8 +165,8 @@ jobs:
           echo "TEMP_DEV=${DEV}" >> $GITHUB_ENV
           echo "TEMP_DMGNAME=${TEMP_DMGNAME}" >> $GITHUB_ENV
     
-    -name: Setup install prefix
-     run: |
+    - name: Setup install prefix
+      run: |
            if [ ${{ runner.os }} == "Linux" ]; then
                export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-appdir/usr
            elif [ ${{ runner.os }} == "macOS" ]; then
