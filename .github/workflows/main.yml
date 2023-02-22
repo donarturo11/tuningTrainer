@@ -156,14 +156,16 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
           export TEMP_DMGNAME=build-dmg
-          hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGNAME}.dmg
-          hdiutil attach ${TEMP_DMGNAME}
+          export TEMP_DMGFILE=${TEMP_DMGNAME}.dmg
+          hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGFILE}
+          hdiutil attach ${TEMP_DMGFILE}
           DEVS=$(hdiutil attach ${TEMP_DMGNAME} | cut -f 1)
           DEV=$(echo $DEVS | cut -f 1 -d ' ')
-          TEMP_VOLUME=$(mount |grep ${DEV} | cut -f 3 -d ' ')
+          TEMP_VOLUME=$(mount | grep ${DEV} | cut -f 3 -d ' ')
           echo "TEMP_VOLUME=${TEMP_VOLUME}" >> $GITHUB_ENV
           echo "TEMP_DEV=${DEV}" >> $GITHUB_ENV
           echo "TEMP_DMGNAME=${TEMP_DMGNAME}" >> $GITHUB_ENV
+          echo "TEMP_DMGFILE=${TEMP_DMGFILE}" >> $GITHUB_ENV
     
     - name: Setup install prefix
       run: |
@@ -210,9 +212,10 @@ jobs:
            codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io ${{env.APPDIR}}
            ln -s /Applications/ ${{ env.VOLUME }}/Applications
            hdiutil detach ${{ env.TEMP_DEV }}
-           hdiutil convert ${{env.TEMP_DMGNAME}}.dmg -format UDBZ \
-                    -o ${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
-           shasum -a 256 ${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           DIST_DMG=${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           hdiutil convert ${{env.TEMP_DMGFILE}} -format UDBZ \
+                    -o ${DIST_DMG}
+           shasum -a 256 ${DIST_DMG}
            
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
