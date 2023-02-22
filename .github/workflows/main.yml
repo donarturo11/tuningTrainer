@@ -213,10 +213,11 @@ jobs:
                               ${{env.APPDIR}}
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
            codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io ${{env.APPDIR}}
-           ln -vs /Applications/ ${{ env.VOLUME }}/Applications
+           ln -s /Applications/ ${{ env.TEMP_DMGPOINT }}/Applications
            echo "::notice:: $(ls -lah)"
            hdiutil detach ${{ env.TEMP_DMGPOINT }}
            hdiutil convert ${{env.TEMP_DMGFILE}} -format UDBZ \
+                    -volname ${{env.pkgname}}
                     -o ${DESTINATION_DIR}/${DIST_DMG}
            shasum -a 256 ${DESTINATION_DIR}/${DIST_DMG}
            
