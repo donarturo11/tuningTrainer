@@ -153,7 +153,7 @@ jobs:
            echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
     
     - name: Prepare macOS temp disk
-      if: ${{runner.os == 'Windows'}}
+      if: ${{runner.os == 'macOS'}}
       run: |
           export TEMP_DMGNAME=build-dmg
           hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGNAME}.dmg
