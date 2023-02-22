@@ -158,7 +158,7 @@ jobs:
           export TEMP_DMGNAME=build-dmg
           export TEMP_DMGFILE=${TEMP_DMGNAME}.dmg
           echo "::notice:: Creating ${TEMP_DMGFILE}"
-          hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGFILE}
+          hdiutil create -size 700m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGFILE}
           hdiutil attach ${TEMP_DMGFILE}
           #DEVS=$(hdiutil attach ${TEMP_DMGNAME} | cut -f 1)
           #DEV=$(echo $DEVS | cut -f 1 -d ' ')
