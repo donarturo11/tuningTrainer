@@ -229,12 +229,11 @@ jobs:
            cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
            echo "::notice::Creating AppImage"
            ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
-           export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}-AppImage
-           mkdir $APPIMAGEDIR
-           find . -name "${{env.pkgname}}*.AppImage" \
-                  -exec chmod a+x {} \; \
-                  -exec cp -pv {} $APPIMAGEDIR \;
-           tar -vczf ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}.tar.gz $APPIMAGEDIR
+           export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+           mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
+           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}.AppImage
+           cp ${{env.pkgname}}.AppImage ${{env.pkgname}}-${{runner.os}}
+           
     
     - name: Test (macOS)
       if: ${{runner.os == 'macOS'}}
@@ -256,7 +255,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{env.pkgname}}-${{runner.os}}
-        path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}.*
+        path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
                 
     - name: Print variables
       run: |
