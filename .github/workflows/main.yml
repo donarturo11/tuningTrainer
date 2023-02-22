@@ -160,7 +160,7 @@ jobs:
           echo "::notice:: Creating ${TEMP_DMGFILE}"
           hdiutil create -size 700m -fs HFS+ -volname "${DMGNAME}" "${TEMP_DMGFILE}"
           hdiutil attach "${TEMP_DMGFILE}"
-          TEMP_DMGPOINT="$(mount | grep "${DMGNAME}" | cut -f 3 -d ' ')"
+          TEMP_DMGPOINT="/Volumes/${DMGNAME}"
           echo "TEMP_DMGNAME=\"${TEMP_DMGNAME}\"" >> $GITHUB_ENV
           echo "TEMP_DMGFILE=\"${TEMP_DMGFILE}\"" >> $GITHUB_ENV
           echo "TEMP_DMGPOINT=\"${TEMP_DMGPOINT}\"" >> $GITHUB_ENV
