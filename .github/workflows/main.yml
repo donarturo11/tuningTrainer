@@ -233,7 +233,6 @@ jobs:
            mkdir $APPIMAGEDIR
            find . -name "${{env.pkgname}}*.AppImage" \
                   -exec chmod a+x {} \; \
-                  -exec mv {} ${{env.pkgname}}.AppImage \; \
                   -exec cp -pv {} $APPIMAGEDIR \;
            tar -vczf ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}.tar.gz $APPIMAGEDIR
     
