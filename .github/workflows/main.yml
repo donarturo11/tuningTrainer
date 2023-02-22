@@ -198,7 +198,7 @@ jobs:
     
     - name: Install
       run: |
-           cmake --install ${{env.WORKDIR}}/build --prefix ${{ env.INSTALL_PREFIX }}
+           cmake --install ${{env.WORKDIR}}/build --prefix "${{ env.INSTALL_PREFIX }}"
     
     - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
