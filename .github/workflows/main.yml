@@ -18,8 +18,8 @@ jobs:
       matrix:
        include:
         #- { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
-        - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        #- { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        #- { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
       run:
@@ -73,8 +73,9 @@ jobs:
            python3 -m pip install -U pip
            echo "SETUPTOOLS_USE_DISTUTILS=stdlib" >> $GITHUB_ENV
     
-    - name: Print Info
+    - name: Setup env vars
       run: |
+           echo "GIT_REVISION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
            echo "::notice:: ${{runner.os}}"
     
     - name: Install Linux Dependencies
@@ -151,17 +152,35 @@ jobs:
            echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
            echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
     
-    - name: Run Configure
-      run: |
+    -name: Prepare macOS temp disk
+     if: ${{runner.os == 'Windows'}}
+     run: |
+          export TEMP_DMGNAME=build-dmg
+          hdiutil create -size 100m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGNAME}.dmg
+          hdiutil attach ${TEMP_DMGNAME}
+          DEVS=$(hdiutil attach ${TEMP_DMGNAME} | cut -f 1)
+          DEV=$(echo $DEVS | cut -f 1 -d ' ')
+          TEMP_VOLUME=$(mount |grep ${DEV} | cut -f 3 -d ' ')
+          echo "TEMP_VOLUME=${TEMP_VOLUME}" >> $GITHUB_ENV
+          echo "TEMP_DEV=${DEV}" >> $GITHUB_ENV
+          echo "TEMP_DMGNAME=${TEMP_DMGNAME}" >> $GITHUB_ENV
+    
+    -name: Setup install prefix
+     run: |
            if [ ${{ runner.os }} == "Linux" ]; then
                export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-appdir/usr
+           elif [ ${{ runner.os }} == "macOS" ]; then
+               export INSTALL_PREFIX=${{env.TEMP_VOLUME}}
            else
                export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-appdir
            fi
            echo "INSTALL_PREFIX=$INSTALL_PREFIX" >> $GITHUB_ENV
+    
+    - name: Run Configure
+      run: |
            cmake -S "${{env.WORKDIR}}" \
                  -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
-                 -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+                 -DCMAKE_INSTALL_PREFIX="${{env.INSTALL_PREFIX}}" \
                  -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}};${{env.DEPSPATH}}" 
                  
     - name: Compile Code
@@ -181,7 +200,7 @@ jobs:
       run: |
            cmake --install ${{env.WORKDIR}}/build --prefix ${{ env.INSTALL_PREFIX }}
     
-    - name: macdeployqt
+    - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
       run: |
            echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
@@ -189,15 +208,19 @@ jobs:
                               ${{env.APPDIR}}
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
            codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io ${{env.APPDIR}}
-
-    - name: windeployqt
+           ln -s /Applications/ ${{ env.VOLUME }}/Applications
+           hdiutil detach ${{ env.TEMP_DEV }}
+           hdiutil convert ${{env.TEMP_DMGNAME}}.dmg -format UDBZ \
+                    -o ${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           shasum -a 256 ${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           
+    - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
       run: |
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
-           7z a ${{env.pkgname}}-${{runner.os}} ${{env.APPDIR}}/
 
-    - name: linuxdeploy
+    - name: Create AppImage
       if: ${{runner.os == 'Linux'}}
       run: | 
            sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
@@ -231,16 +254,15 @@ jobs:
            ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
-           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}.AppImage
-           cp ${{env.pkgname}}.AppImage ${{env.pkgname}}-${{runner.os}}
+           cp ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}
            
     
-    - name: Test (macOS)
-      if: ${{runner.os == 'macOS'}}
-      run: |
-           find ${{env.APPDIR}}
-           codesign -dv -r- ${{env.APPDIR}}
-           codesign -vv ${{env.APPDIR}}
+#    - name: Test (macOS)
+#      if: ${{runner.os == 'macOS'}}
+#      run: |
+#           find ${{env.APPDIR}}
+#           codesign -dv -r- ${{env.APPDIR}}
+#           codesign -vv ${{env.APPDIR}}
                      
 #    - name: Setup tmate session
 #      uses: mxschmitt/action-tmate@v3
