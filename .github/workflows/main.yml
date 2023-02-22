@@ -158,7 +158,7 @@ jobs:
           export TEMP_DMGNAME=build-dmg
           export TEMP_DMGFILE=${TEMP_DMGNAME}.dmg
           echo "::notice:: Creating ${TEMP_DMGFILE}"
-          hdiutil create -size 700m -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGFILE}
+          hdiutil create -megabytes 100 -fs HFS+ -volname ${TEMP_DMGNAME} ${TEMP_DMGFILE}
           hdiutil attach ${TEMP_DMGFILE}
           #DEVS=$(hdiutil attach ${TEMP_DMGNAME} | cut -f 1)
           #DEV=$(echo $DEVS | cut -f 1 -d ' ')
@@ -205,17 +205,19 @@ jobs:
     - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
       run: |
-           echo "::notice::$(find ${{env.WORKDIR}}/${{env.pkgname}}-${{runner.os}}/)"
+           DESTINATION_DIR=${{env.pkgname}}-${{runner.os}}
+           DIST_DMG=${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           mkdir  || echo "::warning:: ${DESTINATION_DIR} already exists"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
                               ${{env.APPDIR}}
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
            codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io ${{env.APPDIR}}
            ln -s /Applications/ ${{ env.VOLUME }}/Applications
            hdiutil detach ${{ env.TEMP_DMGPOINT }}
-           DIST_DMG=${{env.pkgname}}-${{runner.os}}/${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           
            hdiutil convert ${{env.TEMP_DMGFILE}} -format UDBZ \
-                    -o ${DIST_DMG}
-           shasum -a 256 ${DIST_DMG}
+                    -o ${DESTINATION_DIR}/${DIST_DMG}
+           shasum -a 256 ${DESTINATION_DIR}/${DIST_DMG}
            
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
@@ -267,14 +269,14 @@ jobs:
 #           codesign -dv -r- ${{env.APPDIR}}
 #           codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      #if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      #if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
