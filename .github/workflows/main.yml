@@ -206,9 +206,9 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            DESTINATION_DIR=${{env.pkgname}}-${{runner.os}}
-           DIST_DMG=${{env.pkgname}}-${{env.GIT_REVISION}}.dmg
+           DIST_DMG=${{env.pkgname}}-${{env.GITREV}}.dmg
            echo "::notice:: destination dmg: ${DESTINATION_DIR}/${DIST_DMG}"
-           mkdir  || echo "::warning:: ${DESTINATION_DIR} already exists"
+           mkdir ${DESTINATION_DIR}  || echo "::warning:: ${DESTINATION_DIR} already exists"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
                               ${{env.APPDIR}}
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} ${{env.APPDIR}}/Contents/Frameworks \;
@@ -270,14 +270,14 @@ jobs:
 #           codesign -dv -r- ${{env.APPDIR}}
 #           codesign -vv ${{env.APPDIR}}
                      
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      #if: ${{ failure() }}
-      #if: ${{runner.os == 'macOS'}}
-      with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-      timeout-minutes: 60
+#    - name: Setup tmate session
+#      uses: mxschmitt/action-tmate@v3
+#      #if: ${{ failure() }}
+#      #if: ${{runner.os == 'macOS'}}
+#      with:
+#          limit-access-to-actor: true
+#          #install-dependencies: false
+#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
