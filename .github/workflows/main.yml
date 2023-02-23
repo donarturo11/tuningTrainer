@@ -221,12 +221,12 @@ jobs:
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
       run: |
+           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-Windows
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
-           mkdir ${{env.WORKDIR}}/${{env.pkgname}}-Windows
-           cd ${{env.APPDIR}}/
-           cpack -G nsis
-           cpack -G 7z
+           mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
+           cd $ARTIFACT_DIR
+           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake
 
     - name: Create AppImage
       if: ${{runner.os == 'Linux'}}
