@@ -8,6 +8,15 @@ on:
     branches: [ ]
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch:
+      publish-www:
+        description: 'Publish on WWW'
+        required: false
+        type: boolean
+      publish-github:
+        description: 'Publish on GitHub'
+        required: false
+        type: boolean
 env:
   pkgname: tuningTrainer
   qt-version: 6.4.2
@@ -289,14 +298,14 @@ jobs:
       - name: Get macOS Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-macOS
-          path: ${{github.workspace}}/${{env.pkgname}}-macOS
+          name: ${{env.pkgname}}*
+          path: ${{github.workspace}}/
 
       - name: Get Linux Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-Linux
-          path: ${{github.workspace}}/${{env.pkgname}}-Linux
+          name: ${{env.pkgname}}-Linux
+          path: ${{github.workspace}}/
           
       - name: Get Windows Binary
         uses: actions/download-artifact@v2
@@ -334,7 +343,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-macOS
           asset_name: ${{env.pkgname}}-macOS
           asset_content_type: application/octet-stream
 
@@ -372,3 +381,11 @@ jobs:
             ${{github.workspace}}/${{env.pkgname}}-macOS*
             ${{github.workspace}}/${{env.pkgname}}-Windows*
             ${{github.workspace}}/${{env.pkgname}}-Linux*
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
+        with:
+          limit-access-to-actor: true
+          #install-dependencies: false
+        timeout-minutes: 60
