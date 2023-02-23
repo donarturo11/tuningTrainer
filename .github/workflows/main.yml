@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
        include:
-        #- { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
+        - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
         #- { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        #- { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
       run:
@@ -223,6 +223,10 @@ jobs:
       run: |
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
+           mkdir ${{env.WORKDIR}}/${{env.pkgname}}-Windows
+           cd ${{env.APPDIR}}/
+           cpack -G nsis
+           cpack -G 7z
 
     - name: Create AppImage
       if: ${{runner.os == 'Linux'}}
