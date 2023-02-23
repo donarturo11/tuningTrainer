@@ -298,7 +298,7 @@ jobs:
       - name: Get macOS Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{env.pkgname}}*
+          name: ${{env.pkgname}}-macOS
           path: ${{github.workspace}}/
 
       - name: Get Linux Binary
@@ -310,8 +310,8 @@ jobs:
       - name: Get Windows Binary
         uses: actions/download-artifact@v2
         with:
-          name: ${{github.workspace}}/${{env.pkgname}}-Windows
-          path: ${{github.workspace}}/${{env.pkgname}}-Windows
+          name: ${{env.pkgname}}-Windows
+          path: ${{github.workspace}}/
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
