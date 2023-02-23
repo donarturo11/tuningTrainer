@@ -135,7 +135,7 @@ jobs:
            cp -v ../stk/cmake/FindCoreAudio.cmake $(brew --prefix cmake)/share/cmake/Modules/
 
     - name: Checkout Repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Prepare version
       run: |
@@ -276,7 +276,7 @@ jobs:
            cp ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}
 
     - name: Upload All Binaries
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{env.pkgname}}-${{runner.os}}
         path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
@@ -296,19 +296,19 @@ jobs:
         run: echo ::set-output name=BUILD_TAG::build-$(date +'%Y%m%d%H%M')
 
       - name: Get macOS Binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-macOS
           path: ${{github.workspace}}/
 
       - name: Get Linux Binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-Linux
           path: ${{github.workspace}}/
           
       - name: Get Windows Binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-Windows
           path: ${{github.workspace}}/
@@ -384,8 +384,8 @@ jobs:
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
+        #if: ${{ failure() }}
         with:
           limit-access-to-actor: true
           #install-dependencies: false
-        timeout-minutes: 60
+        timeout-minutes: 120
