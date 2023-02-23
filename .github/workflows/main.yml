@@ -227,7 +227,7 @@ jobs:
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
-           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS
+           cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS -V
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G 7Z
 
     - name: Create AppImage
