@@ -6,8 +6,8 @@ on:
     branches: [ ]
   push:
     branches: [ ]
-#  create:
-#      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
+  create:
+      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
 env:
   pkgname: tuningTrainer
   qt-version: 6.4.2
@@ -18,8 +18,8 @@ jobs:
       matrix:
        include:
         - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
-        #- { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        #- { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
+        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
     runs-on: ${{matrix.os}}
     defaults:
       run:
@@ -265,23 +265,6 @@ jobs:
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
            cp ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}
-           
-    
-#    - name: Test (macOS)
-#      if: ${{runner.os == 'macOS'}}
-#      run: |
-#           find ${{env.APPDIR}}
-#           codesign -dv -r- ${{env.APPDIR}}
-#           codesign -vv ${{env.APPDIR}}
-                     
-#    - name: Setup tmate session
-#      uses: mxschmitt/action-tmate@v3
-#      #if: ${{ failure() }}
-#      #if: ${{runner.os == 'macOS'}}
-#      with:
-#          limit-access-to-actor: true
-#          #install-dependencies: false
-#      timeout-minutes: 60
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v2
@@ -296,7 +279,7 @@ jobs:
 
   publish:
     needs: build
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    #if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     steps:
       - name: Get Build Tag
