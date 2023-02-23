@@ -65,6 +65,7 @@ jobs:
             mingw-w64-ucrt-x86_64-python-distutils-extra
             mingw-w64-ucrt-x86_64-python-psutil
             mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-nsis
     
     - name: Setup windows env
       if: ${{runner.os == 'Windows'}}
