@@ -214,7 +214,7 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            DESTINATION_DIR=${{env.pkgname}}-${{runner.os}}
-           DIST_DMG=${{env.pkgname}}-${{env.GITREV}}.dmg
+           DIST_DMG=${{env.pkgname}}.dmg
            echo "::notice:: destination dmg: ${DESTINATION_DIR}/${DIST_DMG}"
            mkdir ${DESTINATION_DIR}  || echo "::warning:: ${DESTINATION_DIR} already exists"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
@@ -237,7 +237,10 @@ jobs:
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS -V
+           mv ${{env.pkgname}}*.exe ${{env.pkgname}}.exe
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G 7Z
+           mv ${{env.pkgname}}*.7z ${{env.pkgname}}.7z
+           rm -Rf _CPack_Packages/
 
     - name: Create AppImage
       if: ${{runner.os == 'Linux'}}
@@ -271,9 +274,10 @@ jobs:
            cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
            echo "::notice::Creating AppImage"
            ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
+           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}.AppImage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
-           cp ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}
+           cp ${{env.pkgname}}.AppImage ${{env.pkgname}}-${{runner.os}}
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v3
@@ -288,12 +292,15 @@ jobs:
 
   publish:
     needs: build
-    #if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     steps:
       - name: Get Build Tag
         id: get_tag
-        run: echo ::set-output name=BUILD_TAG::build-$(date +'%Y%m%d%H%M')
+        run: |
+             DATE=$(date +'%Y%m%d%H%M')
+             echo ::set-output name=BUILD_TAG::build-${DATE}
+             echo DATE=$DATE >> $GITHUB_ENV
 
       - name: Get macOS Binary
         uses: actions/download-artifact@v3
@@ -312,7 +319,7 @@ jobs:
         with:
           name: ${{env.pkgname}}-Windows
           path: ${{github.workspace}}/
-
+          
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
         uses: softprops/action-gh-release@v1
@@ -381,11 +388,3 @@ jobs:
             ${{github.workspace}}/${{env.pkgname}}-macOS*
             ${{github.workspace}}/${{env.pkgname}}-Windows*
             ${{github.workspace}}/${{env.pkgname}}-Linux*
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        #if: ${{ failure() }}
-        with:
-          limit-access-to-actor: true
-          #install-dependencies: false
-        timeout-minutes: 120
