@@ -298,7 +298,7 @@ jobs:
       - name: Get Build Tag
         id: get_tag
         run: |
-             DATE=$(date +'%Y%m%d%-H%M')
+             DATE=$(date +'%Y%m%d-%H%M')
              echo ::set-output name=BUILD_TAG::build-${DATE}
              echo DATE=$DATE >> $GITHUB_ENV
 
