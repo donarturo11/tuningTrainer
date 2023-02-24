@@ -111,8 +111,11 @@ jobs:
            
     - name: Install Qt6
       run: |
+           MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
-           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m qtmultimedia
+           for i in ${MODULES[@]}; do
+               python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m $i
+           done
 
     - name: Install RtAudio
       run: |
