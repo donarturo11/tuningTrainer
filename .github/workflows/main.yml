@@ -277,7 +277,7 @@ jobs:
            mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}.AppImage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
-           cp ${{env.pkgname}}.AppImage ${{env.pkgname}}-${{runner.os}}
+           cp ${{env.pkgname}}-${{runner.os}}.AppImage ${{env.pkgname}}-${{runner.os}}
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v3
