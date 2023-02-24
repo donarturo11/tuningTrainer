@@ -300,7 +300,7 @@ jobs:
         run: |
              DATE=$(date +'%Y%m%d-%H%M')
              BUILD_TAG="${{env.pkgname}}-snapshot-${DATE}"
-             echo "" >> $GITHUB_OUTPUT
+             echo "BUILD_TAG=${BUILD_TAG}" >> $GITHUB_OUTPUT
              echo DATE=$DATE >> $GITHUB_ENV
 
       - name: Get macOS Binary
