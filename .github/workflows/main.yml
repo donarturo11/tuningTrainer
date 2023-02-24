@@ -214,7 +214,7 @@ jobs:
       if: ${{runner.os == 'macOS'}}
       run: |
            DESTINATION_DIR=${{env.pkgname}}-${{runner.os}}
-           DIST_DMG=${{env.pkgname}}.dmg
+           DIST_DMG=${{env.pkgname}}-${{runner.os}}.dmg
            echo "::notice:: destination dmg: ${DESTINATION_DIR}/${DIST_DMG}"
            mkdir ${DESTINATION_DIR}  || echo "::warning:: ${DESTINATION_DIR} already exists"
            ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
@@ -237,9 +237,9 @@ jobs:
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS -V
-           mv ${{env.pkgname}}*.exe ${{env.pkgname}}.exe
+           mv ${{env.pkgname}}*.exe ${{env.pkgname}}-${{runner.os}}-Installer.exe
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G 7Z
-           mv ${{env.pkgname}}*.7z ${{env.pkgname}}.7z
+           mv ${{env.pkgname}}*.7z ${{env.pkgname}}-${{runner.os}}-Portable.7z
            rm -Rf _CPack_Packages/
 
     - name: Create AppImage
@@ -274,7 +274,7 @@ jobs:
            cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
            echo "::notice::Creating AppImage"
            ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
-           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}.AppImage
+           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}.AppImage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
            cp ${{env.pkgname}}.AppImage ${{env.pkgname}}-${{runner.os}}
