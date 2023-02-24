@@ -298,7 +298,7 @@ jobs:
       - name: Get Build Tag
         id: get_tag
         run: |
-             DATE=$(date +'%Y%m%d%H%M')
+             DATE=$(date +'%Y%m%d%-H%M')
              echo ::set-output name=BUILD_TAG::build-${DATE}
              echo DATE=$DATE >> $GITHUB_ENV
 
@@ -306,19 +306,19 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-macOS
-          path: ${{github.workspace}}/
+          path: ${{github.workspace}}/${{env.pkgname}}-macOS
 
       - name: Get Linux Binary
         uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-Linux
-          path: ${{github.workspace}}/
+          path: ${{github.workspace}}/${{env.pkgname}}-Linux
           
       - name: Get Windows Binary
         uses: actions/download-artifact@v3
         with:
           name: ${{env.pkgname}}-Windows
-          path: ${{github.workspace}}/
+          path: ${{github.workspace}}/${{env.pkgname}}-Windows
           
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -329,9 +329,9 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-Windows/*
-            ${{github.workspace}}/${{env.pkgname}}-Linux/*
             ${{github.workspace}}/${{env.pkgname}}-macOS/*
+            ${{github.workspace}}/${{env.pkgname}}-Linux/*
+            ${{github.workspace}}/${{env.pkgname}}-Windows/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
