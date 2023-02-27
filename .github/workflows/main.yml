@@ -302,7 +302,8 @@ jobs:
           echo "::notice:: github.ref = ${{ github.ref }}"
           
     - name: Clean job
-      run: rm -Rf ${WORKDIR} ${AQTPATH} ${DEPSPATH} && echo "::notice:: Job cleaned" || echo "::warning:: Job is already cleaned"
+      run: |
+          rm -Rf ${WORKDIR} ${AQTPATH} ${DEPSPATH} && echo "::notice:: Job cleaned" || echo "::warning:: Job is already cleaned"
 
   publish:
     needs: build
