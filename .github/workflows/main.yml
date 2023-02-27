@@ -112,7 +112,7 @@ jobs:
            python3 -m pip install aqtinstall
            
     - name: Install Qt6
-      if: ${{ matrix.name != 'macos-legacy' || matrix.name != 'windows-legacy' }}
+      if: (matrix.name != 'macos-legacy') || (matrix.name != 'windows-legacy')
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
@@ -121,7 +121,7 @@ jobs:
            done
     
     - name: Install Qt5 (macOS legacy)
-      if: matrix.name == 'macos-legacy' || matrix.name == 'windows-legacy'
+      if: (matrix.name == 'macos-legacy') || (matrix.name == 'windows-legacy')
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
