@@ -68,7 +68,7 @@ jobs:
       name: Prepare MinGW
       uses: msys2/setup-msys2@v2
       with:
-        msystem: UCRT64
+        msystem: ${{ matrix.msystem }}
         install: |
             base base-devel p7zip zip git
             ${MINGW_PACKAGE_PREFIX}-toolchain
@@ -112,7 +112,7 @@ jobs:
            python3 -m pip install aqtinstall
            
     - name: Install Qt6
-      if: ${{matrix.name != 'macos-legacy'}} || ${{matrix.name != 'windows-legacy'}}
+      if: ${{ matrix.name != 'macos-legacy' }} || ${{ matrix.name != 'windows-legacy' }}
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
@@ -121,7 +121,7 @@ jobs:
            done
     
     - name: Install Qt5 (macOS legacy)
-      if: ${{matrix.name != 'macos-legacy'}} || ${{matrix.name != 'windows-legacy'}}
+      if: ${{ matrix.name == 'macos-legacy' }} || ${{ matrix.name == 'windows-legacy' }}
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
@@ -246,7 +246,7 @@ jobs:
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
       run: |
-           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-Windows
+           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-${{matrix.name}}
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
@@ -336,11 +336,17 @@ jobs:
           name: ${{env.pkgname}}-linux
           path: ${{github.workspace}}/${{env.pkgname}}-linux
           
-      - name: Get Windows Binary
+      - name: Get Windows binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-Windows
+          name: ${{env.pkgname}}-windows
           path: ${{github.workspace}}/${{env.pkgname}}-windows
+      
+      - name: Get Windows legacy binary
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{env.pkgname}}-windows-legacy
+          path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
           
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -355,6 +361,7 @@ jobs:
             ${{github.workspace}}/${{env.pkgname}}-macos-legacy/*
             ${{github.workspace}}/${{env.pkgname}}-linux/*
             ${{github.workspace}}/${{env.pkgname}}-windows/*
+            ${{github.workspace}}/${{env.pkgname}}-windows-legacy/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -409,6 +416,17 @@ jobs:
           asset_path: ${{github.workspace}}/${{env.pkgname}}-windows
           asset_name: ${{env.pkgname}}-win-x86_64
           asset_content_type: application/octet-stream
+     
+      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Windows binary
+        name: Update Tagged Release (Windows legacy)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.find_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
+          asset_name: ${{env.pkgname}}-win7-x86_64
+          asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id == 0 # otherwise release does not exist, create one and upload binaries
         name: Create Tagged Release
@@ -422,4 +440,5 @@ jobs:
             ${{github.workspace}}/${{env.pkgname}}-macos-universal*
             ${{github.workspace}}/${{env.pkgname}}-macos-legacy*
             ${{github.workspace}}/${{env.pkgname}}-windows*
+            ${{github.workspace}}/${{env.pkgname}}-windows-legacy*
             ${{github.workspace}}/${{env.pkgname}}-linux*
