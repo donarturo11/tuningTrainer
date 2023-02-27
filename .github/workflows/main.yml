@@ -118,14 +118,14 @@ jobs:
     - name: Install RtAudio
       run: |
            git clone https://github.com/thestk/rtaudio ../rtaudio
-           cmake -S ../rtaudio -B ../rtaudio/build ${{matrix.flags}}
+           cmake -S ../rtaudio -B ../rtaudio/build ${{matrix.flags}} -DCMAKE_BUILD_TYPE=Release
            cmake --build ../rtaudio/build
            cmake --install ../rtaudio/build --prefix ${{matrix.deps-prefix}}
 
     - name: Install STK
       run: |
            git clone https://github.com/thestk/stk ../stk
-           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}}
+           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}} -DCMAKE_BUILD_TYPE=Release
            cmake --build ../stk/build
            cmake --install ../stk/build --prefix ${{matrix.deps-prefix}}
 
@@ -185,6 +185,7 @@ jobs:
       run: |
            cmake -S "${{env.WORKDIR}}" \
                  -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
+                 -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_INSTALL_PREFIX="${{env.INSTALL_PREFIX}}" \
                  -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}};${{env.DEPSPATH}}" 
 
