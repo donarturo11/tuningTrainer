@@ -300,6 +300,9 @@ jobs:
       run: |
           echo "::notice:: github.event_name = ${{ github.event_name }}"
           echo "::notice:: github.ref = ${{ github.ref }}"
+          
+    - name: Clean job
+      run: rm -Rf ${WORKDIR} ${AQTPATH} ${DEPSPATH} && echo "::notice:: Job cleaned" || echo "::warning:: Job is already cleaned"
 
   publish:
     needs: build
