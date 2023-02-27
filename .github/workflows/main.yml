@@ -63,20 +63,19 @@ jobs:
       with:
         msystem: ${{ matrix.msystem }}
         update: true
+        install: |
+            base base-devel p7zip zip git
         
     - if: ${{runner.os == 'Windows'}}
       name: Prepare MinGW
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{ matrix.msystem }}
-        install: |
-            base base-devel p7zip zip git
-            ${MINGW_PACKAGE_PREFIX}-toolchain
-            ${MINGW_PACKAGE_PREFIX}-python-pip
-            ${MINGW_PACKAGE_PREFIX}-python-distutils-extra
-            ${MINGW_PACKAGE_PREFIX}-python-psutil
-            ${MINGW_PACKAGE_PREFIX}-cmake
-            ${MINGW_PACKAGE_PREFIX}-nsis
+      run: |
+            pacman -S --noconfirm \
+                ${MINGW_PACKAGE_PREFIX}-toolchain \
+                ${MINGW_PACKAGE_PREFIX}-python-pip \
+                ${MINGW_PACKAGE_PREFIX}-python-distutils-extra \
+                ${MINGW_PACKAGE_PREFIX}-python-psutil \
+                ${MINGW_PACKAGE_PREFIX}-cmake \
+                ${MINGW_PACKAGE_PREFIX}-nsis
     
     - name: Setup windows env
       if: ${{runner.os == 'Windows'}}
