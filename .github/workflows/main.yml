@@ -287,7 +287,7 @@ jobs:
            cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
            echo "::notice::Creating AppImage"
            ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
-           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{matrix-name}}.AppImage
+           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{matrix.name}}.AppImage
            export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{matrix.name}}
            mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
            cp ${{env.pkgname}}-${{matrix.name}}.AppImage ${{env.pkgname}}-${{matrix.name}}
