@@ -113,7 +113,7 @@ jobs:
            
     - name: Install Qt
       run: |
-           AQT_INSTALL=python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
+           AQT_INSTALL="python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}"
            MODULES=(qtmultimedia)
            
            ${AQT_INSTALL}
