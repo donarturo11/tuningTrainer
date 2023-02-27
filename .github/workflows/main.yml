@@ -25,7 +25,8 @@ jobs:
     strategy:
       matrix:
        include:
-        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64", qt-version: '6.4.2' }
+        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64", qt-version: '6.4.2', msystem: 'UCRT64' }
+        - { name: "windows-legacy", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64", qt-version: '5.12.12', msystem: 'MINGW64' }
         - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64", qt-version: '6.4.2'}
         - { name: "macos-universal", os: macos-11, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos", qt-version: '6.4.2'}
         - { name: "macos-legacy", os: macos-11, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "clang_64", qt-version: '5.12.12' }
@@ -60,7 +61,7 @@ jobs:
       name: Install MinGW
       uses: msys2/setup-msys2@v2
       with:
-        msystem: UCRT64
+        msystem: ${{ matrix.msystem }}
         update: true
         
     - if: ${{runner.os == 'Windows'}}
@@ -69,12 +70,13 @@ jobs:
       with:
         msystem: UCRT64
         install: |
-            base base-devel mingw-w64-ucrt-x86_64-toolchain p7zip zip git
-            mingw-w64-ucrt-x86_64-python-pip
-            mingw-w64-ucrt-x86_64-python-distutils-extra
-            mingw-w64-ucrt-x86_64-python-psutil
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-nsis
+            base base-devel p7zip zip git
+            ${MINGW_PACKAGE_PREFIX}-toolchain
+            ${MINGW_PACKAGE_PREFIX}-python-pip
+            ${MINGW_PACKAGE_PREFIX}-python-distutils-extra
+            ${MINGW_PACKAGE_PREFIX}-python-psutil
+            ${MINGW_PACKAGE_PREFIX}-cmake
+            ${MINGW_PACKAGE_PREFIX}-nsis
     
     - name: Setup windows env
       if: ${{runner.os == 'Windows'}}
@@ -110,7 +112,7 @@ jobs:
            python3 -m pip install aqtinstall
            
     - name: Install Qt6
-      if: ${{matrix.name != 'macos-legacy'}}
+      if: ${{matrix.name != 'macos-legacy'}} || ${{matrix.name != 'windows-legacy'}}
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
@@ -119,7 +121,7 @@ jobs:
            done
     
     - name: Install Qt5 (macOS legacy)
-      if: ${{matrix.name == 'macos-legacy'}}
+      if: ${{matrix.name != 'macos-legacy'}} || ${{matrix.name != 'windows-legacy'}}
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
