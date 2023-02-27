@@ -119,7 +119,7 @@ jobs:
            done
     
     - name: Install Qt5 (macOS legacy)
-      if: ${{matrix.name != 'macos-legacy'}}
+      if: ${{matrix.name == 'macos-legacy'}}
       run: |
            MODULES=(qtmultimedia)
            python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
