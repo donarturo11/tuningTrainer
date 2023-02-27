@@ -19,16 +19,17 @@ on:
         type: boolean
 env:
   pkgname: tuningTrainer
-  qt-version: 6.4.2
 
 jobs:
   build:
     strategy:
       matrix:
        include:
-        - { os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-module: "mingw_64" }
-        - { os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-module: "gcc_64"}
-        - { os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-module: "macos" }
+        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw_64", qt-version: '6.4.2', msystem: 'UCRT64' }
+        - { name: "windows-legacy", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw73", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw73_64", qt-version: '5.12.12', msystem: 'MINGW64' }
+        - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.4.2'}
+        - { name: "macos-universal", os: macos-11, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.4.2'}
+        - { name: "macos-legacy", os: macos-11, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "clang_64", qt-version: '5.12.12' }
     runs-on: ${{matrix.os}}
     defaults:
       run:
@@ -46,48 +47,42 @@ jobs:
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
           echo "IDENTITY_NAME=donarturo11.github.io" >> $GITHUB_ENV
           echo -n "$P12_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo "::notice:: decode certificate succeed"
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security default-keychain -s $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign -T /usr/bin/productsign || echo "::warning:: Import certificate failed"
-          security list-keychain -d user -s $KEYCHAIN_PATH || echo "::warning:: List keychain failed"
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH -T /usr/bin/codesign -T /usr/bin/productsign
+          security list-keychain -d user -s $KEYCHAIN_PATH
           security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-          security find-identity || echo "::warning:: List keychain failed"
-          
+          security find-identity
+
     - if: ${{runner.os == 'Windows'}}
       name: Install MinGW
       uses: msys2/setup-msys2@v2
       with:
-        msystem: UCRT64
+        msystem: ${{ matrix.msystem }}
         update: true
-        
+        install: |
+            base base-devel p7zip zip git
+
     - if: ${{runner.os == 'Windows'}}
       name: Prepare MinGW
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: UCRT64
-        install: |
-            base base-devel mingw-w64-ucrt-x86_64-toolchain p7zip zip git
-            mingw-w64-ucrt-x86_64-python-pip
-            mingw-w64-ucrt-x86_64-python-distutils-extra
-            mingw-w64-ucrt-x86_64-python-psutil
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-nsis
-    
+      run: |
+            pacman -S --noconfirm \
+                ${MINGW_PACKAGE_PREFIX}-toolchain \
+                ${MINGW_PACKAGE_PREFIX}-python-pip \
+                ${MINGW_PACKAGE_PREFIX}-python-distutils-extra \
+                ${MINGW_PACKAGE_PREFIX}-python-psutil \
+                ${MINGW_PACKAGE_PREFIX}-cmake \
+                ${MINGW_PACKAGE_PREFIX}-nsis
+
     - name: Setup windows env
       if: ${{runner.os == 'Windows'}}
       run: |
            echo "::notify:: Upgrading pip"
            python3 -m pip install -U pip
            echo "SETUPTOOLS_USE_DISTUTILS=stdlib" >> $GITHUB_ENV
-    
-    - name: Setup env vars
-      run: |
-           echo "GIT_REVISION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-           echo "::notice:: ${{runner.os}}"
-    
+
     - name: Install Linux Dependencies
       if: ${{runner.os == 'Linux'}}
       run: |
@@ -104,18 +99,21 @@ jobs:
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
                                    libxcb-keysyms1-dev libxcb-randr0 \
                                    libxcb-render-util0 libxcb-shape0
-    
+
     - name: Install AQT
       run: |    
            python3 -m pip install aqtinstall
-           
-    - name: Install Qt6
+
+    - name: Install Qt
       run: |
+           AQT_INSTALL="python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}"
            MODULES=(qtmultimedia)
-           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}}
-           for i in ${MODULES[@]}; do
-               python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{env.qt-version}} ${{matrix.aqt-arch}} -m $i
-           done
+           ${AQT_INSTALL}
+           if [[ ${{matrix.qt-version}} == 6.* ]]; then
+               for i in ${MODULES[@]}; do
+                   ${AQT_INSTALL} -m $i
+               done
+           fi
 
     - name: Install RtAudio
       run: |
@@ -123,14 +121,14 @@ jobs:
            cmake -S ../rtaudio -B ../rtaudio/build ${{matrix.flags}}
            cmake --build ../rtaudio/build
            cmake --install ../rtaudio/build --prefix ${{matrix.deps-prefix}}
-           
+
     - name: Install STK
       run: |
            git clone https://github.com/thestk/stk ../stk
            cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}}
            cmake --build ../stk/build
            cmake --install ../stk/build --prefix ${{matrix.deps-prefix}}
-    
+
     - name: Prepare FindCoreAudio
       if: ${{runner.os == 'macOS'}}
       run: |
@@ -139,11 +137,7 @@ jobs:
 
     - name: Checkout Repo
       uses: actions/checkout@v3
-    
-    - name: Prepare version
-      run: |
-          echo GITREV=$(git rev-parse --short HEAD) >> $GITHUB_ENV
-          
+
     - name: Prepare workdir (UNIX)
       if: ${{runner.os != 'Windows'}}
       run: |
@@ -153,8 +147,7 @@ jobs:
            echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
            echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
            echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
-           
-           
+
     - name: Prepare workdir (MINGW)
       if: ${{runner.os == 'Windows'}}
       run: |
@@ -164,20 +157,19 @@ jobs:
            echo "WORKDIR=${WORKDIR}" >> $GITHUB_ENV
            echo "AQTPATH=${AQTPATH}" >> $GITHUB_ENV
            echo "DEPSPATH=${DEPSPATH}" >> $GITHUB_ENV
-    
+
     - name: Prepare macOS temp disk
       if: ${{runner.os == 'macOS'}}
       run: |
-          export DMGNAME="${{env.pkgname}}-${{runner.os}}"
+          export DMGNAME="${{env.pkgname}}-${{matrix.name}}"
           export TEMP_DMGFILE=${{env.pkgname}}-temp.dmg
-          echo "::notice:: Creating ${TEMP_DMGFILE}"
           hdiutil create -size 700m -fs HFS+ -volname "${DMGNAME}" "${TEMP_DMGFILE}"
           hdiutil attach "${TEMP_DMGFILE}"
           TEMP_DMGPOINT="/Volumes/${DMGNAME}"
           echo "TEMP_DMGNAME=\"${TEMP_DMGNAME}\"" >> $GITHUB_ENV
           echo "TEMP_DMGFILE=\"${TEMP_DMGFILE}\"" >> $GITHUB_ENV
           echo "TEMP_DMGPOINT=\"${TEMP_DMGPOINT}\"" >> $GITHUB_ENV
-    
+
     - name: Setup install prefix
       run: |
            if [ ${{ runner.os }} == "Linux" ]; then
@@ -188,17 +180,17 @@ jobs:
                export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-appdir
            fi
            echo "INSTALL_PREFIX=$INSTALL_PREFIX" >> $GITHUB_ENV
-    
+
     - name: Run Configure
       run: |
            cmake -S "${{env.WORKDIR}}" \
                  -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
                  -DCMAKE_INSTALL_PREFIX="${{env.INSTALL_PREFIX}}" \
-                 -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{env.qt-version}}/${{matrix.aqt-module}};${{env.DEPSPATH}}" 
-                 
+                 -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}};${{env.DEPSPATH}}" 
+
     - name: Compile Code
       run: cmake --build ${{env.WORKDIR}}/build
-      
+
     - name: Prepare appdir
       run: |
            if [ ${{ runner.os }} == "Windows" ]; then export SUFFIX="${{env.pkgname}}"
@@ -207,25 +199,22 @@ jobs:
            fi
            export APPDIR="${{env.INSTALL_PREFIX}}/${SUFFIX}"
            echo "APPDIR=${APPDIR}" >> $GITHUB_ENV
-           echo "::notice:: appdir=${APPDIR}"
-    
+
     - name: Install
       run: |
            cmake --install ${{env.WORKDIR}}/build --prefix "${{ env.INSTALL_PREFIX }}"
-    
+
     - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
       run: |
-           DESTINATION_DIR=${{env.pkgname}}-${{runner.os}}
-           DIST_DMG=${{env.pkgname}}-${{runner.os}}.dmg
-           echo "::notice:: destination dmg: ${DESTINATION_DIR}/${DIST_DMG}"
+           DESTINATION_DIR=${{env.pkgname}}-${{matrix.name}}
+           DIST_DMG=${{env.pkgname}}-${{matrix.name}}.dmg
            mkdir ${DESTINATION_DIR}  || echo "::warning:: ${DESTINATION_DIR} already exists"
-           ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/macdeployqt \
+           ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}/bin/macdeployqt \
                               "${{env.APPDIR}}"
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} "${{env.APPDIR}}"/Contents/Frameworks \;
            codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io "${{env.APPDIR}}"
-           ln -s /Applications/ "${{ env.TEMP_DMGPOINT }}"/Applications
-           #echo "::notice:: $(ls -lah)"
+           ln -s /Applications/ "${{ env.TEMP_DMGPOINT }}"/Applications           
            hdiutil detach "${{ env.TEMP_DMGPOINT }}"
            hdiutil convert "${{env.TEMP_DMGFILE}}" -format UDBZ \
                     -o ${DESTINATION_DIR}/${DIST_DMG}
@@ -234,64 +223,63 @@ jobs:
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
       run: |
-           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-Windows
+           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-${{matrix.name}}
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
-           ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/bin/windeployqt.exe ${{env.APPDIR}}/
+           ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}/bin/windeployqt.exe ${{env.APPDIR}}/
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS -V
-           mv ${{env.pkgname}}*.exe ${{env.pkgname}}-${{runner.os}}-Installer.exe
+           mv ${{env.pkgname}}*.exe ${{env.pkgname}}-${{matrix.name}}-Installer.exe
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G 7Z
-           mv ${{env.pkgname}}*.7z ${{env.pkgname}}-${{runner.os}}-Portable.7z
+           mv ${{env.pkgname}}*.7z ${{env.pkgname}}-${{matrix.name}}-Portable.7z
            rm -Rf _CPack_Packages/
 
     - name: Create AppImage
       if: ${{runner.os == 'Linux'}}
       run: | 
-           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}/lib > /etc/ld.so.conf.d/aqt.conf"
+           sudo bash -c "echo ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}/lib > /etc/ld.so.conf.d/aqt.conf"
            sudo bash -c "echo ${{matrix.deps-prefix}}/lib > /etc/ld.so.conf.d/deps.conf"
            sudo rm /etc/ld.so.cache
            sudo ldconfig
-           echo "::notice::Downloading linux deploy"
-           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+           echo "::group:: Downloading linux deploy"
+               wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+               wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+               wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+           echo "::endgroup::"
            LINUXDEPLOY=linuxdeploy-x86_64.AppImage
            chmod +x *.AppImage
            APPDIR=${{env.pkgname}}.AppDir
            ICONFILE=$(find ${{ env.APPDIR }} -name *.png)
            DESKTOPFILE=$(find ${{env.APPDIR}} -name *.desktop)
            EXECFILE=$(find ${{env.APPDIR}} -name ${{env.pkgname}} -type f -executable)
-           export QTDIR=${{matrix.aqt-prefix}}/${{env.qt-version}}/${{matrix.aqt-module}}
+           export QTDIR=${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}
            export QMAKE=${QTDIR}/bin/qmake 
            export QT_INSTALL_PLUGINS=${QTDIR}/plugins/
            export EXTRA_QT_PLUGINS="multimediagsttools"
-           echo "::notice::Linux deploy QT"
-           ./${LINUXDEPLOY} \
-               --appdir=${APPDIR} \
-               --executable=${EXECFILE} \
-               --icon-file=${ICONFILE} \
-               --desktop-file=${DESKTOPFILE} \
-               --plugin qt
-           cp -Rv $QT_INSTALL_PLUGINS/multimedia ${APPDIR}/usr/plugins/
-           cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
-           echo "::notice::Creating AppImage"
-           ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
-           mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{runner.os}}.AppImage
-           export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
-           mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
-           cp ${{env.pkgname}}-${{runner.os}}.AppImage ${{env.pkgname}}-${{runner.os}}
+           echo "::group:: Linux deploy QT"
+               ./${LINUXDEPLOY} \
+                   --appdir=${APPDIR} \
+                   --executable=${EXECFILE} \
+                   --icon-file=${ICONFILE} \
+                   --desktop-file=${DESKTOPFILE} \
+                   --plugin qt
+               cp -Rv $QT_INSTALL_PLUGINS/multimedia ${APPDIR}/usr/plugins/
+               cp -Rv $QT_INSTALL_PLUGINS/generic ${APPDIR}/usr/plugins/
+           echo "::endgroup::"
+           echo "::group:: Creating AppImage"
+               ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
+               mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{matrix.name}}.AppImage
+               export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{matrix.name}}
+               mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
+               cp ${{env.pkgname}}-${{matrix.name}}.AppImage ${{env.pkgname}}-${{matrix.name}}
+           echo "::endgroup::"
 
     - name: Upload All Binaries
       uses: actions/upload-artifact@v3
       with:
-        name: ${{env.pkgname}}-${{runner.os}}
-        path: ${{github.workspace}}/${{env.pkgname}}-${{runner.os}}
+        name: ${{env.pkgname}}-${{matrix.name}}
+        path: ${{github.workspace}}/${{env.pkgname}}-${{matrix.name}}
                 
-    - name: Print variables
-      run: |
-          echo "::notice:: github.event_name = ${{ github.event_name }}"
-          echo "::notice:: github.ref = ${{ github.ref }}"
 
   publish:
     needs: build
@@ -306,24 +294,36 @@ jobs:
              echo "BUILD_TAG=${BUILD_TAG}" >> $GITHUB_OUTPUT
              echo DATE=$DATE >> $GITHUB_ENV
 
-      - name: Get macOS Binary
+      - name: Get macOS universal binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-macOS
-          path: ${{github.workspace}}/${{env.pkgname}}-macOS
+          name: ${{env.pkgname}}-macos-universal
+          path: ${{github.workspace}}/${{env.pkgname}}-macos-universal
 
-      - name: Get Linux Binary
+      - name: Get macOS legacy binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-Linux
-          path: ${{github.workspace}}/${{env.pkgname}}-Linux
-          
-      - name: Get Windows Binary
+          name: ${{env.pkgname}}-macos-legacy
+          path: ${{github.workspace}}/${{env.pkgname}}-macos-legacy
+
+      - name: Get Linux binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-Windows
-          path: ${{github.workspace}}/${{env.pkgname}}-Windows
-          
+          name: ${{env.pkgname}}-linux
+          path: ${{github.workspace}}/${{env.pkgname}}-linux
+
+      - name: Get Windows binary
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{env.pkgname}}-windows
+          path: ${{github.workspace}}/${{env.pkgname}}-windows
+
+      - name: Get Windows legacy binary
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{env.pkgname}}-windows-legacy
+          path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
+
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
         uses: softprops/action-gh-release@v1
@@ -333,9 +333,11 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-macOS/*
-            ${{github.workspace}}/${{env.pkgname}}-Linux/*
-            ${{github.workspace}}/${{env.pkgname}}-Windows/*
+            ${{github.workspace}}/${{env.pkgname}}-macos-universal/*
+            ${{github.workspace}}/${{env.pkgname}}-macos-legacy/*
+            ${{github.workspace}}/${{env.pkgname}}-linux/*
+            ${{github.workspace}}/${{env.pkgname}}-windows/*
+            ${{github.workspace}}/${{env.pkgname}}-windows-legacy/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -348,14 +350,25 @@ jobs:
           tag: ${{ github.ref_name }}
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload macOS binary
-        name: Update Tagged Release (macOS)
+        name: Update Tagged Release (macOS universal)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-macOS
-          asset_name: ${{env.pkgname}}-macOS
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-macos-universal
+          asset_name: ${{env.pkgname}}-macos-universal
+          asset_content_type: application/octet-stream
+
+      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload macOS binary
+        name: Update Tagged Release (macOS legacy)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.find_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-macos-legacy
+          asset_name: ${{env.pkgname}}-macos-legacy
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Linux binary
@@ -365,7 +378,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-Linux
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-linux
           asset_name: ${{env.pkgname}}-linux-x86_64
           asset_content_type: application/octet-stream
 
@@ -376,8 +389,19 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-Windows
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows
           asset_name: ${{env.pkgname}}-win-x86_64
+          asset_content_type: application/octet-stream
+
+      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Windows binary
+        name: Update Tagged Release (Windows legacy)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.find_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
+          asset_name: ${{env.pkgname}}-win7-x86_64
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id == 0 # otherwise release does not exist, create one and upload binaries
@@ -389,6 +413,8 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-macOS*
-            ${{github.workspace}}/${{env.pkgname}}-Windows*
-            ${{github.workspace}}/${{env.pkgname}}-Linux*
+            ${{github.workspace}}/${{env.pkgname}}-macos-universal*
+            ${{github.workspace}}/${{env.pkgname}}-macos-legacy*
+            ${{github.workspace}}/${{env.pkgname}}-windows*
+            ${{github.workspace}}/${{env.pkgname}}-windows-legacy*
+            ${{github.workspace}}/${{env.pkgname}}-linux*
