@@ -19,16 +19,17 @@ on:
         type: boolean
 env:
   pkgname: tuningTrainer
+  IDENTITY_NAME: ${{ secrets.IDENTITY_NAME }}
 
 jobs:
   build:
     strategy:
       matrix:
        include:
-        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw_64", qt-version: '6.4.2', msystem: 'UCRT64' }
+        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw_64", qt-version: '6.5.0', msystem: 'UCRT64' }
         - { name: "windows-legacy", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw81", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw81_64", qt-version: '5.15.2', msystem: 'MINGW64' }
-        - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.4.2'}
-        - { name: "macos-universal", os: macos-11, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.4.2'}
+        - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.5.0'}
+        - { name: "macos-universal", os: macos-11, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.5.0'}
         - { name: "macos-legacy", os: macos-11, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "clang_64", qt-version: '5.12.12' }
     runs-on: ${{matrix.os}}
     defaults:
@@ -45,7 +46,6 @@ jobs:
       run: |
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          echo "IDENTITY_NAME=donarturo11.github.io" >> $GITHUB_ENV
           echo -n "$P12_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
@@ -97,6 +97,7 @@ jobs:
                                    gstreamer1.0-plugins-good \
                                    gstreamer1.0-plugins-bad 
            sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
+                                   libxcb-cursor0 libxcb-cursor-dev \
                                    libxcb-keysyms1-dev libxcb-randr0 \
                                    libxcb-render-util0 libxcb-shape0
 
@@ -138,6 +139,11 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v3
 
+    - name: Prepare Packages names
+      run: |
+          PACKAGE_NAME=${{env.pkgname}}-${{matrix.name}}
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> ${GITHUB_ENV}
+              
     - name: Prepare workdir (UNIX)
       if: ${{runner.os != 'Windows'}}
       run: |
@@ -161,11 +167,10 @@ jobs:
     - name: Prepare macOS temp disk
       if: ${{runner.os == 'macOS'}}
       run: |
-          export DMGNAME="${{env.pkgname}}-${{matrix.name}}"
-          export TEMP_DMGFILE=${{env.pkgname}}-temp.dmg
-          hdiutil create -size 700m -fs HFS+ -volname "${DMGNAME}" "${TEMP_DMGFILE}"
+          export TEMP_DMGFILE=temp.dmg
+          hdiutil create -size 700m -fs HFS+ -volname "${PACKAGE_NAME}" "${TEMP_DMGFILE}"
           hdiutil attach "${TEMP_DMGFILE}"
-          TEMP_DMGPOINT="/Volumes/${DMGNAME}"
+          TEMP_DMGPOINT="/Volumes/${PACKAGE_NAME}"
           echo "TEMP_DMGNAME=\"${TEMP_DMGNAME}\"" >> $GITHUB_ENV
           echo "TEMP_DMGFILE=\"${TEMP_DMGFILE}\"" >> $GITHUB_ENV
           echo "TEMP_DMGPOINT=\"${TEMP_DMGPOINT}\"" >> $GITHUB_ENV
@@ -208,31 +213,31 @@ jobs:
     - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
       run: |
-           DESTINATION_DIR=${{env.pkgname}}-${{matrix.name}}
-           DIST_DMG=${{env.pkgname}}-${{matrix.name}}.dmg
+           DESTINATION_DIR=${PACKAGE_NAME}
+           DIST_DMG=${PACKAGE_NAME}.dmg
            mkdir ${DESTINATION_DIR}  || echo "::warning:: ${DESTINATION_DIR} already exists"
            ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}/bin/macdeployqt \
                               "${{env.APPDIR}}"
            find ${{env.DEPSPATH}} -name "*.dylib" -exec cp {} "${{env.APPDIR}}"/Contents/Frameworks \;
-           codesign --verbose --strict --continue --timestamp --force --deep -s donarturo11.github.io "${{env.APPDIR}}"
+           codesign --verbose --strict --continue --timestamp --force --deep -s ${IDENTITY_NAME} "${{env.APPDIR}}"
            ln -s /Applications/ "${{ env.TEMP_DMGPOINT }}"/Applications           
            hdiutil detach "${{ env.TEMP_DMGPOINT }}"
-           hdiutil convert "${{env.TEMP_DMGFILE}}" -format UDBZ \
+           hdiutil convert "${{ env.TEMP_DMGFILE }}" -format UDBZ \
                     -o ${DESTINATION_DIR}/${DIST_DMG}
            shasum -a 256 ${DESTINATION_DIR}/${DIST_DMG}
            
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
       run: |
-           export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-${{matrix.name}}
+           export ARTIFACT_DIR=${{env.WORKDIR}}/${PACKAGE_NAME}
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
            ${{matrix.aqt-prefix}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}}/bin/windeployqt.exe ${{env.APPDIR}}/
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G NSIS -V
-           mv ${{env.pkgname}}*.exe ${{env.pkgname}}-${{matrix.name}}-Installer.exe
+           mv ${{env.pkgname}}*.exe ${PACKAGE_NAME}-Installer.exe
            cpack --config ${{env.WORKDIR}}/build/CPackConfig.cmake -G 7Z
-           mv ${{env.pkgname}}*.7z ${{env.pkgname}}-${{matrix.name}}-Portable.7z
+           mv ${{env.pkgname}}*.7z ${PACKAGE_NAME}-Portable.7z
            rm -Rf _CPack_Packages/
 
     - name: Create AppImage
@@ -269,10 +274,10 @@ jobs:
            echo "::endgroup::"
            echo "::group:: Creating AppImage"
                ./${LINUXDEPLOY} --appdir=${APPDIR} --output=appimage
-               mv ${{env.pkgname}}*.AppImage ${{env.pkgname}}-${{matrix.name}}.AppImage
-               export APPIMAGEDIR=${{github.workspace}}/${{env.pkgname}}-${{matrix.name}}
+               mv ${{env.pkgname}}*.AppImage ${PACKAGE_NAME}.AppImage
+               export APPIMAGEDIR=${{github.workspace}}/${PACKAGE_NAME}
                mkdir $APPIMAGEDIR || echo "::warning::${APPIMAGEDIR} already exists"
-               cp ${{env.pkgname}}-${{matrix.name}}.AppImage ${{env.pkgname}}-${{matrix.name}}
+               cp ${PACKAGE_NAME}.AppImage ${PACKAGE_NAME}
            echo "::endgroup::"
 
     - name: Upload All Binaries

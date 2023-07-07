@@ -47,10 +47,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 include_directories(
-       ${PROJECT_SOURCE_DIR}/include
+       ${PROJECT_SOURCE_DIR}/src
        )
 
-FILE(GLOB_RECURSE HEADERS include/*.h)
+FILE(GLOB_RECURSE HEADERS src/*.h)
 FILE(GLOB_RECURSE SOURCES src/*.cpp)
 
 set(RESOURCES resources/resources.qrc
