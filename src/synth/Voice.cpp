@@ -7,8 +7,8 @@ Voice::Voice(Synthesizer* synth)
 {
     _wave_size = 0;
     _synth = synth;
-    _wave_size = synth->wave()->size();
-    _wave = new WaveContainer();
+    //_wave_size = synth->wave().size();
+    //_wave = new WaveContainer();
     _index = Voice::index;
     _noteOn = false;
     fprintf(stderr, "Voice c-tor, index: %i\n", _index);
@@ -31,9 +31,8 @@ void Voice::loadWave(float* wave)
 
 void Voice::update()
 {
-    unsigned int newSize = _synth->wave()->size();
-    _wave->loadWave( _synth->wave()->getArray() );
-    _wave->resize(newSize);
+    auto wave = _synth->wave();
+    _wave.loadWave( wave.data(), wave.size() );
     resetLoop();
 }
 
@@ -64,13 +63,13 @@ void Voice::setRate(unsigned int rate)
 
 void Voice::resetLoop() 
 { 
-    _wave->setReadOffset(0);
+    _wave.setReadOffset(0);
 }
 
 float Voice::tick()
 {
-    if (_wave->empty()) return 0;
-    _lastvalue = _noteOn ? _pitchShift.tick(_wave->read()) : 0;
+    if (_wave.empty()) return 0;
+    _lastvalue = _noteOn ? _pitchShift.tick(_wave.read()) : 0;
     return _lastvalue;
 }
     

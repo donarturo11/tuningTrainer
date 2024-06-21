@@ -8,7 +8,7 @@ public:
     ~WaveContainer();
     void setReadonly(){ _writable = false; }
     void setWritable(){ _writable = true; }
-    void loadWave(float* wave);
+    void loadWave(float* wave, int size);
     float read();
     float readAt(unsigned int idx);
     void write(float value);

@@ -2,7 +2,7 @@
 #define VOICE_H
 #include "synth/common.h"
 #include "synth/Synthesizer.h"
-#include "synth/WaveVector.h"
+#include "synth/WaveContainer.h"
 #include "stk/LentPitShift.h"
 namespace Synth {
 class Synthesizer;
@@ -23,9 +23,8 @@ public:
     void update();
     void resetLoop();
     void setRate(unsigned int rate);
-    int waveSize() { return _wave_size; }
-    bool waveEmpty() { return _wave_size == 0; }
-    void setWaveSize(unsigned int size) { _wave_size = size; }
+    int waveSize() { return _wave.size(); }
+    bool waveEmpty() { return _wave.empty(); }
 protected:
     Synthesizer* _synth;
     int _index;
@@ -36,7 +35,7 @@ protected:
     double _frequency;
     double _base_frequency;
     stk::LentPitShift _pitchShift;
-    WaveContainer* _wave;
+    WaveContainer _wave;
     float _lastvalue;
 };
 }

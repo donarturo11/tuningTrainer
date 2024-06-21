@@ -12,15 +12,13 @@ WaveContainer::~WaveContainer()
 
 }
 
-void WaveContainer::loadWave(float* wave)
+void WaveContainer::loadWave(float* wave, int size)
 {
     _size = 0;
     _wave = 0;
     if (!wave) return;
     _wave = wave;
-    while (*wave++ != _termArray) {
-        _size++;
-    }
+    _size = size;
 }
 
 void WaveContainer::write(float value)
@@ -44,7 +42,7 @@ void WaveContainer::writeAt(unsigned int idx, float value)
 
 float WaveContainer::read()
 {   
-    if (empty()) return 0;
+    if (empty()) return 0.00;
     float value = _wave[_read_offset];
     updateOffset(_read_offset);
     return value;

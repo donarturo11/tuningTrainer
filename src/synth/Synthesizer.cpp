@@ -1,12 +1,12 @@
 #include "synth/Synthesizer.h"
 #include <iostream>
 namespace Synth {
-Synthesizer::Synthesizer() : _wave{ new WaveVector() }
+Synthesizer::Synthesizer()
 {
     fprintf(stderr, "Synthesizer c-tor\n");
 }
 
-Synthesizer::Synthesizer(int voices) : _wave{ new WaveVector() }
+Synthesizer::Synthesizer(int voices)
 {
     fprintf(stderr, "Synthesizer c-tor\n");
     setPolyphony(voices);
@@ -31,7 +31,7 @@ void Synthesizer::setNotesOn()
 
 void Synthesizer::loadWave(std::vector<float> s) {
     if (s.empty()) return;
-    _wave->loadWave(s);
+    _wave = s;
     for (auto v : _voices)
         v->update();
 }
