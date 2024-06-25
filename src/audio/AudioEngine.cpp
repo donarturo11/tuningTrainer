@@ -1,6 +1,15 @@
 #include "audio/AudioEngine.h"
+#include <functional>
+#include "audio/Buffer.h"
 
-AudioEngine::AudioEngine()
+AudioEngine::AudioEngine(int nChannels, int bufsize, int nPeriods)
+: _nChannels(nChannels)
+, _audio(0)
+, _buffer_size(bufsize)
+, _outputId(0)
+, _nPeriods(nPeriods)
+, _input(bufsize*nChannels*nPeriods)
+, _output(bufsize*nChannels*nPeriods)
 {
     init();
 }
@@ -8,15 +17,12 @@ AudioEngine::AudioEngine()
 AudioEngine::~AudioEngine()
 {
     stopStream();
-    _audioSource = 0;
     if (_audio)
         delete _audio;
 }
 
 void AudioEngine::init()
 {
-    _audio = 0;
-    _buffer_size = 512;
     probeDevices();
 }
 
@@ -43,9 +49,10 @@ void AudioEngine::probeJack()
         return;
     }
     if (_audio->getDeviceCount()) {
-        _outputId = _audio->getDefaultOutputDevice();
-        auto info = _audio->getDeviceInfo(_outputId);
-        this->_samplerate = info.preferredSampleRate;
+        _inputParameters.deviceId = _audio->getDefaultInputDevice();
+        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
+        auto info = _audio->getDeviceInfo(_inputParameters.deviceId);
+        _samplerate = info.preferredSampleRate;
         _jack = true;
     }
 }
@@ -57,7 +64,8 @@ void AudioEngine::probeDevices()
     if (_audio) return;
     try {
         _audio = new RtAudio();
-        _outputId = _audio->getDefaultOutputDevice();
+        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
+        _inputParameters.deviceId = _audio->getDefaultInputDevice();
     } catch(...) {
         _audio = 0;
     }
@@ -68,35 +76,42 @@ void AudioEngine::probeChoosenDevice(RtAudio::Api api)
     try {
         _audio = new RtAudio(api);
         if (!_audio) throw 1;
-        _outputId = _audio->getDefaultOutputDevice();
+        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
+        _inputParameters.deviceId = _audio->getDefaultInputDevice();
         fprintf(stderr, "Load SUCCESS\n");
     } catch(...) {
         fprintf(stderr, "Load FAILED\n");
     }
 }
 
-void AudioEngine::initStreamParameters()
+void AudioEngine::startStream(int flags)
 {
-    if (!_audio) return;
-    auto info = _audio->getDeviceInfo(_outputId);
-    _streamParameters = new RtAudio::StreamParameters;
-    _streamParameters->deviceId = _outputId;
-    _streamParameters->nChannels = _nChannels;
-    std::cerr << "Sample rate: " << _samplerate << std::endl;
-    std::cerr << "Device ID: " << _outputId << std::endl;
-}
-
-void AudioEngine::startStream()
-{
-    if (!_audio || !_audioSource)
+    if (!_audio)
         return;
-    initStreamParameters();
+    _inputParameters.nChannels = _nChannels;
+    _outputParameters.nChannels = _nChannels;
     try {
-        _audio->openStream(_streamParameters, NULL, RTAUDIO_FLOAT32, _samplerate, &_buffer_size, &AudioEngine::audioCallback, (void*) _audioSource /* (void*) synth */);
+        _audio->openStream(  (flags & STREAM_OUTPUT) ? &_outputParameters : nullptr,
+                             (flags & STREAM_INPUT ) ? &_inputParameters : nullptr,
+                              RTAUDIO_FLOAT32,
+                              _samplerate,
+                              &_buffer_size,
+                              AudioEngine::audioCallback,
+                              (void*) this );
     } catch(...) {
         return;
     }
     _audio->startStream();
+}
+
+void AudioEngine::readBuffer(void* data, unsigned int nFrames)
+{
+    _output.read((float*) data, nFrames*_nChannels);
+}
+
+void AudioEngine::fillBuffer(void* data, unsigned int nFrames)
+{
+    _input.write((float*) data, nFrames*_nChannels);
 }
 
 void AudioEngine::stopStream()
@@ -105,27 +120,17 @@ void AudioEngine::stopStream()
     if (_audio->isStreamOpen()) _audio->closeStream();
 }
 
-int AudioEngine::audioCallback(void * outputBuffer,
-                               void * inputBuffer, 
-                               unsigned int nFrames, 
-                               double streamTime, 
-                               RtAudioStreamStatus status, 
-                               void * source)
+int AudioEngine::audioCallback(void * output,
+                               void * input,
+                               unsigned int nFrames,
+                               double streamTime,
+                               RtAudioStreamStatus status,
+                               void * obj)
 {
-    unsigned int i, j;
-    AudioSource *audioSource = (AudioSource *) source;
-    float *buffer = (float *) outputBuffer;
-    float lastValue = 0;
-    if ( status )
-        std::cout << "Stream underflow detected!" << std::endl;
-    // Write interleaved audio data.
-    for ( i=0; i<nFrames; i++ ) {
-        lastValue = audioSource ? audioSource->tick() : 0;
-        for ( j=0; j<2; j++ ) {
-            *buffer++ = lastValue;
-        }
-    }
+    AudioEngine *engine = reinterpret_cast<AudioEngine*>(obj);
+    if (rtOutBuf)
+        engine->readBuffer(output, nFrames);
+    if (rtInBuf)
+        engine->fillBuffer(input, nFrames);
     return 0;
-    
 }
-

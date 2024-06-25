@@ -1,5 +1,6 @@
 #include "gui/ControllerWidget.h"
-
+#include <thread>
+#include <chrono>
 #include <QString>
 #include <QDebug>
 
@@ -11,7 +12,8 @@
 namespace GUI {
 
 /* ------------ */
-ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
+ControllerWidget::ControllerWidget(QWidget *parent)
+    : QWidget(parent)
 {
     init();
     setupWidgets();
@@ -27,7 +29,7 @@ ControllerWidget::ControllerWidget(QWidget *parent) : QWidget(parent)
 
 ControllerWidget::~ControllerWidget()
 {
-
+    _audio->stopStream();
 }
 
 void ControllerWidget::init()
@@ -76,11 +78,25 @@ void ControllerWidget::connectEvents()
 
 void ControllerWidget::initAudio()
 {
-    _audio = new AudioEngine();
-    _audio->setSamplerate(_samplerate);
-    _audio->setChannelsNumber(2);
-    _audio->connectSource(_synth);
-    _audio->startStream();
+    _audio = new AudioEngine(2, 512, 2);
+    _audio->outputBuffer()->reset();
+    _audio->startStream(STREAM_OUTPUT);
+    std::thread t(&ControllerWidget::fillBuffer, this);
+    t.detach();
+}
+
+void ControllerWidget::fillBuffer()
+{
+    auto buffer = _audio->outputBuffer();
+    float val = 0.0000;
+    while (!(buffer->full())) {
+        val = _synth->tick();
+        buffer->put(val);
+        buffer->put(val);
+    }
+    while (buffer->full())
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    if (_audio->running()) fillBuffer();
 }
 
 void ControllerWidget::initSynth()

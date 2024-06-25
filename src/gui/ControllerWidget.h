@@ -2,6 +2,7 @@
 #define CONTROLLERWIDGET_H
 #include <QWidget>
 #include <QVBoxLayout>
+#include <thread>
 #include "MainWindow.h"
 #include "gui/controllerwidget/Keyboard.h"
 #include "gui/controllerwidget/ControllerGroup.h"
@@ -24,6 +25,7 @@ public:
     ControllerWidget(QWidget *parent=0);
     ~ControllerWidget();
     KeyEvents* getKeyEvents() { return _events; }
+    void fillBuffer();
 private:
     void init();
     void setupWidgets();
