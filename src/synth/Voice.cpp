@@ -20,14 +20,12 @@ Voice::~Voice()
 {
     
 }
-/*
-void Voice::loadWave(float* wave)
+
+void Voice::loadWave(float* wave, int length)
 {
-    //_wave_orig = &wave[0];
-    //_wave_size = _synth->waveSize();
-    //_wave.resize(_wave_size);
+    _wave.loadWave(wave, length);
 }
-*/
+
 
 void Voice::update()
 {

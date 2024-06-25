@@ -33,7 +33,7 @@ void Synthesizer::loadWave(std::vector<float> s) {
     if (s.empty()) return;
     _wave = s;
     for (auto v : _voices)
-        v->update();
+        v->loadWave(_wave.data(), _wave.size());
 }
 
 float Synthesizer::tick()

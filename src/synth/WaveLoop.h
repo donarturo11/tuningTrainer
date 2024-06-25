@@ -1,11 +1,12 @@
-#ifndef WAVE_CONTAINER
-#define WAVE_CONTAINER
+#ifndef WAVE_LOOP_H
+#define WAVE_LOOP_H
+#include <mutex>
 namespace Synth {
-class WaveContainer
+class WaveLoop
 {
 public:
-    WaveContainer(); 
-    ~WaveContainer();
+    WaveLoop(); 
+    ~WaveLoop();
     void setReadonly(){ _writable = false; }
     void setWritable(){ _writable = true; }
     void loadWave(float* wave, int size);
@@ -29,7 +30,7 @@ protected:
     unsigned int _read_offset;
     unsigned int _write_offset;
     bool _writable;
-    const float _termArray = -1000000;
+    std::mutex _mutex;
 };
 
 }
