@@ -1,17 +1,13 @@
 #include "synth/Voice.h"
 #include "stk/LentPitShift.h"
-#include <iostream>
 
 namespace Synth {
 Voice::Voice(Synthesizer* synth)
 {
     _wave_size = 0;
     _synth = synth;
-    //_wave_size = synth->wave().size();
-    //_wave = new WaveContainer();
     _index = Voice::index;
     _noteOn = false;
-    fprintf(stderr, "Voice c-tor, index: %i\n", _index);
     update();
     Voice::index++;
 }

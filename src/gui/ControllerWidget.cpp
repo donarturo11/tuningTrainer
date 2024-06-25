@@ -127,7 +127,9 @@ void ControllerWidget::sendNoteOff(int number)
 
 void ControllerWidget::sendFrequencyChange(int number, double frequency)
 {
-    qDebug() << "Synth number " << number << " has frequency " << frequency << "Hz";
+#ifdef DEBUG
+	qDebug() << "Synth number " << number << " has frequency " << frequency << "Hz";
+#endif
     _synth->sendFrequencyChange(number, frequency);
     setFocus();
 }
@@ -141,7 +143,9 @@ void ControllerWidget::loadWave(QString filename, float basefreq)
 
 void ControllerWidget::loadWaveToSynth(std::vector <float> wave)
 {
-    qDebug() << "loadWaveToSynth wave size: " << wave.size();
+#ifdef DEBUG
+	qDebug() << "loadWaveToSynth wave size: " << wave.size();
+#endif
     _synth->loadWave(wave);
     _synth->setBaseFrequency(_base_frequency);
     for (int i=0; i < _voices; i++ )

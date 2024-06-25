@@ -1,14 +1,10 @@
 #include "synth/Synthesizer.h"
-#include <iostream>
 namespace Synth {
 Synthesizer::Synthesizer()
-{
-    fprintf(stderr, "Synthesizer c-tor\n");
-}
+{}
 
 Synthesizer::Synthesizer(int voices)
 {
-    fprintf(stderr, "Synthesizer c-tor\n");
     setPolyphony(voices);
 }
 

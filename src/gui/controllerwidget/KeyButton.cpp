@@ -1,5 +1,4 @@
 #include "gui/controllerwidget/KeyButton.h"
-#include <iostream>
 #include <QWidget>
 #include <QDebug>
 namespace GUI {
@@ -16,8 +15,7 @@ KeyButton::KeyButton(QWidget *parent, bool semitone) : QPushButton(parent)
 }
 
 KeyButton::~KeyButton()
-{
-}
+{}
 
 void KeyButton::init()
 {

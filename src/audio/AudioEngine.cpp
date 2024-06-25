@@ -41,11 +41,15 @@ void AudioEngine::probeJack()
         _audio = new RtAudio(RtAudio::Api::UNIX_JACK);
         int deviceCount = _audio->getDeviceCount();
         if (!deviceCount) throw -1;
+#ifdef DEBUG
         std::cerr << "JACK Success\n";
+#endif
     } catch(...) {
         _audio = 0;
         success = false;
+#ifdef DEBUG
         std::cerr << "JACK Failed\n";
+#endif
         return;
     }
     if (_audio->getDeviceCount()) {
@@ -78,9 +82,13 @@ void AudioEngine::probeChoosenDevice(RtAudio::Api api)
         if (!_audio) throw 1;
         _outputParameters.deviceId = _audio->getDefaultOutputDevice();
         _inputParameters.deviceId = _audio->getDefaultInputDevice();
+#ifdef DEBUG
         fprintf(stderr, "Load SUCCESS\n");
+#endif
     } catch(...) {
+#ifdef DEBUG
         fprintf(stderr, "Load FAILED\n");
+#endif
     }
 }
 
@@ -128,9 +136,9 @@ int AudioEngine::audioCallback(void * output,
                                void * obj)
 {
     AudioEngine *engine = reinterpret_cast<AudioEngine*>(obj);
-    if (rtOutBuf)
+    if (output)
         engine->readBuffer(output, nFrames);
-    if (rtInBuf)
+    if (input)
         engine->fillBuffer(input, nFrames);
     return 0;
 }

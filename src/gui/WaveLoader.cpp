@@ -3,7 +3,9 @@ namespace GUI {
 WaveLoader::WaveLoader(QWidget *parent, unsigned int samplerate, unsigned int nChannels)
     : QWidget{parent}
 {
+    #ifdef DEBUG
     qDebug() << "AudioLoader c-tor";
+    #endif
     _finished = false;
     _samplerate = samplerate;
     _nChannels = nChannels;    
@@ -12,7 +14,9 @@ WaveLoader::WaveLoader(QWidget *parent, unsigned int samplerate, unsigned int nC
 
 WaveLoader::~WaveLoader()
 {
+#ifdef DEBUG
     qDebug() << "AudioLoader d-tor";
+#endif
     if (_audioFile->isOpen())
         _audioFile->close();
     if (_decoder)
@@ -73,13 +77,17 @@ void WaveLoader::readBuffer()
 
 void WaveLoader::finishedSlot()
 {
+#ifdef DEBUG
     qDebug() << "Finished slot";
+#endif
     clear();
 }
 
 void WaveLoader::clear()
 {
+#ifdef DEBUG
     qDebug() << "clear";
+#endif
     _decoder->stop();
     _audioFile->close();
 }
@@ -95,8 +103,10 @@ void WaveLoader::decodingChanged(QAudioDecoder::State b)
         _finished = true;
         emit sendWave(_samples);
         emit finished();
+#ifdef DEBUG
         qDebug() << "finished";
         qDebug() << "_samples size" << _samples.size();
+#endif
     }
     //_decoder->stop();
 }

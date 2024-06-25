@@ -4,10 +4,7 @@ namespace GUI {
 
 /* --------------- */
 ControllerGroup::ControllerGroup(QWidget* parent) : QWidget(parent)
-{
-    std::cerr << "Controller group c-tor\n";
-    
-}
+{}
 
 ControllerGroup::~ControllerGroup()
 {
