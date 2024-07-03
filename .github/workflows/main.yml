@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ ]
   push:
-    branches: [ ]
+    branches: [ migration-to-portaudio ]
   create:
       tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
@@ -25,16 +25,17 @@ jobs:
     strategy:
       matrix:
        include:
-        - { name: "windows", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw_64", qt-version: '6.5.1', msystem: 'UCRT64' }
-        - { name: "windows-legacy", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw81", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw81_64", qt-version: '5.15.2', msystem: 'MINGW64' }
-        - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.5.1'}
-        - { name: "macos-universal", os: macos-11, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.5.1'}
-        - { name: "macos-legacy", os: macos-11, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "clang_64", qt-version: '5.12.12' }
+        - { name: "windows-msvc", os: windows-latest, flags: "", shell: 'pwsh', deps-prefix: "D:/deps", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "D:/Qt", aqt-subdir: "msvc2019_64", qt-version: '6.5.1', msystem: 'UCRT64' }
+        - { name: "windows-mingw", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "D:/deps", aqt-os: "windows", aqt-arch: "win64_mingw", aqt-prefix: "D:/Qt", aqt-subdir: "mingw_64", qt-version: '6.5.1', msystem: 'UCRT64' }
+        - { name: "windows-mingw-qt5", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "/opt/deps", aqt-os: "windows", aqt-arch: "win64_mingw81", aqt-prefix: "/opt/Qt", aqt-subdir: "mingw81_64", qt-version: '5.15.2', msystem: 'MINGW64' }
+        - { name: "linux", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "linux", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.5.1' }
+        - { name: "macos-universal", os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.5.1' }
+        - { name: "macos-legacy", os: macos-latest, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\" -DCMAKE_OSX_ARCHITECTURES=\"x86_64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "clang_64", qt-version: '5.12.12' }
     runs-on: ${{matrix.os}}
     defaults:
       run:
         shell: ${{matrix.shell}}
-
+    
     steps:
     - name: Install the Apple certificate and provisioning profile
       if: ${{runner.os == 'macOS'}}
@@ -55,7 +56,7 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
           security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
           security find-identity
-
+      
     - if: ${{runner.os == 'Windows'}}
       name: Install MinGW
       uses: msys2/setup-msys2@v2
@@ -67,8 +68,9 @@ jobs:
 
     - if: ${{runner.os == 'Windows'}}
       name: Prepare MinGW
+      shell: 'msys2 {0}'
       run: |
-            pacman -S --noconfirm \
+           pacman -S --noconfirm \
                 ${MINGW_PACKAGE_PREFIX}-toolchain \
                 ${MINGW_PACKAGE_PREFIX}-python-pip \
                 ${MINGW_PACKAGE_PREFIX}-python-distutils-extra \
@@ -78,6 +80,7 @@ jobs:
 
     - name: Setup windows env
       if: ${{runner.os == 'Windows'}}
+      shell: 'msys2 {0}'
       run: |
            echo "::notify:: Upgrading pip"
            python3 -m pip install -U pip
@@ -101,34 +104,54 @@ jobs:
                                    libxcb-keysyms1-dev libxcb-randr0 \
                                    libxcb-render-util0 libxcb-shape0
 
-    - name: Install AQT
-      run: |    
+    - name: Prepare flags for POSIX
+      if: ${{runner.name != 'windows-msvc'}}
+      shell: 'bash'
+      run: |
+           echo ":: Portaudio will be linked dynamicaly"
+           echo "PORTAUDIO_FLAGS=\"-DBUILD_SHARED_LIBS=1\"" >> $GITHUB_ENV
+           echo "STK_FLAGS=\"-DBUILD_SHARED=1\"" >> $GITHUB_ENV
+    
+    - name: Prepare flags for MSVC
+      if: ${{runner.name == 'windows-msvc'}}
+      shell: 'msys2 {0}'
+      run: |
+           echo ":: Portaudio will be linked staticaly"
+           echo "PORTAUDIO_FLAGS=\"-DBUILD_SHARED_LIBS=1\"" >> $GITHUB_ENV
+           echo "STK_FLAGS=\"-DBUILD_SHARED=1\"" >> $GITHUB_ENV
+           
+    - name: Install AQT (MacOS)
+      if: ${{runner.os == 'macOS'}}
+      run: |
+           python3 -m pip install --break-system-packages --user aqtinstall
+           
+    - name: Install AQT (no MacOS)
+      if: ${{runner.os != 'macOS'}}
+      run: |
            python3 -m pip install aqtinstall
 
     - name: Install Qt
       run: |
-           AQT_INSTALL="python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}"
-           MODULES=(qtmultimedia)
-           ${AQT_INSTALL}
-           if [[ ${{matrix.qt-version}} == 6.* ]]; then
-               for i in ${MODULES[@]}; do
-                   ${AQT_INSTALL} -m $i
-               done
-           fi
-
-    - name: Install RtAudio
+           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}}
+    
+    - name: Install Qt6 module
+      if: ${{matrix.qt-version == '6.5.1'}}
       run: |
-           git clone https://github.com/thestk/rtaudio ../rtaudio
-           cmake -S ../rtaudio -B ../rtaudio/build ${{matrix.flags}} -DCMAKE_BUILD_TYPE=Release
-           cmake --build ../rtaudio/build
-           cmake --install ../rtaudio/build --prefix ${{matrix.deps-prefix}}
+           python3 -m aqt install-qt -O ${{matrix.aqt-prefix}} ${{matrix.aqt-os}} desktop ${{matrix.qt-version}} ${{matrix.aqt-arch}} -m qtmultimedia
+           
+    - name: Install PortAudio
+      run: |
+           git clone https://github.com/portaudio/portaudio ../portaudio
+           cmake -S ../portaudio -B ../portaudio/build ${{matrix.flags}} -DCMAKE_BUILD_TYPE=Release ${{env.PORTAUDIO_FLAGS}}
+           cmake --build ../portaudio/build --config Release
+           cmake --install ../portaudio/build  --config Release --prefix ${{matrix.deps-prefix}}
 
     - name: Install STK
       run: |
            git clone https://github.com/thestk/stk ../stk
-           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}} -DCMAKE_BUILD_TYPE=Release
-           cmake --build ../stk/build
-           cmake --install ../stk/build --prefix ${{matrix.deps-prefix}}
+           cmake -S ../stk -B ../stk/build -DCOMPILE_PROJECTS=0 ${{matrix.flags}} ${{env.STK_FLAGS}} -DCMAKE_BUILD_TYPE=Release
+           cmake --build ../stk/build --config Release
+           cmake --install ../stk/build --config Release --prefix ${{matrix.deps-prefix}}
 
     - name: Prepare FindCoreAudio
       if: ${{runner.os == 'macOS'}}
@@ -151,6 +174,7 @@ jobs:
 
     - name: Prepare workdir (MINGW)
       if: ${{runner.os == 'Windows'}}
+      shell: 'msys2 {0}'
       run: |
            export WORKDIR="$(cygpath -m "${{github.workspace}}")"
            export AQTPATH="$(cygpath -m "${{matrix.aqt-prefix}}")"
@@ -172,6 +196,7 @@ jobs:
           echo "TEMP_DMGPOINT=\"${TEMP_DMGPOINT}\"" >> $GITHUB_ENV
 
     - name: Setup install prefix
+      shell: 'bash'
       run: |
            if [ ${{ runner.os }} == "Linux" ]; then
                export INSTALL_PREFIX=${{env.WORKDIR}}/${{env.pkgname}}-appdir/usr
@@ -182,18 +207,22 @@ jobs:
            fi
            echo "INSTALL_PREFIX=$INSTALL_PREFIX" >> $GITHUB_ENV
 
-    - name: Run Configure
+    - name: Setup project configuration flags
+      shell: 'bash'
       run: |
-           cmake -S "${{env.WORKDIR}}" \
-                 -B "${{env.WORKDIR}}/build" ${{matrix.flags}} \
-                 -DCMAKE_BUILD_TYPE=Release \
-                 -DCMAKE_INSTALL_PREFIX="${{env.INSTALL_PREFIX}}" \
-                 -DCMAKE_PREFIX_PATH="${{env.AQTPATH}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}};${{env.DEPSPATH}}" 
+           PROJECT_FLAGS="-DCMAKE_BUILD_TYPE=Release"
+           PROJECT_FLAGS+=" -DCMAKE_INSTALL_PREFIX=\"${{env.INSTALL_PREFIX}}\""
+           PROJECT_FLAGS+=" -DCMAKE_PREFIX_PATH=\"${{env.AQTPATH}}/${{matrix.qt-version}}/${{matrix.aqt-subdir}};${{env.DEPSPATH}}\""
+           echo "PROJECT_FLAGS=${PROJECT_FLAGS}" >> $GITHUB_ENV
+           
+    - name: Run Configure
+      run: cmake -S "${{env.WORKDIR}}" -B "${{env.WORKDIR}}/build" ${{matrix.flags}} ${{env.PROJECT_FLAGS}}
 
     - name: Compile Code
-      run: cmake --build ${{env.WORKDIR}}/build
+      run: cmake --build ${{env.WORKDIR}}/build --config Release
 
     - name: Prepare appdir
+      shell: 'bash'
       run: |
            if [ ${{ runner.os }} == "Windows" ]; then export SUFFIX="${{env.pkgname}}"
            elif [ ${{ runner.os }} == "macOS" ]; then export SUFFIX="${{env.pkgname}}.app"
@@ -204,7 +233,7 @@ jobs:
 
     - name: Install
       run: |
-           cmake --install ${{env.WORKDIR}}/build --prefix "${{ env.INSTALL_PREFIX }}"
+           cmake --install ${{env.WORKDIR}}/build  --config Release --prefix "${{ env.INSTALL_PREFIX }}"
 
     - name: Create MacOS Package
       if: ${{runner.os == 'macOS'}}
@@ -224,6 +253,7 @@ jobs:
            
     - name: Create Windows Package
       if: ${{runner.os == 'Windows'}}
+      shell: 'msys2 {0}'
       run: |
            export ARTIFACT_DIR=${{env.WORKDIR}}/${{env.pkgname}}-${{matrix.name}}
            cp -v ${{env.DEPSPATH}}/bin/*.dll ${{env.APPDIR}}/
@@ -317,14 +347,20 @@ jobs:
       - name: Get Windows binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-windows
-          path: ${{github.workspace}}/${{env.pkgname}}-windows
+          name: ${{env.pkgname}}-windows-msvc
+          path: ${{github.workspace}}/${{env.pkgname}}-windows-msvc
 
-      - name: Get Windows legacy binary
+      - name: Get Windows mingw binary
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-windows-legacy
-          path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
+          name: ${{env.pkgname}}-windows-mingw
+          path: ${{github.workspace}}/${{env.pkgname}}-windows-mingw
+      
+      - name: Get Windows mingw qt5 binary
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{env.pkgname}}-windows-mingw
+          path: ${{github.workspace}}/${{env.pkgname}}-windows-mingw-qt5
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
@@ -338,8 +374,9 @@ jobs:
             ${{github.workspace}}/${{env.pkgname}}-macos-universal/*
             ${{github.workspace}}/${{env.pkgname}}-macos-legacy/*
             ${{github.workspace}}/${{env.pkgname}}-linux/*
-            ${{github.workspace}}/${{env.pkgname}}-windows/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-legacy/*
+            ${{github.workspace}}/${{env.pkgname}}-windows-msvc/*
+            ${{github.workspace}}/${{env.pkgname}}-windows-mingw/*
+            ${{github.workspace}}/${{env.pkgname}}-windows-mingw-qt5/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -392,20 +429,31 @@ jobs:
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
           asset_path: ${{github.workspace}}/${{env.pkgname}}-windows
-          asset_name: ${{env.pkgname}}-win-x86_64
+          asset_name: ${{env.pkgname}}-msvc-x86_64
           asset_content_type: application/octet-stream
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Windows binary
-        name: Update Tagged Release (Windows legacy)
+        name: Update Tagged Release (Windows mingw qt5)
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.find_release.outputs.upload_url }}
-          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows-legacy
-          asset_name: ${{env.pkgname}}-win7-x86_64
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows-mingw-qt5
+          asset_name: ${{env.pkgname}}-mingw-qt5-x86_64
           asset_content_type: application/octet-stream
-
+      
+      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # release exists - upload Windows binary
+        name: Update Tagged Release (Windows mingw)
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.find_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/${{env.pkgname}}-windows-mingw
+          asset_name: ${{env.pkgname}}-mingw-x86_64
+          asset_content_type: application/octet-stream
+      
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id == 0 # otherwise release does not exist, create one and upload binaries
         name: Create Tagged Release
         uses: softprops/action-gh-release@v1
@@ -417,6 +465,6 @@ jobs:
           files: |
             ${{github.workspace}}/${{env.pkgname}}-macos-universal*
             ${{github.workspace}}/${{env.pkgname}}-macos-legacy*
-            ${{github.workspace}}/${{env.pkgname}}-windows*
-            ${{github.workspace}}/${{env.pkgname}}-windows-legacy*
+            ${{github.workspace}}/${{env.pkgname}}-windows-msvc*
+            ${{github.workspace}}/${{env.pkgname}}-windows-mingw*
             ${{github.workspace}}/${{env.pkgname}}-linux*
