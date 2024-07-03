@@ -7,6 +7,7 @@
 */
 #include <QtGui>
 #include <QApplication>
+#include <iostream>
 #include "MainWindow.h"
 #ifdef DEBUG
 #define qPrettyDebug() qDebug() << Q_FUNC_INFO
@@ -18,5 +19,6 @@ int main(int argc,  char **argv)
     QApplication app(argc, argv);
     MainWindow mainwindow;
 	mainwindow.show();
+    
 	return app.exec();
 }

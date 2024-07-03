@@ -15,16 +15,17 @@ namespace GUI {
 ControllerWidget::ControllerWidget(QWidget *parent)
     : QWidget(parent)
 {
+    initAudio();
     init();
     setupWidgets();
     connectWidgets();
     connectEvents();
     initSynth();
-    initAudio();
     initWaveloader();
     loadWave(":/resources/harpsichord.wav", 220);
-    
     setFixedSize(FrequencyController::position_x+100, 400);
+    std::thread t(&ControllerWidget::fillBuffer, this);
+    t.detach();
 }
 
 ControllerWidget::~ControllerWidget()
@@ -78,11 +79,12 @@ void ControllerWidget::connectEvents()
 
 void ControllerWidget::initAudio()
 {
-    _audio = new AudioEngine(2, 512, 2);
+    _audio = new AudioEngine(2, 1024, 4);
     _audio->outputBuffer()->reset();
-    _audio->startStream(STREAM_OUTPUT);
-    std::thread t(&ControllerWidget::fillBuffer, this);
-    t.detach();
+    _audio->setupOutputOnly();
+    _audio->setupDefaultDevice();
+    _audio->setupDefaultStreamParameters();
+    _audio->startStream();
 }
 
 void ControllerWidget::fillBuffer()

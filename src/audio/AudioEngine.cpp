@@ -1,144 +1,240 @@
 #include "audio/AudioEngine.h"
-#include <functional>
 #include "audio/Buffer.h"
+#ifdef USE_PORTAUDIOCPP
+#include <algorithm>
+#endif
+#ifdef DEBUG
+#include <iostream>
+#endif
 
-AudioEngine::AudioEngine(int nChannels, int bufsize, int nPeriods)
-: _nChannels(nChannels)
-, _audio(0)
-, _buffer_size(bufsize)
-, _outputId(0)
+AudioEngine::AudioEngine(int nChannels, int nFrames, int nPeriods, int flags, int samplerate)
+: _interleaved(true)
+, _nChannels(nChannels)
+, _nFrames(nFrames)
 , _nPeriods(nPeriods)
-, _input(bufsize*nChannels*nPeriods)
-, _output(bufsize*nChannels*nPeriods)
+, _samplerate(samplerate)
+, _stream_flags(flags)
+//, _output(nullptr)
+//, _input(nullptr)
+, _running(false)
+#ifdef USE_PORTAUDIOCPP
+, _sampleformat(portaudio::FLOAT32)
+, _sys(nullptr)
+#else
+, _sampleformat(paFloat32)
+, _paError(Pa_Initialize())
+, _outDev(paNoDevice)
+, _inDev(paNoDevice)
+, _stream(nullptr)
+#endif
 {
-    init();
+#ifdef USE_PORTAUDIOCPP
+    _sys = &(portaudio::System::instance());
+#else
+    if (!_interleaved)
+        _sampleformat |= paNonInterleaved;
+    else
+        _sampleformat &= ~paNonInterleaved;
+#endif
+    initBuffers();
 }
 
 AudioEngine::~AudioEngine()
 {
-    stopStream();
-    if (_audio)
-        delete _audio;
+#ifdef DEBUG
+    std::cout << "Terminating audio engine" << std::endl;
+#endif
+#ifdef USE_PORTAUDIOCPP
+    if (_sys)
+        _sys->terminate();
+#else
+    if (_paError == paNoError)
+        Pa_Terminate();
+#endif
 }
 
-void AudioEngine::init()
+void AudioEngine::initBuffers()
 {
-    probeDevices();
+    if (_stream_flags & STREAM_OUTPUT)
+        setOutputBuffer();
+    if (_stream_flags & STREAM_INPUT)
+        setInputBuffer();
 }
 
-void AudioEngine::probeJack()
+void AudioEngine::startStream()
 {
-    std::vector<RtAudio::Api> apis;
-    RtAudio::getCompiledApi(apis);
-    bool success = false;
-    for (auto api : apis) {
-        if (api == RtAudio::Api::UNIX_JACK) {
-            success = true;
+#ifdef USE_PORTAUDIOCPP
+    portaudio::StreamParameters streamParams = portaudio::StreamParameters(
+                         _inParams,
+                         _outParams,
+                         _samplerate,
+                         _nFrames,
+                         paClipOff);
+    try {
+        _stream.open(streamParams, *this, &AudioEngine::handlePaStream);
+        _stream.start();
+        _running = true;
+    }
+    catch(...) {
+        _running = false;
+    }
+#else
+    PaStreamParameters streamParams;
+    PaError err = Pa_OpenStream(
+          &_stream,
+          ((_stream_flags & STREAM_INPUT) ? &_inParams : nullptr),
+          ((_stream_flags & STREAM_OUTPUT) ? &_outParams : nullptr),
+          _samplerate,
+          _nFrames,
+          paClipOff,
+          AudioEngine::paStreamCallback,
+          this );
+    if (!err) {
+        err = Pa_StartStream(_stream);
+    }
+    _running = (!err);
+#endif
+}
+
+void AudioEngine::setupDefaultStreamParameters()
+{
+#ifdef USE_PORTAUDIOCPP
+    if (!_sys) return;
+    if (_stream_flags & STREAM_OUTPUT) {
+        _outParams = portaudio::DirectionSpecificStreamParameters(
+                         *_outDev,
+                         _nChannels,
+                         portaudio::FLOAT32,
+                         _interleaved,
+                         _outDev->defaultLowOutputLatency(),
+                         NULL);
+    } else {
+        _outParams = portaudio::DirectionSpecificStreamParameters::null();
+    }
+    if (_stream_flags & STREAM_INPUT) {
+        _inParams  = portaudio::DirectionSpecificStreamParameters(
+                         *_inDev,
+                         _nChannels,
+                         _sampleformat,
+                         _interleaved,
+                         _inDev->defaultLowInputLatency(),
+                         NULL);
+     } else {
+         _inParams = portaudio::DirectionSpecificStreamParameters::null();
+     }
+#else
+    if (_stream_flags & STREAM_OUTPUT) {
+        _outParams = {
+            _outDev,
+            _nChannels,
+            _sampleformat,
+            Pa_GetDeviceInfo( _outDev )->defaultLowOutputLatency,
+            nullptr
+        };
+    }
+    if (_stream_flags & STREAM_INPUT) {
+        _inParams = {
+            _inDev,
+            _nChannels,
+            _sampleformat,
+            Pa_GetDeviceInfo( _inDev )->defaultLowInputLatency,
+            nullptr
+        };
+     }
+#endif
+}
+
+void AudioEngine::setupHostApi(PaHostApiTypeId hostid)
+{
+#ifdef USE_PORTAUDIOCPP
+    auto apiFound = [hostid](portaudio::HostApi& api){
+        return api.typeId()==hostid;
+    };
+    auto it = std::find_if(_sys->hostApisBegin(), _sys->hostApisEnd(), apiFound);
+    if (it != _sys->hostApisEnd()) {
+        portaudio::HostApi *api = &(*it);
+        _outDev = &(api->defaultOutputDevice());
+        _inDev = &(api->defaultInputDevice());
+    } else {
+        setupDefaultDevice();
+    }
+    _samplerate = _outDev->defaultSampleRate();
+#else
+    bool apiFound = false;
+    int numDevices = Pa_GetDeviceCount();
+    for (int i = 0; i<numDevices; i++) {
+        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
+        auto api = Pa_GetHostApiInfo( deviceInfo->hostApi );
+        if (api->type == hostid) {
+            _inDev = api->defaultInputDevice;
+            _outDev = api->defaultOutputDevice;
+            apiFound = true;
+            break;
         }
     }
-    if(!success) return;
-    try {
-        _audio = new RtAudio(RtAudio::Api::UNIX_JACK);
-        int deviceCount = _audio->getDeviceCount();
-        if (!deviceCount) throw -1;
-#ifdef DEBUG
-        std::cerr << "JACK Success\n";
+    if (!apiFound)
+        setupDefaultDevice();
+    _samplerate = Pa_GetDeviceInfo( _outDev )->defaultSampleRate;
 #endif
-    } catch(...) {
-        _audio = 0;
-        success = false;
-#ifdef DEBUG
-        std::cerr << "JACK Failed\n";
+}
+
+void AudioEngine::setupDefaultDevice()
+{
+#ifdef USE_PORTAUDIOCPP
+    _outDev = &(_sys->defaultOutputDevice());
+    _inDev = &(_sys->defaultInputDevice());
+#else
+    _outDev = Pa_GetDefaultOutputDevice();
+    _inDev = Pa_GetDefaultInputDevice();
 #endif
-        return;
-    }
-    if (_audio->getDeviceCount()) {
-        _inputParameters.deviceId = _audio->getDefaultInputDevice();
-        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
-        auto info = _audio->getDeviceInfo(_inputParameters.deviceId);
-        _samplerate = info.preferredSampleRate;
-        _jack = true;
-    }
-}
-
-void AudioEngine::probeDevices()
-{
-    _jack = false;
-    probeJack();
-    if (_audio) return;
-    try {
-        _audio = new RtAudio();
-        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
-        _inputParameters.deviceId = _audio->getDefaultInputDevice();
-    } catch(...) {
-        _audio = 0;
-    }
-}
-
-void AudioEngine::probeChoosenDevice(RtAudio::Api api)
-{
-    try {
-        _audio = new RtAudio(api);
-        if (!_audio) throw 1;
-        _outputParameters.deviceId = _audio->getDefaultOutputDevice();
-        _inputParameters.deviceId = _audio->getDefaultInputDevice();
-#ifdef DEBUG
-        fprintf(stderr, "Load SUCCESS\n");
-#endif
-    } catch(...) {
-#ifdef DEBUG
-        fprintf(stderr, "Load FAILED\n");
-#endif
-    }
-}
-
-void AudioEngine::startStream(int flags)
-{
-    if (!_audio)
-        return;
-    _inputParameters.nChannels = _nChannels;
-    _outputParameters.nChannels = _nChannels;
-    try {
-        _audio->openStream(  (flags & STREAM_OUTPUT) ? &_outputParameters : nullptr,
-                             (flags & STREAM_INPUT ) ? &_inputParameters : nullptr,
-                              RTAUDIO_FLOAT32,
-                              _samplerate,
-                              &_buffer_size,
-                              AudioEngine::audioCallback,
-                              (void*) this );
-    } catch(...) {
-        return;
-    }
-    _audio->startStream();
-}
-
-void AudioEngine::readBuffer(void* data, unsigned int nFrames)
-{
-    _output.read((float*) data, nFrames*_nChannels);
-}
-
-void AudioEngine::fillBuffer(void* data, unsigned int nFrames)
-{
-    _input.write((float*) data, nFrames*_nChannels);
 }
 
 void AudioEngine::stopStream()
 {
-    if (_audio->isStreamRunning()) _audio->stopStream();
-    if (_audio->isStreamOpen()) _audio->closeStream();
+    _running = false;
+#ifdef USE_PORTAUDIOCPP
+    _stream.stop();
+    _stream.close();
+#else
+    Pa_StopStream(_stream);
+    Pa_CloseStream(_stream);
+#endif
 }
 
-int AudioEngine::audioCallback(void * output,
-                               void * input,
-                               unsigned int nFrames,
-                               double streamTime,
-                               RtAudioStreamStatus status,
-                               void * obj)
+void AudioEngine::readBuffer(void* data,unsigned int nFrames)
 {
-    AudioEngine *engine = reinterpret_cast<AudioEngine*>(obj);
-    if (output)
-        engine->readBuffer(output, nFrames);
-    if (input)
-        engine->fillBuffer(input, nFrames);
-    return 0;
+    if (!_output) return;
+    float* out = (float*) data;
+    _output->read(out, nFrames*_nChannels);
 }
+
+void AudioEngine::fillBuffer(const void* data,unsigned int nFrames)
+{
+    if (!_input) return;
+    const float* in = (const float*) data;
+    _input->write(in, nFrames*_nChannels);
+}
+
+int AudioEngine::paStreamCallback(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
+        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags, void *userData)
+{
+    auto self = reinterpret_cast<AudioEngine*>(userData);
+    return self->handlePaStream(inputBuffer,
+                                outputBuffer,
+                                framesPerBuffer,
+                                timeInfo,
+                                statusFlags);
+}
+
+int AudioEngine::handlePaStream(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
+        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags)
+{
+    if (_stream_flags & STREAM_OUTPUT)
+        readBuffer(outputBuffer, framesPerBuffer);
+
+    if (_stream_flags & STREAM_INPUT)
+        fillBuffer(inputBuffer, framesPerBuffer);
+
+    return paContinue;
+}
+

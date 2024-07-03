@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(FORCE_QT5 "Force qt5 install" OFF)
 option(FORCE_QT6 "Force qt6 install" OFF)
+option(USE_PORTAUDIOCPP "Build with portaudiocpp" OFF)
 option(MINGW_DEPLOY "Deploy MinGW runtime dependencies" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -22,7 +23,11 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(RtAudio REQUIRED)
+find_package(PortAudio REQUIRED)
+if (USE_PORTAUDIOCPP)
+find_package(PortAudioCpp REQUIRED)
+add_compile_definitions(USE_PORTAUDIOCPP)
+endif()
 find_package(Stk REQUIRED)
 
 if(FORCE_QT5)
@@ -100,7 +105,11 @@ ELSEIF(APPLE)
     )
 ENDIF()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE RtAudio::rtaudio)
+if (USE_PORTAUDIOCPP)
+target_link_libraries(${PROJECT_NAME} PRIVATE PortAudio::PortAudioCpp)
+endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE PortAudio::PortAudio)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE Stk::stk)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

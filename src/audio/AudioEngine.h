@@ -1,73 +1,111 @@
 #ifndef AUDIOENGINE_H
 #define AUDIOENGINE_H
-#include "rtaudio/RtAudio.h"
+#ifdef USE_PORTAUDIOCPP
+#include "portaudiocpp/PortAudioCpp.hxx"
+#endif
+#include "portaudio.h"
 #include <vector>
-#include "audio/AudioSource.h"
+#include <memory>
 #include "audio/Buffer.h"
 
 #define STREAM_OUTPUT 1
 #define STREAM_INPUT 2
-
-class NoJackError{};
+#define STREAM_DUPLEX (STREAM_OUTPUT | STREAM_INPUT)
+using AudioBuffer = Buffer<float>;
 class AudioEngine
 {
 public:
-    AudioEngine(int nChannels = 1, int buffersize = 512, int nPeriods = 1);
+    AudioEngine(int nChannels = 1, int nFrames = 512, int nPeriods = 1, int flags = STREAM_DUPLEX, int samplerate = 44100);
     ~AudioEngine();
-    static int audioCallback(void * rtOutBuf,
-                             void * rtInBuf,
-                             unsigned int nFrames,
-                             double streamTime,
-                             RtAudioStreamStatus status,
-                             void *obj );
-    void init();
-    void probeDevices();
-    void probeJack();
-    void probeChoosenDevice(RtAudio::Api api);
-    Buffer<float> * outputBuffer() { return &_output; }
-    Buffer<float> * inputBuffer() { return &_input; }
+    int handlePaStream(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
+        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags);
+    static int paStreamCallback(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
+        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags, void *userData);
+    void initBuffers();
     void readBuffer(void*,unsigned int);
-    void fillBuffer(void*,unsigned int);
-    void startStream(int flags = (STREAM_OUTPUT | STREAM_INPUT));
+    void fillBuffer(const void*,unsigned int);
+    AudioBuffer * outputBuffer() { return _output.get(); }
+    AudioBuffer * inputBuffer() { return _input.get(); }
+    unsigned int outputBufferSize() const {
+        return _output ? _output->capacity() : 0;
+    }
+    unsigned int inputBufferSize() const {
+        return _input ? _input->capacity() : 0;
+    }
+    void setupInputOnly() { _stream_flags = STREAM_INPUT; }
+    void setupOutputOnly() { _stream_flags = STREAM_OUTPUT; }
+    void setupDuplex() { _stream_flags = (STREAM_INPUT | STREAM_OUTPUT); }
+    void startStream();
+    void setupDefaultStreamParameters();
+    void setupHostApi(PaHostApiTypeId hostid);
+    void setupDefaultDevice();
     void stopStream();
-    void setSamplerate(unsigned int r) { if (!_jack) _samplerate = r; }
+    void setSamplerate(unsigned int r) { _samplerate = r; }
     int samplerate() const { return _samplerate; }
     int periods() const { return _nPeriods; }
     int channels() const { return _nChannels; }
-    int bufferSize() const { return _buffer_size; }
+    int frames() const { return _nFrames; }
     void setChannelsNumber(unsigned int n) {
         _nChannels = n;
         resizeBuffer();
-        _inputParameters.nChannels = _nChannels;
-        _outputParameters.nChannels = _nChannels;
     }
     void setPeriodsNumber(unsigned int n) {
         _nPeriods = n;
         resizeBuffer();
     }
     bool running() const {
-        if (!_audio) return false;
-        return _audio->isStreamRunning();
+        return _running;
+    }
+    void setInputBuffer(AudioBuffer* in = nullptr) {
+        if (_input) {
+            _input.reset();
+        }
+        if (in) {
+            _input = std::unique_ptr<AudioBuffer>(in);
+        }
+        else _input = std::make_unique<AudioBuffer>(_nFrames*_nChannels*_nPeriods);
+    }
+    void setOutputBuffer(AudioBuffer* out = nullptr) {
+        if (_output) {
+             _output.reset();
+        }
+        if (out) {
+            _output = std::unique_ptr<AudioBuffer>(out);
+        }
+        else _output = std::make_unique<AudioBuffer>(_nFrames*_nChannels*_nPeriods);
     }
 private:
     void resizeBuffer() {
-        _input.resize(_buffer_size * _nChannels * _nPeriods);
-        _output.resize(_buffer_size * _nChannels * _nPeriods);
+        _input->resize(_nFrames * _nChannels * _nPeriods);
+        _output->resize(_nFrames * _nChannels * _nPeriods);
     }
 protected:
-    bool _jack;
-    RtAudio* _audio;
-    RtAudio::StreamParameters _inputParameters;
-    RtAudio::StreamParameters _outputParameters;
-    Buffer<float> _input;
-    Buffer<float> _output;
-    unsigned int _outputId;
-    unsigned int _nChannels;
+    const bool _interleaved;
+#ifdef USE_PORTAUDIOCPP
+    portaudio::SampleDataFormat _sampleformat;
+    portaudio::AutoSystem autoSys;
+    portaudio::System *_sys;
+    portaudio::MemFunCallbackStream<AudioEngine> _stream;
+    portaudio::DirectionSpecificStreamParameters _outParams;
+    portaudio::DirectionSpecificStreamParameters _inParams;
+    portaudio::Device *_outDev;
+    portaudio::Device *_inDev;
+#else
+    PaSampleFormat _sampleformat;
+    PaStream *_stream;
+    PaStreamParameters _outParams;
+    PaStreamParameters _inParams;
+    PaDeviceIndex _outDev;
+    PaDeviceIndex _inDev;
+    PaError _paError;
+#endif
+    std::unique_ptr<AudioBuffer> _input;
+    std::unique_ptr<AudioBuffer> _output;
+    int _stream_flags;
+    int _nChannels;
     unsigned int _samplerate;
-    unsigned int _buffer_size;
+    unsigned int _nFrames;
     unsigned int _nPeriods;
-    
-
+    bool _running;
 };
-
 #endif // AUDIOENGINE_H

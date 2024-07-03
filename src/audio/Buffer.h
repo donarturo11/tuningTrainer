@@ -7,12 +7,12 @@ class Buffer
 {
 private:
     std::vector<T> m_buffer;
-    int m_head;
-    int m_tail;
-    int m_capacity;
+    unsigned int m_head;
+    unsigned int m_tail;
+    unsigned int m_capacity;
     std::mutex m_mutex;
 public:
-    Buffer(int n)
+    Buffer(unsigned int n)
     {
         resize(n);
         m_head = 0;
@@ -26,7 +26,7 @@ public:
         m_tail = 0;
     }
     
-    void resize(int capacity)
+    void resize(unsigned int capacity)
     {
         m_capacity = capacity;
         m_buffer.resize(m_capacity);
@@ -53,17 +53,17 @@ public:
         m_mutex.unlock();
     }
 
-    int read(T* vals, int n)
+    unsigned int read(T* vals, unsigned int n)
     {
-        for (int i = 0; i<n; i++) {
+        for (unsigned int i = 0; i<n; i++) {
             vals[i] = get();
             if (empty()) return i;
         }
         return n;
     }
     
-    int write(T* vals, int n) {
-        for (int i = 0; i<n; i++) {
+    unsigned int write(const T* vals, unsigned int n) {
+        for (unsigned int i = 0; i<n; i++) {
             put(vals[i]);
             if (full()) return i;
         }
@@ -73,7 +73,7 @@ public:
     std::vector<T> readAll()
     {
         T values[m_capacity];
-        int n = read(values, m_capacity);
+        unsigned int n = read(values, m_capacity);
         return std::vector<T>(values, values+n);
     }
     
@@ -84,7 +84,7 @@ public:
         return val;
     }
     
-    int capacity() const
+    unsigned int capacity() const
     {
         return m_capacity;
     }
@@ -99,7 +99,7 @@ public:
         return (m_head + 1) % m_capacity == m_tail;
     }
     
-    int size() const
+    unsigned int size() const
     {
         if (m_head >= m_tail) return m_head - m_tail;
         return m_capacity - (m_tail - m_head);
