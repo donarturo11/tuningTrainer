@@ -8,6 +8,7 @@ option(FORCE_QT5 "Force qt5 install" OFF)
 option(FORCE_QT6 "Force qt6 install" OFF)
 option(USE_PORTAUDIOCPP "Build with portaudiocpp" OFF)
 option(MINGW_DEPLOY "Deploy MinGW runtime dependencies" OFF)
+option(DEPS_DEPLOY "Deploy MinGW runtime dependencies" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
@@ -142,12 +143,10 @@ install (TARGETS ${PROJECT_NAME}
 
 include(CPackConfig)
 
-if (MINGW)
-    if (MINGW_DEPLOY)
-        include(MingwDeploy)
-    endif()
+if (MINGW AND MINGWDEPLOY)
+include(MingwDeploy)
 endif()
-if (WIN32)
+if (WIN32 AND DEPS_DEPLOY)
 find_file(PORTAUDIO_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES portaudio.dll libportaudio.dll)
 find_file(STK_DLL PATHS ${CMAKE_PREFIX_PATH} NAMES stk.dll libstk.dll)
 install(FILES ${RTAUDIO_DLL} ${STK_DLL} DESTINATION ${PROJECT_NAME})
