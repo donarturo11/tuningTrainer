@@ -341,6 +341,11 @@ jobs:
             for i in $(ldd ${{env.APPDIR}}/${{env.pkgname}}.exe | cut -f 3 -d " " | grep "/bin/")
              do cp -v $i ${{env.APPDIR}}/
             done
+            if ${{matrix.qt-version}} == 6.* ]]; then
+             for i in $(ldd ${{env.APPDIR}}/multimedia/ffmpegmediaplugin.dll | cut -f 3 -d " " | grep "/bin/")
+              do cp -v $i ${{env.APPDIR}}/
+             done
+            fi
            fi
            mkdir $ARTIFACT_DIR || echo "::warning::${ARTIFACT_DIR} already exists"
            cd $ARTIFACT_DIR
