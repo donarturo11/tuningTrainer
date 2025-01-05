@@ -428,9 +428,8 @@ jobs:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-            path: ~/artifacts
+            path: ~/artifacts/
 #            pattern: ${{env.pkgname}}-*
-            merge-multiple: true
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
