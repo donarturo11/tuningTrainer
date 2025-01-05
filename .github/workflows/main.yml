@@ -428,7 +428,7 @@ jobs:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-            path: ~/artifacts/
+            path: ${{ runner.temp }}/artifacts/
 #            pattern: ${{env.pkgname}}-*
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
