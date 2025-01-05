@@ -425,8 +425,21 @@ jobs:
              echo "BUILD_TAG=${BUILD_TAG}" >> $GITHUB_OUTPUT
              echo DATE=$DATE >> $GITHUB_ENV
 
-      - name: Download All Artifacts
-        uses: actions/download-artifact@v4
+      - name: List all available artifacts
+        id: list-artifacts
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts \
+               > artifacts.json
+
+      - name: Parse and download artifacts
+        run: |
+          artifacts=$(jq -r '.artifacts[].name' artifacts.json)
+          for artifact in $artifacts; do
+            echo "Downloading artifact: $artifact"
+            gh run download ${{ github.run_id }} --name "$artifact" --dir ~/artifacts/
+          done
         
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
