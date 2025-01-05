@@ -425,54 +425,11 @@ jobs:
              echo "BUILD_TAG=${BUILD_TAG}" >> $GITHUB_OUTPUT
              echo DATE=$DATE >> $GITHUB_ENV
 
-      - name: Get macOS universal binary
+      - name: Download All Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: ${{env.pkgname}}-macos-qt6-universal
-          path: ${{github.workspace}}/${{env.pkgname}}-macos-qt6-universal
-
-      - name: Get macOS legacy binary
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-macos-qt5-legacy
-          path: ${{github.workspace}}/${{env.pkgname}}-macos-qt5-legacy
-
-      - name: Get Linux binary (QT6)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-linux-qt6
-          path: ${{github.workspace}}/${{env.pkgname}}-linux-qt6
-
-      - name: Get Linux binary (QT5)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-linux-qt5
-          path: ${{github.workspace}}/${{env.pkgname}}-linux-qt5
-
-      - name: Get Windows binary (Qt6 MSVC)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-windows-qt6-msvc
-          path: ${{github.workspace}}/${{env.pkgname}}-windows-qt6-msvc
-
-      - name: Get Windows binary (Qt5 MSVC)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-windows-qt5-msvc
-          path: ${{github.workspace}}/${{env.pkgname}}-windows-qt5-msvc
-
-      - name: Get Windows binary (Qt6 MINGW)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-windows-qt6-mingw
-          path: ${{github.workspace}}/${{env.pkgname}}-windows-qt6-mingw
-
-      - name: Get Windows (Qt5 MinGW)
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{env.pkgname}}-windows-qt5-mingw
-          path: ${{github.workspace}}/${{env.pkgname}}-windows-qt5-mingw
-
+          path: ${{ github.workspace }}/output/
+        
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
         name: Create Snapshot Release
         uses: softprops/action-gh-release@v2
@@ -482,14 +439,7 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-macos-qt6-universal/*
-            ${{github.workspace}}/${{env.pkgname}}-macos-qt5-legacy/*
-            ${{github.workspace}}/${{env.pkgname}}-linux-qt6/*
-            ${{github.workspace}}/${{env.pkgname}}-linux-qt5/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt6-mingw/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt5-mingw/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt6-msvc/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt5-msvc/*
+            ${{ github.workspace }}/output/*/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -510,11 +460,4 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            ${{github.workspace}}/${{env.pkgname}}-macos-qt6-universal/*
-            ${{github.workspace}}/${{env.pkgname}}-macos-qt5-legacy/*
-            ${{github.workspace}}/${{env.pkgname}}-linux-qt6/*
-            ${{github.workspace}}/${{env.pkgname}}-linux-qt5/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt6-mingw/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt5-mingw/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt6-msvc/*
-            ${{github.workspace}}/${{env.pkgname}}-windows-qt5-msvc/*
+            ${{ github.workspace }}/output/*/*
