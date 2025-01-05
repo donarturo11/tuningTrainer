@@ -428,8 +428,8 @@ jobs:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-            path: ${{github.workspace}}/my-artifact
-            pattern: ${{github.workspace}}/my-artifact-*
+            path: ~/artifacts
+            pattern: ${{env.pkgname}}-*
             merge-multiple: true
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
@@ -441,7 +441,7 @@ jobs:
           generate_release_notes: true
           prerelease: true
           files: |
-            ${{github.workspace}}/my-artifact/*
+            ~/artifacts/*
 
       - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') # this is a versioned build. check if release already exists
         name: Find Existing Release
@@ -462,4 +462,4 @@ jobs:
           generate_release_notes: true
           prerelease: false
           files: |
-            ${{github.workspace}}/my-artifact/*
+            ~/artifacts/*
