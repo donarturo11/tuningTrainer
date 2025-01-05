@@ -429,7 +429,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
             path: ~/artifacts
-            pattern: ${{env.pkgname}}-*
+#            pattern: ${{env.pkgname}}-*
             merge-multiple: true
 
       - if: github.event_name == 'push' # this is a snapshot build. create a release and upload binaries
