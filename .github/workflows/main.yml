@@ -7,8 +7,9 @@ on:
   push:
     branches: [ ]
   create:
-      tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
+    tags: ['v*'] # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
+    inputs:
       publish-www:
         description: 'Publish on WWW'
         required: false
@@ -25,13 +26,13 @@ jobs:
     strategy:
       matrix:
        include:
-        - { name: "windows-qt6-msvc", os: windows-latest, flags: "", shell: 'pwsh', deps-prefix: "D:/deps", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "D:/Qt", aqt-subdir: "msvc2019_64", qt-version: '6.5.1', msystem: 'UCRT64', build-deps: true }
+        - { name: "windows-qt6-msvc", os: windows-latest, flags: "", shell: 'pwsh', deps-prefix: "D:/deps", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "D:/Qt", aqt-subdir: "msvc2019_64", qt-version: '6.2.4', msystem: 'UCRT64', build-deps: true }
         - { name: "windows-qt5-msvc", os: windows-latest, flags: "", shell: 'pwsh', deps-prefix: "D:/deps", aqt-os: "windows", aqt-arch: "win64_msvc2019_64", aqt-prefix: "D:/Qt", aqt-subdir: "msvc2019_64", qt-version: '5.15.2', msystem: 'UCRT64', build-deps: true }
         - { name: "windows-qt6-mingw", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "D:/deps", aqt-os: "none", aqt-arch: "win64_mingw", aqt-prefix: "D:/Qt", aqt-subdir: "mingw_64", qt-version: '6.5.1', msystem: 'UCRT64', build-deps: false  }
         - { name: "windows-qt5-mingw", os: windows-latest, flags: "", shell: 'msys2 {0}', deps-prefix: "D:/deps", aqt-os: "none", aqt-arch: "win64_mingw81", aqt-prefix: "D:/Qt", aqt-subdir: "mingw81_64", qt-version: '5.12.12', msystem: 'MINGW64', build-deps: false  }
-        - { name: "linux-qt6", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "none", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.5.1', build-deps: false  }
+        - { name: "linux-qt6", os: ubuntu-latest, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "none", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '6.2.4', build-deps: false  }
         - { name: "linux-qt5", os: ubuntu-22.04, flags: "", shell: 'bash', deps-prefix: "/home/runner/deps", aqt-os: "none", aqt-arch: "gcc_64", aqt-prefix: "/home/runner/Qt", aqt-subdir: "gcc_64", qt-version: '5.12.12', build-deps: false  }
-        - { name: "macos-qt6-universal", os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.5.1', build-deps: true  }
+        - { name: "macos-qt6-universal", os: macos-latest, flags: "-DCMAKE_OSX_ARCHITECTURES=\"x86_64;arm64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "macos", qt-version: '6.2.4', build-deps: true  }
         - { name: "macos-qt5-legacy", os: macos-latest, flags: "-DCMAKE_OSX_DEPLOYMENT_TARGET=\"10.12\" -DCMAKE_OSX_ARCHITECTURES=\"x86_64\"", shell: 'bash', deps-prefix: "/Users/runner/deps", aqt-os: "mac", aqt-arch: "", aqt-prefix: "/Users/runner/Qt", aqt-subdir: "clang_64", qt-version: '5.12.12', build-deps: true  }
     runs-on: ${{matrix.os}}
     defaults:
@@ -404,7 +405,7 @@ jobs:
            echo "::endgroup::"
 
     - name: Upload All Binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{env.pkgname}}-${{matrix.name}}
         path: ${{github.workspace}}/${{env.pkgname}}-${{matrix.name}}
@@ -412,7 +413,7 @@ jobs:
 
   publish:
     needs: build
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) || inputs.publish-github || inputs.publish-www 
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -426,7 +427,7 @@ jobs:
              echo DATE=$DATE >> $GITHUB_ENV
 
       - name: Download All Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ${{ github.workspace }}/output/
         
@@ -451,7 +452,7 @@ jobs:
           doNotFailIfNotFound: true
           tag: ${{ github.ref_name }}
 
-      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 # otherwise release does not exist, create one and upload binaries
+      - if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v') && steps.find_release.outputs.id != 0 || inputs.publish-github # otherwise release does not exist, create one and upload binaries
         name: Create Tagged Release
         uses: softprops/action-gh-release@v1
         with:
