@@ -20,6 +20,7 @@ on:
         type: boolean
 env:
   pkgname: tuningTrainer
+  CMAKE_POLICY_VERSION_MINIMUM: 3.5
 
 jobs:
   build:
